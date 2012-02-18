@@ -101,7 +101,6 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 	downKeys := make(map[int]bool)
 	go func(ech chan<- interface{}, uich <-chan interface{}) {
 		var lastMouse ui.MouseEvent
-		var lastKey ui.KeyEvent
 		for uie := range uich {
 			switch uie := uie.(type) {
 			case ui.ConfigEvent:
@@ -113,28 +112,25 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				sendMouseEvents(lastMouse, uie, ech)
 				lastMouse = uie
 			case ui.KeyEvent:
-				if lastKey.Key != uie.Key {
-					code := uie.Key
-					up := code < 0
-					if code < 0 {
-						code *= -1
-					}
-					ke := wde.KeyEvent{
-						Code: code,
-						Letter: fmt.Sprintf("%c", code),
-					}
-					if up {
-						ech <- wde.KeyUpEvent(ke)
-						downKeys[code] = false
-					} else {
-						if !downKeys[code] {
-							ech <- wde.KeyDownEvent(ke)
-						}
-						ech <- wde.KeyTypedEvent(ke)
-						downKeys[code] = true
-					}
+				code := uie.Key
+				up := code < 0
+				if code < 0 {
+					code *= -1
 				}
-				lastKey = uie
+				ke := wde.KeyEvent{
+					Code: code,
+					Letter: fmt.Sprintf("%c", code),
+				}
+				if up {
+					ech <- wde.KeyUpEvent(ke)
+					downKeys[code] = false
+				} else {
+					if !downKeys[code] {
+						ech <- wde.KeyDownEvent(ke)
+					}
+					ech <- wde.KeyTypedEvent(ke)
+					downKeys[code] = true
+				}
 			}
 		}
 		close(ech)
