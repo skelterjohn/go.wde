@@ -16,6 +16,14 @@
 
 package wde
 
+type Button int
+
+const (
+	LeftButton Button = 1<<iota
+	MiddleButton
+	RightButton
+)
+
 type Event int
 
 type MouseEvent struct {
@@ -30,12 +38,16 @@ type MouseMovedEvent struct {
 
 type MouseButtonEvent struct {
 	MouseEvent
-	Button int
+	Which Button
 }
 
 type MouseDownEvent MouseButtonEvent
 type MouseUpEvent MouseButtonEvent
-type MouseDraggedEvent MouseButtonEvent
+
+type MouseDraggedEvent struct {
+	MouseMovedEvent
+	Which Button
+}
 
 type MouseEnteredEvent MouseMovedEvent
 type MouseExitedEvent MouseMovedEvent
@@ -47,7 +59,6 @@ type KeyEvent struct {
 
 type KeyDownEvent KeyEvent
 type KeyUpEvent KeyEvent
-type KeyPressEvent KeyEvent
 type KeyTypedEvent KeyEvent
 
 type ResizeEvent struct {
