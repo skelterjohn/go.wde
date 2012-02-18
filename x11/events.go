@@ -114,7 +114,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 			case ui.KeyEvent:
 				code := uie.Key
 				up := code < 0
-				if code < 0 {
+				if up {
 					code *= -1
 				}
 				ke := wde.KeyEvent{
