@@ -48,32 +48,27 @@ func Run(wgen func() (wde.Window, error)) {
 			for ei := range events {
 				switch e := ei.(type) {
 				case wde.MouseDownEvent:
-					println("md", e.X, e.Y, e.Which)
+					fmt.Println("clicked", e.X, e.Y, e.Which)
 					dw.Close()
 				case wde.MouseUpEvent:
-					println("mu", e.X, e.Y, e.Which)
 				case wde.MouseMovedEvent:
-					println("mv", e.X, e.Y)
 				case wde.MouseDraggedEvent:
-					println("mdr", e.X, e.Y, e.Which)
 				case wde.MouseEnteredEvent:
-					println("men", e.X, e.Y)
+					fmt.Println("mouse entered", e.X, e.Y)
 				case wde.MouseExitedEvent:
-					println("mex", e.X, e.Y)
+					fmt.Println("mouse exited", e.X, e.Y)
 				case wde.KeyDownEvent:
-					println("kd", e.Letter)
 				case wde.KeyUpEvent:
-					println("ku", e.Letter)
 				case wde.KeyTypedEvent:
-					println("kt", e.Letter)
+					fmt.Println("typed", e.Letter)
 				case wde.CloseEvent:
-					println("close")
+					fmt.Println("close")
 				case wde.ResizeEvent:
-					println("resize")
+					fmt.Println("resize")
 					s = dw.Screen()
 				}
 			}
-			println("end of events")
+			fmt.Println("end of events")
 			done <- true
 		}()
 
