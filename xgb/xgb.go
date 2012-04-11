@@ -37,6 +37,7 @@ func ensureConnection() (err error) {
 	}
 
 	xu, err = xgbutil.Dial(":0.0")
+	go handleEvents(xu.Conn())
 
 	return
 }
@@ -49,9 +50,6 @@ type Window struct {
 }
 
 func NewWindow(width, height int) (w *Window, err error) {
-
-	println(width, height)
-
 	err = ensureConnection()
 	if err != nil {
 		return
@@ -65,7 +63,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 	screen := xu.Screen()
 
 	w.id = w.conn.NewId()
-	w.conn.CreateWindow(xgb.WindowClassCopyFromParent, w.id, screen.Root, 200, 200, uint16(width), uint16(height), 10, xgb.WindowClassInputOutput, screen.RootVisual, 0, []uint32{})
+	w.conn.CreateWindow(xgb.WindowClassCopyFromParent, w.id, screen.Root, 600, 500, uint16(width), uint16(height), 0, xgb.WindowClassInputOutput, screen.RootVisual, 0, []uint32{})
 
 	return
 }
@@ -102,8 +100,4 @@ func (w *Window) FlushImage() {
 func (w *Window) Close() (err error) {
 
 	return
-}
-
-func (w *Window) EventChan() (events <-chan interface{}) {
-	return make(chan interface{})
 }

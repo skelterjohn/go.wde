@@ -22,8 +22,8 @@ import (
 	"github.com/skelterjohn/go.wde/wdetest"
 )
 
-func wgen() (w wde.Window, err error) {
-	w, err = xgb.NewWindow(200, 200)
+func wgen(width, height int) (w wde.Window, err error) {
+	w, err = xgb.NewWindow(width, height)
 	return
 }
 

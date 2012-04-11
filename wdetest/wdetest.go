@@ -25,11 +25,11 @@ import (
 	"time"
 )
 
-func Run(wgen func() (wde.Window, error)) {
+func Run(wgen func(width, height int) (wde.Window, error)) {
 	var wg sync.WaitGroup
 
 	x := func() {
-		dw, err := wgen()
+		dw, err := wgen(100, 100)
 		if err != nil {
 			fmt.Println(err)
 			return

@@ -22,7 +22,7 @@ import (
 	"github.com/skelterjohn/go.wde/wdetest"
 )
 
-func wgen() (w wde.Window, err error) {
+func wgen(width, height int) (w wde.Window, err error) {
 	w, err = x11.NewWindow()
 	return
 }
