@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"code.google.com/p/jamslam-x-go-binding/xgb"
+	"github.com/BurntSushi/xgbutil"
 	"sync"
 )
 
@@ -13,20 +14,27 @@ var eventLock sync.Mutex
 func handleEvents(conn *xgb.Conn) {
 	for {
 		e, err := conn.WaitForEvent()
-		fmt.Printf("%T, %s\n", e, err)
+		fmt.Printf("wfe: %T, %s\n", e, err)
 
 		if err == io.EOF {
 			break
 		}
 
-		// var id xgb.Id
+		xgbutil.BeSafe(&err)
 
-		// eventLock.Lock()
-		// ch, ok := eventChans[id]
-		// if ok {
-		// 	ch <- e
-		// }
-		// eventLock.Unlock()
+		var id xgb.Id
+
+		switch e := e.(type) {
+		case xgb.PropertyNotifyEvent:
+			id = e.Window
+		}
+
+		eventLock.Lock()
+		ch, ok := eventChans[id]
+		if ok {
+			ch <- e
+		}
+		eventLock.Unlock()
 	}
 
 	eventLock.Lock()
