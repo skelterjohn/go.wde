@@ -14,8 +14,11 @@ var eventLock sync.Mutex
 func handleEvents(conn *xgb.Conn) {
 	for {
 		e, err := conn.WaitForEvent()
-		fmt.Printf("wfe: %T, %s\n", e, err)
 
+		fmt.Printf("wfe: %T\n%+v\n", e, e)
+		if err != nil {
+			fmt.Println("err:", err)
+		}
 		if err == io.EOF {
 			break
 		}

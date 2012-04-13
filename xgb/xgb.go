@@ -20,10 +20,10 @@ import (
 	"code.google.com/p/jamslam-x-go-binding/xgb"
 	"image/draw"
 	"image"
-	"fmt"
 	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/BurntSushi/xgbutil/xwindow"
+	"github.com/BurntSushi/xgbutil/icccm"
 	"sync"
 )
 
@@ -31,14 +31,15 @@ var xu *xgbutil.XUtil
 var connLock sync.Mutex
 
 func ensureConnection() (err error) {
-	connLock.Lock()
-	defer connLock.Unlock()
 
 	if xu != nil {
 		return
 	}
 
 	xu, err = xgbutil.Dial(":0.0")
+	if err != nil {
+		return
+	}
 	go handleEvents(xu.Conn())
 
 	return
@@ -52,6 +53,9 @@ type Window struct {
 }
 
 func NewWindow(width, height int) (w *Window, err error) {
+	connLock.Lock()
+	defer connLock.Unlock()
+
 	err = ensureConnection()
 	if err != nil {
 		return
@@ -65,10 +69,10 @@ func NewWindow(width, height int) (w *Window, err error) {
 	screen := xu.Screen()
 
 	w.id = w.conn.NewId()
-	fmt.Printf("cw: %x\n", w.id)
 	w.conn.CreateWindow(xgb.WindowClassCopyFromParent, w.id, screen.Root, 600, 500, uint16(width), uint16(height), 0, xgb.WindowClassInputOutput, screen.RootVisual, 0, []uint32{})
 
 	xwindow.Listen(xu, w.id, xgb.EventMaskKeyPress | xgb.EventMaskButtonPress)
+	
 
 	return
 }
@@ -89,8 +93,12 @@ func (w *Window) Size() (width, height int)  {
 }
 
 func (w *Window) Show() {
+	connLock.Lock()
+	defer connLock.Unlock()
 	w.conn.MapWindow(w.id)
-
+	
+	icccm.WmProtocolsSet(xu, w.id, []string{"WM_DELETE_WINDOW"})
+	
 }
 
 func (w *Window) Screen() (im draw.Image) {
@@ -99,6 +107,8 @@ func (w *Window) Screen() (im draw.Image) {
 }
 
 func (w *Window) FlushImage() {
+	connLock.Lock()
+	defer connLock.Unlock()
 	xgraphics.PaintImg(xu, w.id, w.buffer)
 }
 
