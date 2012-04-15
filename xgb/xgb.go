@@ -20,11 +20,13 @@ import (
 	"code.google.com/p/jamslam-x-go-binding/xgb"
 	"image/draw"
 	"image"
+	"fmt"
 	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/BurntSushi/xgbutil/xwindow"
 	"github.com/BurntSushi/xgbutil/icccm"
 	"sync"
+	"runtime"
 )
 
 var xu *xgbutil.XUtil
@@ -50,6 +52,7 @@ type Window struct {
 	conn *xgb.Conn
 	buffer draw.Image
 	width, height int
+	closed bool
 }
 
 func NewWindow(width, height int) (w *Window, err error) {
@@ -63,7 +66,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	w = new(Window)
 	w.width, w.height = width, height
-	w.buffer = image.NewNRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
+	w.buffer = image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
 
 	w.conn = xu.Conn()
 	screen := xu.Screen()
@@ -78,41 +81,69 @@ func NewWindow(width, height int) (w *Window, err error) {
 }
 
 func (w *Window) SetTitle(title string) {
+	if w.closed {
+		return
+	}
 	// cannot
 	return
 }
 
 func (w *Window) SetSize(width, height int) {
+	if w.closed {
+		return
+	}
 	// cannot
 	return
 }
 
 func (w *Window) Size() (width, height int)  {
+	if w.closed {
+		return
+	}
 	width, height = w.width, w.height
 	return
 }
 
 func (w *Window) Show() {
+	if w.closed {
+		return
+	}
 	connLock.Lock()
 	defer connLock.Unlock()
 	w.conn.MapWindow(w.id)
-	
-	icccm.WmProtocolsSet(xu, w.id, []string{"WM_DELETE_WINDOW"})
-	
+	if true {
+		err := icccm.WmProtocolsSet(xu, w.id, []string{"WM_DELETE_WINDOW"})
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 }
 
 func (w *Window) Screen() (im draw.Image) {
+	if w.closed {
+		return
+	}
 	im = w.buffer
 	return
 }
 
 func (w *Window) FlushImage() {
+	if w.closed {
+		return
+	}
 	connLock.Lock()
 	defer connLock.Unlock()
+	runtime.Gosched()
 	xgraphics.PaintImg(xu, w.id, w.buffer)
 }
 
 func (w *Window) Close() (err error) {
-
+	if w.closed {
+		return
+	}
+	connLock.Lock()
+	defer connLock.Unlock()
+	w.conn.DestroyWindow(w.id)
+	w.closed = true
 	return
 }

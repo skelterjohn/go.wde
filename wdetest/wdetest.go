@@ -22,6 +22,8 @@ import (
 	"fmt"
 	"image/draw"
 	"sync"
+	"runtime"
+	"math/rand"
 	"time"
 )
 
@@ -29,13 +31,15 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 	var wg sync.WaitGroup
 
 	x := func() {
-		dw, err := wgen(100, 100)
+		offset := time.Duration(rand.Intn(1e9))
+
+		dw, err := wgen(200, 200)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		dw.SetTitle("hi!")
-		dw.SetSize(100, 100)
+		dw.SetSize(200, 200)
 		dw.Show()
 
 		events := dw.EventChan()
@@ -45,11 +49,14 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 		done := make(chan bool)
 
 		go func() {
+			loop:
 			for ei := range events {
+				runtime.Gosched()
 				switch e := ei.(type) {
 				case wde.MouseDownEvent:
 					fmt.Println("clicked", e.X, e.Y, e.Which)
-					dw.Close()
+					// dw.Close()
+					// break loop
 				case wde.MouseUpEvent:
 				case wde.MouseMovedEvent:
 				case wde.MouseDraggedEvent:
@@ -63,35 +70,37 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 					fmt.Println("typed", e.Letter)
 				case wde.CloseEvent:
 					fmt.Println("close")
+					dw.Close()
+					break loop
 				case wde.ResizeEvent:
 					fmt.Println("resize")
 					s = dw.Screen()
 				}
 			}
-			fmt.Println("end of events")
 			done <- true
+			fmt.Println("end of events")
 		}()
 
 		for i := 0; ; i++ {
-			for x := 0; x < 100; x++ {
-				for y := 0; y < 100; y++ {
+			for x := 0; x < 200; x++ {
+				for y := 0; y < 200; y++ {
 					var r uint8
-					if x > 50 {
+					if x > 100 {
 						r = 255
 					}
 					var g uint8
-					if y >= 50 {
+					if y >= 100 {
 						g = 255
 					}
 					var b uint8
-					if y < 25 || y >= 75 {
+					if y < 50 || y >= 150 {
 						b = 255
 					}
 					if i%2 == 1 {
 						r = 255 - r
 					}
 
-					if y > 90 {
+					if y > 190 {
 						r = 255
 						g = 255
 						b = 255
@@ -108,7 +117,7 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 			}
 			dw.FlushImage()
 			select {
-			case <-time.After(1e9):
+			case <-time.After(5e8+offset):
 			case <-done:
 				wg.Done()
 				return

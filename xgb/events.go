@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io"
 	"code.google.com/p/jamslam-x-go-binding/xgb"
+	"runtime"
 	"github.com/BurntSushi/xgbutil"
+	"github.com/skelterjohn/go.wde"
 	"sync"
 )
 
@@ -13,12 +15,13 @@ var eventLock sync.Mutex
 
 func handleEvents(conn *xgb.Conn) {
 	for {
+		runtime.Gosched()
 		e, err := conn.WaitForEvent()
 
 		fmt.Printf("wfe: %T\n%+v\n", e, e)
-		if err != nil {
-			fmt.Println("err:", err)
-		}
+		// if err != nil {
+		// 	fmt.Println("err:", err)
+		// }
 		if err == io.EOF {
 			break
 		}
@@ -27,15 +30,29 @@ func handleEvents(conn *xgb.Conn) {
 
 		var id xgb.Id
 
+		var wdeEvent interface{}
+
 		switch e := e.(type) {
 		case xgb.PropertyNotifyEvent:
 			id = e.Window
+		case xgb.ButtonPressEvent:
+			id = e.Event
+			var bpe wde.MouseDownEvent
+			bpe.X = int(e.EventX)
+			bpe.Y = int(e.EventY)
+			wdeEvent = bpe
+
+		case xgb.ClientMessageEvent:
+			id = e.Window
+			if e.Type == 264 {
+				wdeEvent = wde.CloseEvent{}
+			}
 		}
 
 		eventLock.Lock()
 		ch, ok := eventChans[id]
 		if ok {
-			ch <- e
+			ch <- wdeEvent
 		}
 		eventLock.Unlock()
 	}
