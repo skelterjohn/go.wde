@@ -29,16 +29,18 @@ import (
 func Run(wgen func(width, height int) (wde.Window, error)) {
 	var wg sync.WaitGroup
 
+	size := 200
+
 	x := func() {
 		offset := time.Duration(rand.Intn(1e9))
 
-		dw, err := wgen(200, 200)
+		dw, err := wgen(size, size)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		dw.SetTitle("hi!")
-		dw.SetSize(200, 200)
+		dw.SetSize(size, size)
 		dw.Show()
 
 		events := dw.EventChan()
@@ -91,22 +93,22 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 			for x := 0; x < width; x++ {
 				for y := 0; y < height; y++ {
 					var r uint8
-					if x > 100 {
+					if x > width/2 {
 						r = 255
 					}
 					var g uint8
-					if y >= 100 {
+					if y >= height/2 {
 						g = 255
 					}
 					var b uint8
-					if y < 50 || y >= 150 {
+					if y < height/4 || y >= height*3/4 {
 						b = 255
 					}
 					if i%2 == 1 {
 						r = 255 - r
 					}
 
-					if y > 190 {
+					if y > height-10 {
 						r = 255
 						g = 255
 						b = 255
