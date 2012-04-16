@@ -39,8 +39,6 @@ func (w *Window) handleEvents() {
 
 		xgbutil.BeSafe(&err)
 
-		var wdeEvent interface{}
-
 		switch e := e.(type) {
 		case xgb.PropertyNotifyEvent:
 
@@ -52,7 +50,7 @@ func (w *Window) handleEvents() {
 			bpe.Y = int(e.EventY)
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
-			wdeEvent = bpe
+			w.events <- bpe
 
 		case xgb.ButtonReleaseEvent:
 			button = button & ^buttonForDetail(e.Detail)
@@ -62,7 +60,7 @@ func (w *Window) handleEvents() {
 			bue.Y = int(e.EventY)
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
-			wdeEvent = bue
+			w.events <- bue
 
 		case xgb.LeaveNotifyEvent:
 			var wee wde.MouseExitedEvent
@@ -70,14 +68,14 @@ func (w *Window) handleEvents() {
 			wee.Y = int(e.EventY)
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
-			wdeEvent = wee
+			w.events <- wee
 		case xgb.EnterNotifyEvent:
 			var wee wde.MouseEnteredEvent
 			wee.X = int(e.EventX)
 			wee.Y = int(e.EventY)
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
-			wdeEvent = wee
+			w.events <- wee
 
 		case xgb.MotionNotifyEvent:
 			var mme wde.MouseMovedEvent
@@ -93,35 +91,37 @@ func (w *Window) handleEvents() {
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
 			if button == 0 {
-				wdeEvent = mme
+				w.events <- mme
 			} else {
 				var mde wde.MouseDraggedEvent
 				mde.MouseMovedEvent = mme
 				mde.Which = button
-				wdeEvent = mde
+				w.events <- mde
 			}
 
 		case xgb.KeyPressEvent:
 			var kde wde.KeyDownEvent
 			kde.Letter = keybind.LookupString(w.xu, e.State, e.Detail)
 			kde.Code = int(e.Detail)
-			wdeEvent = kde
+			w.events <- kde
+			kpe := wde.KeyTypedEvent(kde)
+			w.events <- kpe
+
 		case xgb.KeyReleaseEvent:
 			var kpe wde.KeyUpEvent
 			kpe.Letter = keybind.LookupString(w.xu, e.State, e.Detail)
 			kpe.Code = int(e.Detail)
-			wdeEvent = kpe
+			w.events <- kpe
 
 		case xgb.ClientMessageEvent:
 			if e.Type == 264 {
-				wdeEvent = wde.CloseEvent{}
+				w.events <- wde.CloseEvent{}
 			}
 
 		default:
 			fmt.Printf("wfe: %T\n%+v\n", e, e)
 		}
 
-		w.events <- wdeEvent
 	}
 
 	close(w.events)
