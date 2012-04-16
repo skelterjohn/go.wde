@@ -41,7 +41,6 @@ func (w *Window) handleEvents() {
 		xgbutil.BeSafe(&err)
 
 		switch e := e.(type) {
-		case xgb.PropertyNotifyEvent:
 
 		case xgb.ButtonPressEvent:
 			button = button | buttonForDetail(e.Detail)
@@ -128,9 +127,12 @@ func (w *Window) handleEvents() {
 				w.events <- wde.CloseEvent{}
 			}
 
+		case xgb.ReparentNotifyEvent:
+		case xgb.MapNotifyEvent:
 		case xgb.UnmapNotifyEvent:
 		case xgb.DestroyNotifyEvent:
-			
+		case xgb.PropertyNotifyEvent:
+
 		default:
 			fmt.Printf("unhandled event: type %T\n%+v\n", e, e)
 		}
