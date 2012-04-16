@@ -26,7 +26,17 @@ import (
 	"github.com/BurntSushi/xgbutil/xwindow"
 	"github.com/BurntSushi/xgbutil/icccm"
 	"github.com/BurntSushi/xgbutil/ewmh"
+	"github.com/BurntSushi/xgbutil/keybind"
 )
+
+const AllEventsMask =
+	xgb.EventMaskKeyPress |
+	xgb.EventMaskKeyRelease |
+	xgb.EventMaskButtonPress |
+	xgb.EventMaskButtonRelease |
+    xgb.EventMaskEnterWindow |
+    xgb.EventMaskLeaveWindow |
+    xgb.EventMaskPointerMotion
 
 type Window struct {
 	id xgb.Id
@@ -58,7 +68,11 @@ func NewWindow(width, height int) (w *Window, err error) {
 	w.id = w.conn.NewId()
 	w.conn.CreateWindow(xgb.WindowClassCopyFromParent, w.id, screen.Root, 600, 500, uint16(width), uint16(height), 0, xgb.WindowClassInputOutput, screen.RootVisual, 0, []uint32{})
 
-	xwindow.Listen(w.xu, w.id, xgb.EventMaskKeyPress | xgb.EventMaskButtonPress)
+	xwindow.Listen(w.xu, w.id, AllEventsMask)
+
+	keyMap, modMap := keybind.MapsGet(w.xu)
+	w.xu.KeyMapSet(keyMap)
+	w.xu.ModMapSet(modMap)
 	
 	w.events = make(chan interface{})
 

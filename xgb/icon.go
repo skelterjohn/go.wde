@@ -19,6 +19,7 @@ func init() {
 }
 
 func (w *Window) SetIconName(name string) {
+	// this doesn't work
 	err := ewmh.WmIconNameSet(w.xu, w.id, name)
 	if err != nil {
 		println(err.Error())
