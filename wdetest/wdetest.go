@@ -20,7 +20,6 @@ import (
 	"github.com/skelterjohn/go.wde"
 	"image/color"
 	"fmt"
-	"image/draw"
 	"sync"
 	"runtime"
 	"math/rand"
@@ -43,8 +42,6 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 		dw.Show()
 
 		events := dw.EventChan()
-
-		var s draw.Image = dw.Screen()
 
 		done := make(chan bool)
 
@@ -73,17 +70,26 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 					dw.Close()
 					break loop
 				case wde.ResizeEvent:
-					fmt.Println("resize")
-					s = dw.Screen()
+					fmt.Println("resize", e.Width, e.Height)
 				}
 			}
 			done <- true
 			fmt.Println("end of events")
 		}()
 
+
 		for i := 0; ; i++ {
-			for x := 0; x < 200; x++ {
-				for y := 0; y < 200; y++ {
+			width, height := dw.Size()
+			s := dw.Screen()
+			fmt.Println(width, height)
+			fmt.Println(s.Bounds())
+			for x := 0; x < width; x++ {
+				for y := 0; y < height; y++ {
+					s.Set(x, y, color.White)
+				}
+			}
+			for x := 0; x < width; x++ {
+				for y := 0; y < height; y++ {
 					var r uint8
 					if x > 100 {
 						r = 255

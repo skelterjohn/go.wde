@@ -36,7 +36,8 @@ const AllEventsMask =
 	xgb.EventMaskButtonRelease |
     xgb.EventMaskEnterWindow |
     xgb.EventMaskLeaveWindow |
-    xgb.EventMaskPointerMotion
+    xgb.EventMaskPointerMotion |
+    xgb.EventMaskResizeRedirect
 
 type Window struct {
 	id xgb.Id
@@ -140,6 +141,7 @@ func (w *Window) FlushImage() {
 	if w.closed {
 		return
 	}
+	fmt.Println("painting", w.buffer.Bounds())
 	xgraphics.PaintImg(w.xu, w.id, w.buffer)
 }
 

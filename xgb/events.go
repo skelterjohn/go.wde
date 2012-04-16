@@ -3,6 +3,7 @@ package xgb
 import (
 	"fmt"
 	"io"
+	"image"
 	"code.google.com/p/jamslam-x-go-binding/xgb"
 	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/keybind"
@@ -112,6 +113,15 @@ func (w *Window) handleEvents() {
 			kpe.Letter = keybind.LookupString(w.xu, e.State, e.Detail)
 			kpe.Code = int(e.Detail)
 			w.events <- kpe
+
+		case xgb.ResizeRequestEvent:
+			var re wde.ResizeEvent
+			re.Width = int(e.Width)
+			re.Height = int(e.Height)
+			w.width, w.height = re.Width, re.Height
+			w.buffer = image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{re.Width, re.Height}})
+
+			w.events <- re
 
 		case xgb.ClientMessageEvent:
 			if e.Type == 264 {
