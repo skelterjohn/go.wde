@@ -25,6 +25,7 @@ import (
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/BurntSushi/xgbutil/xwindow"
 	"github.com/BurntSushi/xgbutil/icccm"
+	"github.com/BurntSushi/xgbutil/ewmh"
 )
 
 type Window struct {
@@ -55,22 +56,49 @@ func NewWindow(width, height int) (w *Window, err error) {
 	screen := w.xu.Screen()
 
 	w.id = w.conn.NewId()
-	println("creating", w.id)
 	w.conn.CreateWindow(xgb.WindowClassCopyFromParent, w.id, screen.Root, 600, 500, uint16(width), uint16(height), 0, xgb.WindowClassInputOutput, screen.RootVisual, 0, []uint32{})
 
 	xwindow.Listen(w.xu, w.id, xgb.EventMaskKeyPress | xgb.EventMaskButtonPress)
 	
 	w.events = make(chan interface{})
+
+	
 	go w.handleEvents()
 
 	return
+}
+
+func (w *Window) SetIcon(icon image.Image) {
+	width := icon.Bounds().Max.X - icon.Bounds().Min.X
+	height := icon.Bounds().Max.Y - icon.Bounds().Min.Y
+	data := make([]int, width*height*4)
+	for x:=0; x<width; x++ {
+		for y:=0; y<height; y++ {
+			i := x+y*width
+			c := icon.At(x, y)
+			r, g, b, a := c.RGBA()
+			data[i] = int(a)
+			data[i+1] = int(r)
+			data[i+2] = int(g)
+			data[i+3] = int(b)
+		}
+	}
+	wmicon := ewmh.WmIcon{
+		Width: width,
+		Height: height,
+		Data: data,
+	}
+	ewmh.WmIconSet(w.xu, w.id, []ewmh.WmIcon{wmicon})
 }
 
 func (w *Window) SetTitle(title string) {
 	if w.closed {
 		return
 	}
-	// cannot
+	err := ewmh.WmNameSet(w.xu, w.id, title)
+	if err != nil {
+		// TODO: log
+	}
 	return
 }
 
@@ -78,7 +106,11 @@ func (w *Window) SetSize(width, height int) {
 	if w.closed {
 		return
 	}
-	// cannot
+	err := xwindow.Resize(w.xu, w.id, width, height)
+	if err != nil {
+		// TODO: log
+	}
+	w.width, w.height = width, height
 	return
 }
 
