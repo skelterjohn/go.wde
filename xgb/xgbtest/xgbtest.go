@@ -17,8 +17,6 @@
 package main
 
 import (
-   "image"
-   "image/color"
 	"github.com/skelterjohn/go.wde/xgb"
 	"github.com/skelterjohn/go.wde"
 	"github.com/skelterjohn/go.wde/wdetest"
@@ -27,21 +25,6 @@ import (
 func wgen(width, height int) (w wde.Window, err error) {
    xw, err := xgb.NewWindow(width, height)
    w = xw
-
-   s := 32
-   icon := image.NewRGBA(image.Rectangle{Min:image.Point{0, 0}, Max:image.Point{s, s}})
-
-   for x:=0; x<s; x++ {
-      for y:=0; y<s; y++ {
-      icon.Set(x, y, color.White)
-      }
-   }
-
-   for i:=0; i<s; i++ {
-      icon.Set(i, i, color.RGBA{255, 0, 0, 255})
-   }
-
-   xw.SetIcon(icon)
 
    return
 }
