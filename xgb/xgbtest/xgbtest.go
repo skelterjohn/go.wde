@@ -23,9 +23,7 @@ import (
 )
 
 func wgen(width, height int) (w wde.Window, err error) {
-   xw, err := xgb.NewWindow(width, height)
-   w = xw
-
+   w, err = xgb.NewWindow(width, height)
    return
 }
 

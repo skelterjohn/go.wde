@@ -131,6 +131,8 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 					ech <- wde.KeyTypedEvent(ke)
 					downKeys[code] = true
 				}
+			default:
+				fmt.Println(uie)
 			}
 		}
 		close(ech)

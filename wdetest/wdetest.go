@@ -83,8 +83,6 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 		for i := 0; ; i++ {
 			width, height := dw.Size()
 			s := dw.Screen()
-			fmt.Println(width, height)
-			fmt.Println(s.Bounds())
 			for x := 0; x < width; x++ {
 				for y := 0; y < height; y++ {
 					s.Set(x, y, color.White)

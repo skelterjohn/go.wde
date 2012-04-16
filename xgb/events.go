@@ -129,7 +129,7 @@ func (w *Window) handleEvents() {
 			}
 
 		default:
-			fmt.Printf("wfe: %T\n%+v\n", e, e)
+			fmt.Printf("unhandled event: type %T\n%+v\n", e, e)
 		}
 
 	}

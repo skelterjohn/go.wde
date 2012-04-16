@@ -141,7 +141,6 @@ func (w *Window) FlushImage() {
 	if w.closed {
 		return
 	}
-	fmt.Println("painting", w.buffer.Bounds())
 	xgraphics.PaintImg(w.xu, w.id, w.buffer)
 }
 
