@@ -37,7 +37,8 @@ const AllEventsMask =
     xgb.EventMaskEnterWindow |
     xgb.EventMaskLeaveWindow |
     xgb.EventMaskPointerMotion |
-    xgb.EventMaskResizeRedirect
+    // xgb.EventMaskResizeRedirect |
+    xgb.EventMaskStructureNotify
 
 type Window struct {
 	id xgb.Id

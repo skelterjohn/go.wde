@@ -114,7 +114,7 @@ func (w *Window) handleEvents() {
 			kpe.Code = int(e.Detail)
 			w.events <- kpe
 
-		case xgb.ResizeRequestEvent:
+		case xgb.ConfigureNotifyEvent:
 			var re wde.ResizeEvent
 			re.Width = int(e.Width)
 			re.Height = int(e.Height)
@@ -128,6 +128,9 @@ func (w *Window) handleEvents() {
 				w.events <- wde.CloseEvent{}
 			}
 
+		case xgb.UnmapNotifyEvent:
+		case xgb.DestroyNotifyEvent:
+			
 		default:
 			fmt.Printf("unhandled event: type %T\n%+v\n", e, e)
 		}
