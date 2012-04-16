@@ -6,6 +6,7 @@ import (
 	"image"
 	"code.google.com/p/jamslam-x-go-binding/xgb"
 	"github.com/BurntSushi/xgbutil"
+	"github.com/BurntSushi/xgbutil/xprop"
 	"github.com/BurntSushi/xgbutil/keybind"
 	"github.com/skelterjohn/go.wde"
 )
@@ -46,8 +47,8 @@ func (w *Window) handleEvents() {
 			button = button | buttonForDetail(e.Detail)
 			var bpe wde.MouseDownEvent
 			bpe.Which = buttonForDetail(e.Detail)
-			bpe.X = int(e.EventX)
-			bpe.Y = int(e.EventY)
+			bpe.Where.X = int(e.EventX)
+			bpe.Where.Y = int(e.EventY)
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
 			w.events <- bpe
@@ -56,37 +57,37 @@ func (w *Window) handleEvents() {
 			button = button & ^buttonForDetail(e.Detail)
 			var bue wde.MouseUpEvent
 			bue.Which = buttonForDetail(e.Detail)
-			bue.X = int(e.EventX)
-			bue.Y = int(e.EventY)
+			bue.Where.X = int(e.EventX)
+			bue.Where.Y = int(e.EventY)
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
 			w.events <- bue
 
 		case xgb.LeaveNotifyEvent:
 			var wee wde.MouseExitedEvent
-			wee.X = int(e.EventX)
-			wee.Y = int(e.EventY)
+			wee.Where.X = int(e.EventX)
+			wee.Where.Y = int(e.EventY)
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
 			w.events <- wee
 		case xgb.EnterNotifyEvent:
 			var wee wde.MouseEnteredEvent
-			wee.X = int(e.EventX)
-			wee.Y = int(e.EventY)
+			wee.Where.X = int(e.EventX)
+			wee.Where.Y = int(e.EventY)
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
 			w.events <- wee
 
 		case xgb.MotionNotifyEvent:
 			var mme wde.MouseMovedEvent
-			mme.X = int(e.EventX)
-			mme.Y = int(e.EventY)
+			mme.Where.X = int(e.EventX)
+			mme.Where.Y = int(e.EventY)
 			if lastX != noX {
-				mme.FromX = int(lastX)
-				mme.FromY = int(lastY)
+				mme.From.X = int(lastX)
+				mme.From.Y = int(lastY)
 			} else {
-				mme.FromX = mme.X
-				mme.FromY = mme.Y
+				mme.From.X = mme.Where.X
+				mme.From.Y = mme.Where.Y
 			}
 			lastX = int32(e.EventX)
 			lastX = int32(e.EventY)
@@ -117,20 +118,37 @@ func (w *Window) handleEvents() {
 			var re wde.ResizeEvent
 			re.Width = int(e.Width)
 			re.Height = int(e.Height)
-			w.width, w.height = re.Width, re.Height
-			w.buffer = image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{re.Width, re.Height}})
-
-			w.events <- re
+			if re.Width != w.width || re.Height != w.height {
+				w.width, w.height = re.Width, re.Height
+				w.buffer = image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{re.Width, re.Height}})
+				w.events <- re
+			}
 
 		case xgb.ClientMessageEvent:
-			if e.Type == 264 {
+			if e.Format != 32 {
+				break
+			}
+			name, err := xprop.AtomName(w.xu, e.Type)
+			if err != nil {
+				// TODO: log
+				break
+			}
+			if name != "WM_PROTOCOLS" {
+				break
+			}
+			name2, err := xprop.AtomName(w.xu, xgb.Id(e.Data.Data32[0]))
+			if err != nil {
+				// TODO: log
+				break
+			}
+			if name2 == "WM_DELETE_WINDOW" {
 				w.events <- wde.CloseEvent{}
 			}
 
+		case xgb.DestroyNotifyEvent:
 		case xgb.ReparentNotifyEvent:
 		case xgb.MapNotifyEvent:
 		case xgb.UnmapNotifyEvent:
-		case xgb.DestroyNotifyEvent:
 		case xgb.PropertyNotifyEvent:
 
 		default:

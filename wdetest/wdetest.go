@@ -53,16 +53,16 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 				runtime.Gosched()
 				switch e := ei.(type) {
 				case wde.MouseDownEvent:
-					fmt.Println("clicked", e.X, e.Y, e.Which)
+					fmt.Println("clicked", e.Where.X, e.Where.Y, e.Which)
 					// dw.Close()
 					// break loop
 				case wde.MouseUpEvent:
 				case wde.MouseMovedEvent:
 				case wde.MouseDraggedEvent:
 				case wde.MouseEnteredEvent:
-					fmt.Println("mouse entered", e.X, e.Y)
+					fmt.Println("mouse entered", e.Where.X, e.Where.Y)
 				case wde.MouseExitedEvent:
-					fmt.Println("mouse exited", e.X, e.Y)
+					fmt.Println("mouse exited", e.Where.X, e.Where.Y)
 				case wde.KeyDownEvent:
 				case wde.KeyUpEvent:
 				case wde.KeyTypedEvent:

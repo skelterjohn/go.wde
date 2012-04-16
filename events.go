@@ -16,6 +16,10 @@
 
 package wde
 
+import (
+	"image"
+)
+
 type Button int
 
 const (
@@ -28,12 +32,12 @@ type Event int
 
 type MouseEvent struct {
 	Event
-	X, Y int
+	Where image.Point
 }
 
 type MouseMovedEvent struct {
 	MouseEvent
-	FromX, FromY int
+	From image.Point
 }
 
 type MouseButtonEvent struct {
