@@ -56,9 +56,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 	w.width, w.height = width, height
 	w.buffer = image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
 
-
-
-	w.xu, err = xgbutil.Dial(":0.0")
+	w.xu, err = xgbutil.Dial("")
 	if err != nil {
 		return
 	}
