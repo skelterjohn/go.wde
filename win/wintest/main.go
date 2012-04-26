@@ -1,41 +1,134 @@
 package main
 
 import (
-	"image"
-	"image/draw"
+	"os"
+	"fmt"
+	"time"
+	"sync"
+	"math/rand"
 	"image/color"
 	"github.com/papplampe/go.wde/win"
 	"github.com/skelterjohn/go.wde"
 )
 
-func wgen(parent wde.Window, width, height int) (window wde.Window, err error) {
+func wgen(width, height int) (window wde.Window, err error) {
 	window, err = win.NewWindow(width, height)
 	return
 }
 
 func main() {
-	w, err := wgen(nil, 400, 400)
-	if err != nil {
-		println(err.Error())
-		return
-	}
+	size := 200
 	
-	FillRectangle(w.Screen(), image.Rect(100, 100, 300, 300), color.RGBA{0xFF, 0x00, 0xFF, 0x00})
-	w.SetTitle("wde on windows")
-	w.Show()
+	var wg sync.WaitGroup
+	x := func() {
+		wg.Add(1)
 	
-	for {
-		event := <- w.EventChan()
-		if _, ok := event.(wde.CloseEvent); ok {
-			break
+		offset := time.Duration(rand.Intn(1e9))
+	
+		dw, err := wgen(size, size)
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
-	}
-}
+		dw.SetTitle("hi!")
+		dw.SetSize(size, size)
+		dw.Show()
+		
+		events := dw.EventChan()
+		
+		done := make(chan bool)
+		
+		go func() {
+			loop:
+			for {
+				ei := <-events
+				switch e := ei.(type) {
+				case wde.MouseDownEvent:
+					fmt.Println("clicked", e.Where.X, e.Where.Y, e.Which)
+					// dw.Close()
+					// break loop
+				case wde.MouseUpEvent:
+				case wde.MouseMovedEvent:
+				case wde.MouseDraggedEvent:
+				case wde.MouseEnteredEvent:
+					fmt.Println("mouse entered", e.Where.X, e.Where.Y)
+				case wde.MouseExitedEvent:
+					fmt.Println("mouse exited", e.Where.X, e.Where.Y)
+				case wde.KeyDownEvent:
+				case wde.KeyUpEvent:
+				case wde.KeyTypedEvent:
+					fmt.Println("typed", e.Letter, e.Code)
+				case wde.CloseEvent:
+					fmt.Println("close")
+					dw.Close()
+					break loop
+				case wde.ResizeEvent:
+					fmt.Println("resize", e.Width, e.Height)
+				}
+			}
+			done <- true
+			fmt.Println("end of events")
+		}()
+		
+		go func() {
+			for i := 0; i < 100; i++ {
+				width, height := dw.Size()
+				s := dw.Screen()
+				for x := 0; x < width; x++ {
+					for y := 0; y < height; y++ {
+						s.Set(x, y, color.White)
+					}
+				}
+				for x := 0; x < width; x++ {
+					for y := 0; y < height; y++ {
+						var r uint8
+						if x > width/2 {
+							r = 255
+						}
+						var g uint8
+						if y >= height/2 {
+							g = 255
+						}
+						var b uint8
+						if y < height/4 || y >= height*3/4 {
+							b = 255
+						}
+						if i%2 == 1 {
+							r = 255 - r
+						}
 
-func FillRectangle(img draw.Image, rect image.Rectangle, color color.Color) {
-	for y := rect.Min.Y; y <= rect.Max.Y; y++ {
-		for x := rect.Min.X; x <= rect.Max.X; x++ {
-			img.Set(x, y, color)
-		}
+						if y > height-10 {
+							r = 255
+							g = 255
+							b = 255
+						}
+
+						if x == y {
+							r = 100
+							g = 100
+							b = 100
+						}
+
+						s.Set(x, y, color.RGBA{r, g, b, 255})
+					}
+				}
+				dw.FlushImage()
+				select {
+				case <-time.After(5e8+offset):
+				case <-done:
+					wg.Done()
+					return
+				}
+			}
+		}()
 	}
+	x()
+	x()
+	
+	go func() {
+		wg.Wait()
+		os.Exit(0)
+	}()
+	
+	win.HandleWndMessages()
 }
