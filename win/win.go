@@ -26,24 +26,24 @@ func NewWindow(width, height int) (*Window, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	hwnd, err := CreateWindow(WIN_CLASSNAME, nil, w32.WS_EX_CLIENTEDGE, w32.WS_OVERLAPPEDWINDOW, width, height)
 	//hwnd, err := CreateWindow(WIN_CLASSNAME, nil, 0, w32.WS_POPUP, width, height)
 	if err != nil {
 		return nil, err
 	}
-	
-	window := &Window {
+
+	window := &Window{
 		hwnd:   hwnd,
 		buffer: NewDIB(image.Rect(0, 0, width, height)),
 		events: make(chan interface{}, 16),
 	}
 	window.InitEventData()
-	
+
 	RegMsgHandler(window)
 
 	window.Center()
-	
+
 	return window, nil
 }
 
@@ -96,7 +96,7 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	bounds := this.buffer.Bounds()
 	width := bounds.Dx()
 	height := bounds.Dy()
-	
+
 	var bi w32.BITMAPINFO
 	bi.BmiHeader.BiSize = uint(unsafe.Sizeof(bi.BmiHeader))
 	bi.BmiHeader.BiWidth = width
@@ -104,7 +104,7 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	bi.BmiHeader.BiPlanes = 1
 	bi.BmiHeader.BiBitCount = 24
 	bi.BmiHeader.BiCompression = w32.BI_RGB
-	
+
 	w32.SetDIBitsToDevice(hdc,
 		0, 0,
 		width, height,

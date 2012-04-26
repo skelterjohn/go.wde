@@ -14,7 +14,7 @@ func dibModel(c color.Color) color.Color {
 		return c
 	}
 	r, g, b, _ := c.RGBA()
-	return DIBColor { uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}
+	return DIBColor{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}
 }
 
 type DIBColor struct {
@@ -49,7 +49,7 @@ func NewDIB(r image.Rectangle) *DIB {
 	for scanline%4 != 0 {
 		scanline++
 	}
-	
+
 	buf := make([]uint8, scanline*h)
 	return &DIB{buf, scanline, r}
 }
@@ -64,10 +64,10 @@ func (p *DIB) Bounds() image.Rectangle {
 
 func (p *DIB) At(x, y int) color.Color {
 	if !(image.Point{x, y}.In(p.Rect)) {
-		return DIBColor {}
+		return DIBColor{}
 	}
 	i := p.PixOffset(x, y)
-	return DIBColor { p.Pix[i+2], p.Pix[i+1], p.Pix[i+0]}
+	return DIBColor{p.Pix[i+2], p.Pix[i+1], p.Pix[i+0]}
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
@@ -105,10 +105,10 @@ func (p *DIB) SubImage(r image.Rectangle) image.Image {
 	// either r1 or r2 if the intersection is empty. Without explicitly checking for
 	// this, the Pix[i:] expression below can panic.
 	if r.Empty() {
-		return &DIB {}
+		return &DIB{}
 	}
 	i := p.PixOffset(r.Min.X, r.Min.Y)
-	return &DIB {
+	return &DIB{
 		Pix:    p.Pix[i:],
 		Stride: p.Stride,
 		Rect:   r,

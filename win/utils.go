@@ -1,11 +1,11 @@
 package win
 
 import (
+	"errors"
 	"fmt"
 	"github.com/papplampe/w32"
 	"syscall"
 	"unsafe"
-	"errors"
 )
 
 const (
@@ -14,11 +14,10 @@ const (
 )
 
 var (
-	gWindows           map[w32.HWND]*Window
-	gClasses           []string
-	gAppInstance       w32.HINSTANCE
-	gGeneralCallback   uintptr
-	gWndHandlerStarted bool
+	gWindows         map[w32.HWND]*Window
+	gClasses         []string
+	gAppInstance     w32.HINSTANCE
+	gGeneralCallback uintptr
 )
 
 func init() {
@@ -97,7 +96,7 @@ func RegisterClass(className string, wndproc uintptr) error {
 	if ret := w32.RegisterClassEx(&wc); ret == 0 {
 		return syscall.GetLastError()
 	}
-	
+
 	return nil
 }
 
@@ -117,7 +116,7 @@ func RegClassOnlyOnce(className string) error {
 		}
 		gClasses = append(gClasses, className)
 	}
-	
+
 	return nil
 }
 

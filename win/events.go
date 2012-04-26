@@ -1,20 +1,20 @@
 package win
 
 import (
-	"image"
-	"unsafe"
 	"github.com/papplampe/w32"
 	"github.com/skelterjohn/go.wde"
+	"image"
+	"unsafe"
 )
 
 type EventData struct {
 	lastX, lastY int
-	button wde.Button
-	noX int
+	button       wde.Button
+	noX          int
 }
 
 func (this *EventData) InitEventData() {
-	this.noX = 1<<31-1
+	this.noX = 1<<31 - 1
 	this.noX++
 	this.lastX = this.noX
 }
@@ -36,7 +36,7 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 	if wnd == nil {
 		return uintptr(w32.DefWindowProc(hwnd, msg, wparam, lparam))
 	}
-	
+
 	var rc uintptr
 	switch msg {
 	case w32.WM_LBUTTONDOWN, w32.WM_RBUTTONDOWN, w32.WM_MBUTTONDOWN:
@@ -48,7 +48,7 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		wnd.lastX = bpe.Where.X
 		wnd.lastY = bpe.Where.Y
 		wnd.events <- bpe
-		
+
 	case w32.WM_LBUTTONUP, w32.WM_RBUTTONUP, w32.WM_MBUTTONUP:
 		wnd.button = wnd.button & ^buttonForDetail(msg)
 		var bpe wde.MouseUpEvent
@@ -58,7 +58,7 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		wnd.lastX = bpe.Where.X
 		wnd.lastY = bpe.Where.Y
 		wnd.events <- bpe
-	
+
 	case w32.WM_MOUSEMOVE:
 		var mme wde.MouseMovedEvent
 		mme.Where.X = int(lparam) & 0xFFFF
@@ -72,8 +72,8 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		}
 		wnd.lastX = mme.Where.X
 		wnd.lastY = mme.Where.Y
-	
-		if(!wnd.trackMouse) {
+
+		if !wnd.trackMouse {
 			var tme w32.TRACKMOUSEEVENT
 			tme.CbSize = uint(unsafe.Sizeof(tme))
 			tme.DwFlags = w32.TME_LEAVE
@@ -92,7 +92,7 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 				wnd.events <- mde
 			}
 		}
-	
+
 	case w32.WM_MOUSELEAVE:
 		wnd.trackMouse = false
 
@@ -101,24 +101,24 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		wee.Where.Y = wnd.lastX
 		wee.Where.X = wnd.lastY
 		wnd.events <- wee
-		
+
 	case w32.WM_KEYDOWN:
 		// TODO: letter
 		kde := wde.KeyDownEvent{
-			int(wparam), 
+			int(wparam),
 			"",
 		}
 		wnd.events <- kde
 		kpe := wde.KeyTypedEvent(kde)
 		wnd.events <- kpe
-		
+
 	case w32.WM_KEYUP:
 		// TODO: letter
 		wnd.events <- wde.KeyUpEvent{
 			int(wparam),
 			"",
 		}
-		
+
 	case w32.WM_SIZE:
 		width := int(lparam) & 0xFFFF
 		height := int(lparam>>16) & 0xFFFF

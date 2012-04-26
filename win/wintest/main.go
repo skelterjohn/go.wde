@@ -1,14 +1,14 @@
 package main
 
 import (
-	"os"
 	"fmt"
-	"time"
-	"sync"
-	"math/rand"
-	"image/color"
 	"github.com/papplampe/go.wde/win"
 	"github.com/skelterjohn/go.wde"
+	"image/color"
+	"math/rand"
+	"os"
+	"sync"
+	"time"
 )
 
 func wgen(width, height int) (window wde.Window, err error) {
@@ -18,13 +18,13 @@ func wgen(width, height int) (window wde.Window, err error) {
 
 func main() {
 	size := 200
-	
+
 	var wg sync.WaitGroup
 	x := func() {
 		wg.Add(1)
-	
+
 		offset := time.Duration(rand.Intn(1e9))
-	
+
 		dw, err := wgen(size, size)
 		if err != nil {
 			fmt.Println(err)
@@ -33,13 +33,13 @@ func main() {
 		dw.SetTitle("hi!")
 		dw.SetSize(size, size)
 		dw.Show()
-		
+
 		events := dw.EventChan()
-		
+
 		done := make(chan bool)
-		
+
 		go func() {
-			loop:
+		loop:
 			for {
 				ei := <-events
 				switch e := ei.(type) {
@@ -69,7 +69,7 @@ func main() {
 			done <- true
 			fmt.Println("end of events")
 		}()
-		
+
 		go func() {
 			for i := 0; i < 100; i++ {
 				width, height := dw.Size()
@@ -114,7 +114,7 @@ func main() {
 				}
 				dw.FlushImage()
 				select {
-				case <-time.After(5e8+offset):
+				case <-time.After(5e8 + offset):
 				case <-done:
 					wg.Done()
 					return
@@ -124,11 +124,11 @@ func main() {
 	}
 	x()
 	x()
-	
+
 	go func() {
 		wg.Wait()
 		os.Exit(0)
 	}()
-	
+
 	win.HandleWndMessages()
 }
