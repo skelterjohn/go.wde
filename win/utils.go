@@ -3,7 +3,7 @@ package win
 import (
 	"errors"
 	"fmt"
-	"github.com/papplampe/w32"
+	"github.com/AllenDang/w32"
 	"syscall"
 	"unsafe"
 )

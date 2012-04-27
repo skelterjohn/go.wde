@@ -45,11 +45,7 @@ type DIB struct {
 func NewDIB(r image.Rectangle) *DIB {
 	w, h := r.Dx(), r.Dy()
 	// make sure that every scan line is a multiple of 4 bytes
-	scanline := w * 3
-	for scanline%4 != 0 {
-		scanline++
-	}
-
+	scanline := (w*3 + 3) & ^0x03
 	buf := make([]uint8, scanline*h)
 	return &DIB{buf, scanline, r}
 }

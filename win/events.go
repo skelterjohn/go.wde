@@ -1,7 +1,7 @@
 package win
 
 import (
-	"github.com/papplampe/w32"
+	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"unsafe"

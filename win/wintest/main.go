@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/papplampe/go.wde/win"
+	"github.com/skelterjohn/go.wde/win"
 	"github.com/skelterjohn/go.wde"
 	"image/color"
 	"math/rand"
@@ -71,7 +71,7 @@ func main() {
 		}()
 
 		go func() {
-			for i := 0; i < 100; i++ {
+			for i := 0; ; i++ {
 				width, height := dw.Size()
 				s := dw.Screen()
 				for x := 0; x < width; x++ {
