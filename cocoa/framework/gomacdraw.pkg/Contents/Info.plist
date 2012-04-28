@@ -5,7 +5,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>edu.rutgers.gomacdraw.gomacdraw.pkg</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1</string>
+	<string>1.0</string>
 	<key>IFMajorVersion</key>
 	<integer>1</integer>
 	<key>IFMinorVersion</key>
