@@ -1,0 +1,244 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E12EFB3413746C71006BFAF5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E12EFB3313746C71006BFAF5 /* Cocoa.framework */; };
+		E12EFB4113746C71006BFAF5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E12EFB4013746C71006BFAF5 /* main.m */; };
+		E12EFB6113747172006BFAF5 /* gomacdraw.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E12EFB6013747172006BFAF5 /* gomacdraw.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		E12EFB2F13746C71006BFAF5 /* gmdTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gmdTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E12EFB3313746C71006BFAF5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		E12EFB3613746C71006BFAF5 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		E12EFB3713746C71006BFAF5 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		E12EFB3813746C71006BFAF5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E12EFB4013746C71006BFAF5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E12EFB6013747172006BFAF5 /* gomacdraw.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = gomacdraw.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E12EFB2C13746C71006BFAF5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E12EFB6113747172006BFAF5 /* gomacdraw.framework in Frameworks */,
+				E12EFB3413746C71006BFAF5 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E12EFB2413746C71006BFAF5 = {
+			isa = PBXGroup;
+			children = (
+				E12EFB3913746C71006BFAF5 /* gmdTest */,
+				E12EFB3213746C71006BFAF5 /* Frameworks */,
+				E12EFB3013746C71006BFAF5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E12EFB3013746C71006BFAF5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E12EFB2F13746C71006BFAF5 /* gmdTest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E12EFB3213746C71006BFAF5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E12EFB6013747172006BFAF5 /* gomacdraw.framework */,
+				E12EFB3313746C71006BFAF5 /* Cocoa.framework */,
+				E12EFB3513746C71006BFAF5 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E12EFB3513746C71006BFAF5 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E12EFB3613746C71006BFAF5 /* AppKit.framework */,
+				E12EFB3713746C71006BFAF5 /* CoreData.framework */,
+				E12EFB3813746C71006BFAF5 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		E12EFB3913746C71006BFAF5 /* gmdTest */ = {
+			isa = PBXGroup;
+			children = (
+				E12EFB4013746C71006BFAF5 /* main.m */,
+			);
+			path = gmdTest;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E12EFB2E13746C71006BFAF5 /* gmdTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E12EFB4D13746C71006BFAF5 /* Build configuration list for PBXNativeTarget "gmdTest" */;
+			buildPhases = (
+				E12EFB2B13746C71006BFAF5 /* Sources */,
+				E12EFB2C13746C71006BFAF5 /* Frameworks */,
+				E12EFB2D13746C71006BFAF5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gmdTest;
+			productName = gmdTest;
+			productReference = E12EFB2F13746C71006BFAF5 /* gmdTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E12EFB2613746C71006BFAF5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "Rutgers University";
+			};
+			buildConfigurationList = E12EFB2913746C71006BFAF5 /* Build configuration list for PBXProject "gmdTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E12EFB2413746C71006BFAF5;
+			productRefGroup = E12EFB3013746C71006BFAF5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E12EFB2E13746C71006BFAF5 /* gmdTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E12EFB2D13746C71006BFAF5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E12EFB2B13746C71006BFAF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E12EFB4113746C71006BFAF5 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		E12EFB4B13746C71006BFAF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E12EFB4C13746C71006BFAF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		E12EFB4E13746C71006BFAF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "gmdTest/gmdTest-Prefix.pch";
+				INFOPLIST_FILE = "gmdTest/gmdTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		E12EFB4F13746C71006BFAF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "gmdTest/gmdTest-Prefix.pch";
+				INFOPLIST_FILE = "gmdTest/gmdTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E12EFB2913746C71006BFAF5 /* Build configuration list for PBXProject "gmdTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E12EFB4B13746C71006BFAF5 /* Debug */,
+				E12EFB4C13746C71006BFAF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E12EFB4D13746C71006BFAF5 /* Build configuration list for PBXNativeTarget "gmdTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E12EFB4E13746C71006BFAF5 /* Debug */,
+				E12EFB4F13746C71006BFAF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E12EFB2613746C71006BFAF5 /* Project object */;
+}

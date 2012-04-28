@@ -1,0 +1,321 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E1339C87137B363B00F74A8D /* EventWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = E1339C85137B363B00F74A8D /* EventWindow.h */; };
+		E1339C88137B363B00F74A8D /* EventWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E1339C86137B363B00F74A8D /* EventWindow.m */; };
+		E1339C8C137C474400F74A8D /* EventHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1339C8A137C474400F74A8D /* EventHolder.h */; };
+		E1339C8D137C474400F74A8D /* EventHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = E1339C8B137C474400F74A8D /* EventHolder.m */; };
+		E1339C981382E88500F74A8D /* GoMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = E1339C961382E88500F74A8D /* GoMenu.h */; };
+		E1339C991382E88500F74A8D /* GoMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E1339C971382E88500F74A8D /* GoMenu.m */; };
+		E1D5D44F137463CD009D3386 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1D5D44E137463CD009D3386 /* Cocoa.framework */; };
+		E1D5D459137463CD009D3386 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E1D5D457137463CD009D3386 /* InfoPlist.strings */; };
+		E1D5D46513746413009D3386 /* Window.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D5D46413746413009D3386 /* Window.xib */; };
+		E1E5D98C137A15DA00AD36E2 /* ImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E5D98A137A15DA00AD36E2 /* ImageBuffer.h */; };
+		E1E5D98D137A15DA00AD36E2 /* ImageBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D98B137A15DA00AD36E2 /* ImageBuffer.m */; };
+		E1F4AC531378738D0076F7D2 /* gmd.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F4AC521378738D0076F7D2 /* gmd.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E1F4AC55137874150076F7D2 /* gmd.m in Sources */ = {isa = PBXBuildFile; fileRef = E1F4AC54137874150076F7D2 /* gmd.m */; };
+		E1F4AC5B137886E90076F7D2 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1F4AC5A137886E90076F7D2 /* MainMenu.xib */; };
+		E1F4AC5E1378A22C0076F7D2 /* GoWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F4AC5C1378A22C0076F7D2 /* GoWindow.h */; };
+		E1F4AC5F1378A22C0076F7D2 /* GoWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E1F4AC5D1378A22C0076F7D2 /* GoWindow.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		E1339C85137B363B00F74A8D /* EventWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventWindow.h; sourceTree = "<group>"; };
+		E1339C86137B363B00F74A8D /* EventWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventWindow.m; sourceTree = "<group>"; };
+		E1339C8A137C474400F74A8D /* EventHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHolder.h; sourceTree = "<group>"; };
+		E1339C8B137C474400F74A8D /* EventHolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventHolder.m; sourceTree = "<group>"; };
+		E1339C961382E88500F74A8D /* GoMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoMenu.h; sourceTree = "<group>"; };
+		E1339C971382E88500F74A8D /* GoMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoMenu.m; sourceTree = "<group>"; };
+		E1D5D44B137463CD009D3386 /* gomacdraw.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = gomacdraw.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1D5D44E137463CD009D3386 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		E1D5D451137463CD009D3386 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		E1D5D452137463CD009D3386 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		E1D5D453137463CD009D3386 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E1D5D456137463CD009D3386 /* gomacdraw-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "gomacdraw-Info.plist"; sourceTree = "<group>"; };
+		E1D5D458137463CD009D3386 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E1D5D45A137463CD009D3386 /* gomacdraw-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "gomacdraw-Prefix.pch"; sourceTree = "<group>"; };
+		E1D5D46413746413009D3386 /* Window.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Window.xib; path = ../Window.xib; sourceTree = "<group>"; };
+		E1E5D98A137A15DA00AD36E2 /* ImageBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBuffer.h; sourceTree = "<group>"; };
+		E1E5D98B137A15DA00AD36E2 /* ImageBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageBuffer.m; sourceTree = "<group>"; };
+		E1F4AC521378738D0076F7D2 /* gmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmd.h; sourceTree = "<group>"; };
+		E1F4AC54137874150076F7D2 /* gmd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gmd.m; sourceTree = "<group>"; };
+		E1F4AC5A137886E90076F7D2 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenu.xib; path = ../MainMenu.xib; sourceTree = "<group>"; };
+		E1F4AC5C1378A22C0076F7D2 /* GoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoWindow.h; sourceTree = "<group>"; };
+		E1F4AC5D1378A22C0076F7D2 /* GoWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoWindow.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E1D5D447137463CC009D3386 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1D5D44F137463CD009D3386 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E1D5D43F137463CC009D3386 = {
+			isa = PBXGroup;
+			children = (
+				E1339C961382E88500F74A8D /* GoMenu.h */,
+				E1339C971382E88500F74A8D /* GoMenu.m */,
+				E1339C8A137C474400F74A8D /* EventHolder.h */,
+				E1339C8B137C474400F74A8D /* EventHolder.m */,
+				E1339C85137B363B00F74A8D /* EventWindow.h */,
+				E1339C86137B363B00F74A8D /* EventWindow.m */,
+				E1E5D98A137A15DA00AD36E2 /* ImageBuffer.h */,
+				E1E5D98B137A15DA00AD36E2 /* ImageBuffer.m */,
+				E1F4AC5C1378A22C0076F7D2 /* GoWindow.h */,
+				E1F4AC5D1378A22C0076F7D2 /* GoWindow.m */,
+				E1F4AC521378738D0076F7D2 /* gmd.h */,
+				E1F4AC54137874150076F7D2 /* gmd.m */,
+				E1D5D455137463CD009D3386 /* Supporting Files */,
+				E1D5D44D137463CD009D3386 /* Frameworks */,
+				E1D5D44C137463CD009D3386 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E1D5D44C137463CD009D3386 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E1D5D44B137463CD009D3386 /* gomacdraw.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E1D5D44D137463CD009D3386 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E1D5D44E137463CD009D3386 /* Cocoa.framework */,
+				E1D5D450137463CD009D3386 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E1D5D450137463CD009D3386 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E1D5D451137463CD009D3386 /* AppKit.framework */,
+				E1D5D452137463CD009D3386 /* CoreData.framework */,
+				E1D5D453137463CD009D3386 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		E1D5D455137463CD009D3386 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E1F4AC5A137886E90076F7D2 /* MainMenu.xib */,
+				E1D5D46413746413009D3386 /* Window.xib */,
+				E1D5D456137463CD009D3386 /* gomacdraw-Info.plist */,
+				E1D5D457137463CD009D3386 /* InfoPlist.strings */,
+				E1D5D45A137463CD009D3386 /* gomacdraw-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			path = gomacdraw;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		E1D5D448137463CC009D3386 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1F4AC531378738D0076F7D2 /* gmd.h in Headers */,
+				E1F4AC5E1378A22C0076F7D2 /* GoWindow.h in Headers */,
+				E1E5D98C137A15DA00AD36E2 /* ImageBuffer.h in Headers */,
+				E1339C87137B363B00F74A8D /* EventWindow.h in Headers */,
+				E1339C8C137C474400F74A8D /* EventHolder.h in Headers */,
+				E1339C981382E88500F74A8D /* GoMenu.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		E1D5D44A137463CC009D3386 /* gomacdraw */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E1D5D45D137463CD009D3386 /* Build configuration list for PBXNativeTarget "gomacdraw" */;
+			buildPhases = (
+				E1D5D446137463CC009D3386 /* Sources */,
+				E1D5D447137463CC009D3386 /* Frameworks */,
+				E1D5D448137463CC009D3386 /* Headers */,
+				E1D5D449137463CC009D3386 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = gomacdraw;
+			productName = gomacdraw;
+			productReference = E1D5D44B137463CD009D3386 /* gomacdraw.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E1D5D441137463CC009D3386 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "Rutgers University";
+			};
+			buildConfigurationList = E1D5D444137463CC009D3386 /* Build configuration list for PBXProject "gomacdraw" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E1D5D43F137463CC009D3386;
+			productRefGroup = E1D5D44C137463CD009D3386 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E1D5D44A137463CC009D3386 /* gomacdraw */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E1D5D449137463CC009D3386 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1D5D459137463CD009D3386 /* InfoPlist.strings in Resources */,
+				E1D5D46513746413009D3386 /* Window.xib in Resources */,
+				E1F4AC5B137886E90076F7D2 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E1D5D446137463CC009D3386 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1F4AC55137874150076F7D2 /* gmd.m in Sources */,
+				E1F4AC5F1378A22C0076F7D2 /* GoWindow.m in Sources */,
+				E1E5D98D137A15DA00AD36E2 /* ImageBuffer.m in Sources */,
+				E1339C88137B363B00F74A8D /* EventWindow.m in Sources */,
+				E1339C8D137C474400F74A8D /* EventHolder.m in Sources */,
+				E1339C991382E88500F74A8D /* GoMenu.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		E1D5D457137463CD009D3386 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E1D5D458137463CD009D3386 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E1D5D45B137463CD009D3386 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E1D5D45C137463CD009D3386 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		E1D5D45E137463CD009D3386 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "gomacdraw/gomacdraw-Prefix.pch";
+				INFOPLIST_FILE = "gomacdraw/gomacdraw-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		E1D5D45F137463CD009D3386 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "gomacdraw/gomacdraw-Prefix.pch";
+				INFOPLIST_FILE = "gomacdraw/gomacdraw-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E1D5D444137463CC009D3386 /* Build configuration list for PBXProject "gomacdraw" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E1D5D45B137463CD009D3386 /* Debug */,
+				E1D5D45C137463CD009D3386 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E1D5D45D137463CD009D3386 /* Build configuration list for PBXNativeTarget "gomacdraw" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E1D5D45E137463CD009D3386 /* Debug */,
+				E1D5D45F137463CD009D3386 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E1D5D441137463CC009D3386 /* Project object */;
+}

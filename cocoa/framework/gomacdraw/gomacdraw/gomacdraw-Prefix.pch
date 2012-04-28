@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'gomacdraw' target in the 'gomacdraw' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

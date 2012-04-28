@@ -1,0 +1,3 @@
+go.wde/cocoa
+
+In the framework directory there is gomacdraw.pkg, an installer for gomacdraw.framework. It must be installed prior to building with go.wde/cocoa.
