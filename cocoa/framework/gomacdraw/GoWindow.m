@@ -48,16 +48,17 @@
 
 - (ImageBuffer*)buffer
 {
-    if (buffer == nil) {
-        return [self newBuffer];
+    CGSize bsize = [buffer size];
+    CGSize wsize = [self size];
+    if (bsize.width == wsize.width && bsize.height == wsize.height) {
+        return buffer;
     }
-    return buffer;
+    return [self newBuffer];
 }
 
 - (ImageBuffer*)newBuffer
 {
     CGSize bufsize = [self size];
-    bufsize.height -= 22;
     buffer = [[ImageBuffer alloc] initWithSize:bufsize];
     [imageView setImage:nil];
     return buffer;
@@ -65,24 +66,25 @@
 
 - (CGSize)size
 {
-    return [[self window] frame].size;
+    CGSize size = [[self window] frame].size;
+    size.height -= 22;
+    return size;
 }
 
 - (void)flush
 {
-    
     CGImageRef cgimg = [[self buffer] image];
-    CGSize size;
-    size.width = CGImageGetWidth(cgimg);
-    size.height = CGImageGetHeight(cgimg);
-    
-    CGSize wsize = [[self window] frame].size;
-    wsize.height -= 22;
-    
-    NSImage* img = [[[NSImage alloc] autorelease] initWithCGImage:cgimg size:wsize];
+    if (cgimg == nil) {
+        return;
+    }
+    // CGSize size = [self size];
+    // size.width = CGImageGetWidth(cgimg);
+    // size.height = CGImageGetHeight(cgimg);
+ 
+    NSImage* img = [[[NSImage alloc] autorelease] initWithCGImage:cgimg size:NSZeroSize];
     
     CGRect frame = [[self window] frame];
-    frame.size = wsize;
+    frame.size.height -= 22;
     frame.origin = CGPointMake(0, 0);
     
     [imageView setFrame:frame];

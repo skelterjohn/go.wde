@@ -67,10 +67,12 @@ static CGDataProviderDirectCallbacks callbacks = {
 
 - (CGImageRef)image
 {
+    if (data == nil) {
+        return nil;
+    }
     if (currentCGImage != nil) {
         CGImageRelease(currentCGImage);
     }
-    
     UInt8* copyData = (UInt8*)malloc(numBytes);
     memcpy(copyData, data, numBytes);
     
@@ -86,6 +88,7 @@ static CGDataProviderDirectCallbacks callbacks = {
                      nil, //decode
                      NO, //shouldInterpolaten
                      kCGRenderingIntentDefault); //intent
+    
     CGImageRetain(currentCGImage);
     return currentCGImage;
 }

@@ -85,7 +85,7 @@ func (w *Window) Size() (width, height int) {
 	var rw, rh _Ctype_int
 	C.getWindowSize(w.cw, &rw, &rh)
 	width = int(rw)
-	height = int(rh)-22
+	height = int(rh)
 	return
 }
 

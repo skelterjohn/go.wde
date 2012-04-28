@@ -71,7 +71,7 @@
     GMDEvent e;
     CGPoint loc = [theEvent locationInWindow];
     e.data[0] = (int)loc.x;
-    e.data[1] = [self frame].size.height - (int)loc.y - 23; // not 22 so we allow 0
+    e.data[1] = [self frame].size.height - (int)loc.y - (22 + 1); // not 22 so we allow 0
     e.data[2] = (int)[theEvent buttonNumber];
     return e;
 }
@@ -158,7 +158,7 @@
     e.data[0] = [self frame].size.width;
     e.data[1] = [self frame].size.height-22;
     [self nq:e];
-    [gw newBuffer];
+    //[gw newBuffer];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
