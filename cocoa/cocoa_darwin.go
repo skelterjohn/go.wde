@@ -53,11 +53,12 @@ type Window struct {
 	ec chan interface{}
 }
 
-func NewWindow() (w *Window, err error) {
+func NewWindow(width, height int) (w *Window, err error) {
 	cw := C.openWindow()
 	w = &Window{
 		cw: cw,
 	}
+	w.SetSize(width, height)
 	return
 }
 

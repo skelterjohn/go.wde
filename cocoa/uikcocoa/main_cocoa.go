@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"image/color"
 	"github.com/skelterjohn/geom"
-	"github.com/skelterjohn/gmd"
 	"github.com/skelterjohn/go.wde"
+	"github.com/skelterjohn/go.wde/cocoa"
 	"github.com/skelterjohn/go.uik"
 	"github.com/skelterjohn/go.uik/widgets"
 	"github.com/skelterjohn/go.uik/layouts"
@@ -33,8 +33,7 @@ func main() {
 	go func() {
 
 		uik.WindowGenerator = func(parent wde.Window, width, height int) (window wde.Window, err error) {
-			window, err = gmd.NewWindow()
-			window.SetSize(width, height)
+			window, err = gmd.NewWindow(width, height)
 			return
 		}
 

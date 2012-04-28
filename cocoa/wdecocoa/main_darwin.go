@@ -17,13 +17,13 @@
 package main
 
 import (
-	"github.com/skelterjohn/gmd"
 	"github.com/skelterjohn/go.wde"
+	"github.com/skelterjohn/go.wde/cocoa"
 	"github.com/skelterjohn/go.wde/wdetest"
 )
 
 func wgen(width, height int) (w wde.Window, err error) {
-	w, err = gmd.NewWindow()
+	w, err = gmd.NewWindow(width, height)
 	return
 }
 
