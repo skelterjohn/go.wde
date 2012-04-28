@@ -1,5 +1,5 @@
 /*
-   Copyright 2012 John Asmuth
+   Copyright 2012 the go.wde authors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,34 +18,33 @@ package xgb
 
 import (
 	"code.google.com/p/jamslam-x-go-binding/xgb"
-	"image/draw"
-	"image"
 	"fmt"
 	"github.com/BurntSushi/xgbutil"
+	"github.com/BurntSushi/xgbutil/ewmh"
+	"github.com/BurntSushi/xgbutil/icccm"
+	"github.com/BurntSushi/xgbutil/keybind"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/BurntSushi/xgbutil/xwindow"
-	"github.com/BurntSushi/xgbutil/icccm"
-	"github.com/BurntSushi/xgbutil/ewmh"
-	"github.com/BurntSushi/xgbutil/keybind"
+	"image"
+	"image/draw"
 )
 
-const AllEventsMask =
-	xgb.EventMaskKeyPress |
+const AllEventsMask = xgb.EventMaskKeyPress |
 	xgb.EventMaskKeyRelease |
 	xgb.EventMaskButtonPress |
 	xgb.EventMaskButtonRelease |
-    xgb.EventMaskEnterWindow |
-    xgb.EventMaskLeaveWindow |
-    xgb.EventMaskPointerMotion |
-    xgb.EventMaskStructureNotify
+	xgb.EventMaskEnterWindow |
+	xgb.EventMaskLeaveWindow |
+	xgb.EventMaskPointerMotion |
+	xgb.EventMaskStructureNotify
 
 type Window struct {
-	id xgb.Id
-	xu *xgbutil.XUtil
-	conn *xgb.Conn
-	buffer draw.Image
+	id            xgb.Id
+	xu            *xgbutil.XUtil
+	conn          *xgb.Conn
+	buffer        draw.Image
 	width, height int
-	closed bool
+	closed        bool
 
 	events chan interface{}
 }
@@ -72,7 +71,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 	keyMap, modMap := keybind.MapsGet(w.xu)
 	w.xu.KeyMapSet(keyMap)
 	w.xu.ModMapSet(modMap)
-	
+
 	w.events = make(chan interface{})
 
 	w.SetIcon(Gordon)
@@ -106,7 +105,7 @@ func (w *Window) SetSize(width, height int) {
 	return
 }
 
-func (w *Window) Size() (width, height int)  {
+func (w *Window) Size() (width, height int) {
 	if w.closed {
 		return
 	}

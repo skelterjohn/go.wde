@@ -1,14 +1,30 @@
+/*
+   Copyright 2012 the go.wde authors
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package xgb
 
 import (
-	"fmt"
-	"io"
-	"image"
 	"code.google.com/p/jamslam-x-go-binding/xgb"
+	"fmt"
 	"github.com/BurntSushi/xgbutil"
-	"github.com/BurntSushi/xgbutil/xprop"
 	"github.com/BurntSushi/xgbutil/keybind"
+	"github.com/BurntSushi/xgbutil/xprop"
 	"github.com/skelterjohn/go.wde"
+	"image"
+	"io"
 )
 
 func buttonForDetail(detail xgb.Button) wde.Button {
@@ -24,7 +40,7 @@ func buttonForDetail(detail xgb.Button) wde.Button {
 }
 
 func (w *Window) handleEvents() {
-	var noX int32 = 1<<31-1
+	var noX int32 = 1<<31 - 1
 	noX++
 	var lastX, lastY int32 = noX, 0
 	var button wde.Button
@@ -50,7 +66,7 @@ func (w *Window) handleEvents() {
 			bpe.Where.X = int(e.EventX)
 			bpe.Where.Y = int(e.EventY)
 			lastX = int32(e.EventX)
-			lastX = int32(e.EventY)
+			lastY = int32(e.EventY)
 			w.events <- bpe
 
 		case xgb.ButtonReleaseEvent:
@@ -60,22 +76,36 @@ func (w *Window) handleEvents() {
 			bue.Where.X = int(e.EventX)
 			bue.Where.Y = int(e.EventY)
 			lastX = int32(e.EventX)
-			lastX = int32(e.EventY)
+			lastY = int32(e.EventY)
 			w.events <- bue
 
 		case xgb.LeaveNotifyEvent:
 			var wee wde.MouseExitedEvent
 			wee.Where.X = int(e.EventX)
 			wee.Where.Y = int(e.EventY)
+			if lastX != noX {
+				wee.From.X = int(lastX)
+				wee.From.Y = int(lastY)
+			} else {
+				wee.From.X = wee.Where.X
+				wee.From.Y = wee.Where.Y
+			}
 			lastX = int32(e.EventX)
-			lastX = int32(e.EventY)
+			lastY = int32(e.EventY)
 			w.events <- wee
 		case xgb.EnterNotifyEvent:
 			var wee wde.MouseEnteredEvent
 			wee.Where.X = int(e.EventX)
 			wee.Where.Y = int(e.EventY)
+			if lastX != noX {
+				wee.From.X = int(lastX)
+				wee.From.Y = int(lastY)
+			} else {
+				wee.From.X = wee.Where.X
+				wee.From.Y = wee.Where.Y
+			}
 			lastX = int32(e.EventX)
-			lastX = int32(e.EventY)
+			lastY = int32(e.EventY)
 			w.events <- wee
 
 		case xgb.MotionNotifyEvent:
@@ -90,7 +120,7 @@ func (w *Window) handleEvents() {
 				mme.From.Y = mme.Where.Y
 			}
 			lastX = int32(e.EventX)
-			lastX = int32(e.EventY)
+			lastY = int32(e.EventY)
 			if button == 0 {
 				w.events <- mme
 			} else {

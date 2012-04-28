@@ -17,16 +17,16 @@
 package main
 
 import (
-	"github.com/skelterjohn/go.wde/xgb"
 	"github.com/skelterjohn/go.wde"
 	"github.com/skelterjohn/go.wde/wdetest"
+	"github.com/skelterjohn/go.wde/xgb"
 )
 
 func wgen(width, height int) (w wde.Window, err error) {
-   w, err = xgb.NewWindow(width, height)
-   return
+	w, err = xgb.NewWindow(width, height)
+	return
 }
 
 func main() {
-   wdetest.Run(wgen)
+	wdetest.Run(wgen)
 }

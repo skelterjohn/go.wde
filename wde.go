@@ -1,5 +1,5 @@
 /*
-   Copyright 2012 John Asmuth
+   Copyright 2012 the go.wde authors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import (
 type Window interface {
 	SetTitle(title string)
 	SetSize(width, height int)
-	Size() (width, height int) 
+	Size() (width, height int)
 	Show()
 	Screen() (im draw.Image)
 	FlushImage()

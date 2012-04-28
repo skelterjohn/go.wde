@@ -1,5 +1,5 @@
 /*
-   Copyright 2012 John Asmuth
+   Copyright 2012 the go.wde authors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 package wdetest
 
 import (
+	"fmt"
 	"github.com/skelterjohn/go.wde"
 	"image/color"
-	"fmt"
-	"sync"
-	"runtime"
 	"math/rand"
+	"runtime"
+	"sync"
 	"time"
 )
 
@@ -48,7 +48,7 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 		done := make(chan bool)
 
 		go func() {
-			loop:
+		loop:
 			for ei := range events {
 				runtime.Gosched()
 				switch e := ei.(type) {
@@ -78,7 +78,6 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 			done <- true
 			fmt.Println("end of events")
 		}()
-
 
 		for i := 0; ; i++ {
 			width, height := dw.Size()
@@ -123,7 +122,7 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 			}
 			dw.FlushImage()
 			select {
-			case <-time.After(5e8+offset):
+			case <-time.After(5e8 + offset):
 			case <-done:
 				wg.Done()
 				return
@@ -136,6 +135,6 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 	go x()
 
 	wg.Wait()
-	
+
 	println("done")
 }

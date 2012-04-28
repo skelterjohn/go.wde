@@ -1,5 +1,5 @@
 /*
-   Copyright 2012 John Asmuth
+   Copyright 2012 the go.wde authors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import (
 type Button int
 
 const (
-	LeftButton Button = 1<<iota
+	LeftButton Button = 1 << iota
 	MiddleButton
 	RightButton
 )
@@ -57,7 +57,7 @@ type MouseEnteredEvent MouseMovedEvent
 type MouseExitedEvent MouseMovedEvent
 
 type KeyEvent struct {
-	Code int
+	Code   int
 	Letter string
 }
 
@@ -69,4 +69,4 @@ type ResizeEvent struct {
 	Width, Height int
 }
 
-type CloseEvent struct {}
+type CloseEvent struct{}
