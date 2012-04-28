@@ -36,7 +36,7 @@ func NewWindow(width, height int) (*Window, error) {
 
 	window := &Window{
 		hwnd:   hwnd,
-		buffer: NewDIB(image.Rect(0, 0, width, height)),
+		buffer: NewDIB(image.Rect(0, 0, width, height+22)),
 		events: make(chan interface{}, 16),
 	}
 	window.InitEventData()
@@ -54,7 +54,7 @@ func (this *Window) SetTitle(title string) {
 
 func (this *Window) SetSize(width, height int) {
 	x, y := this.Pos()
-	w32.MoveWindow(this.hwnd, x, y, width, height, true)
+	w32.MoveWindow(this.hwnd, x, y, width, height+22, true)
 }
 
 func (this *Window) Size() (width, height int) {
