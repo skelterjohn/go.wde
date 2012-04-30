@@ -24,11 +24,6 @@ import (
 	"unsafe"
 )
 
-const (
-	HORZSIZE = 4
-	VERTSIZE = 6
-)
-
 var (
 	gWindows         map[w32.HWND]*Window
 	gClasses         []string

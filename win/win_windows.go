@@ -44,7 +44,6 @@ func NewWindow(width, height int) (*Window, error) {
 	}
 
 	hwnd, err := CreateWindow(WIN_CLASSNAME, nil, w32.WS_EX_CLIENTEDGE, w32.WS_OVERLAPPEDWINDOW, width, height)
-	//hwnd, err := CreateWindow(WIN_CLASSNAME, nil, 0, w32.WS_POPUP, width, height)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +72,6 @@ func (this *Window) SetSize(width, height int) {
 }
 
 func (this *Window) Size() (width, height int) {
-	// rect := w32.GetWindowRect(this.hwnd)
-	// return int(rect.Right - rect.Left), int(rect.Bottom - rect.Top)
 	bounds := this.buffer.Bounds()
 	return bounds.Dx(), bounds.Dy()
 }
