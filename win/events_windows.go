@@ -27,6 +27,7 @@ type EventData struct {
 	lastX, lastY int
 	button       wde.Button
 	noX          int
+	trackMouse   bool
 }
 
 func (this *EventData) InitEventData() {
