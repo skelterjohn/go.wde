@@ -37,6 +37,7 @@ var appChanFinish = make(chan bool)
 
 func init() {
 	runtime.LockOSThread()
+ println("firing up initMacDraw")
 	C.initMacDraw()
 }
 
@@ -158,5 +159,6 @@ func Run() {
 }
 
 func Stop() {
+	C.releaseMacDraw()
 	C.NSAppStop()
 }

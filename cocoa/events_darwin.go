@@ -105,29 +105,29 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 						letter = keyMapping[keycode]
 					}
 				}
+				if flags&(1<<23) == 8388608 {
+					addToChord(&chord, "function")
+				}
 				if flags&(1<<17) == 131072 {
 					addToChord(&chord, "shift")
 				}
 
 				addToChord(&chord, keyMapping[keycode])
 
-				// the following shortcuts trigger "marked text" in Cocoa and don't return actual characters, so I am setting them manually here.
-				for _, v := range []string{"e", "i", "u", "n", "`"} {
-					if chord == "alt+"+v {
-						letter = v
-					}
-				}
-
 				ke.Glyph = keyMapping[keycode]
 
 				if !downKeys[keycode] {
 					ec <- wde.KeyDownEvent(ke)
 				}
-				ec <- wde.KeyTypedEvent{KeyEvent: ke, Chord: chord, Letter: letter}
+				if ke.Glyph != "alt" && ke.Glyph != "control" && ke.Glyph != "shift" && ke.Glyph != "super" && ke.Glyph != "function" {
+					// only send a typed event if the last keypress is not a modifier key
+					ec <- wde.KeyTypedEvent{KeyEvent: ke, Chord: chord, Letter: letter}
+				}
+
 				downKeys[keycode] = true
 			case C.GMDKeyUp:
 				var ke wde.KeyUpEvent
-				ke.Glyph = fmt.Sprintf("%c", e.data[0])
+				ke.Glyph = keyMapping[int(e.data[1])]
 				ec <- ke
 				downKeys[int(e.data[1])] = false
 			case C.GMDResize:

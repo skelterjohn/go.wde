@@ -25,7 +25,7 @@ func containsInt(haystack []int, needle int) bool {
   return false
 }
 
-var blankLetterCodes = []int{71,117,115,119,116,121,122,120,99,118,96,97,98,100,101,109,10,103,111,105,107,113,123,124,125,126}
+var blankLetterCodes = []int{71,117,115,119,116,121,122,120,99,118,96,97,98,100,101,109,10,103,111,105,107,113,123,124,125,126,63,58,55,59,56,61,54,62,60,114}
 var keyMapping = map[int]string{
   0: "a",
   11: "b",
@@ -117,5 +117,17 @@ var keyMapping = map[int]string{
   124: "right arrow",
   125: "down arrow",
   126: "up arrow",
+  63: "function",
+  58: "alt",
+  55: "super",
+  59: "control",
+  56: "shift",
+  61: "alt",
+  54: "super",
+  62: "control",
+  60: "shift",
+  114: "insert",
+  48: "tab",
+  49: "space",
 }
 
