@@ -129,8 +129,11 @@
     NSString* chars = [theEvent characters];
     int keycode = [theEvent keyCode];
     GMDEvent e;
-    e.data[0] = [chars characterAtIndex:0];
+    if ([chars length] > 0) {
+        e.data[0] = [chars characterAtIndex:0];
+    }
     e.data[1] = keycode;
+    e.data[2] = [theEvent modifierFlags];
     return e;
 }
 

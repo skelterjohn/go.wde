@@ -66,7 +66,7 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 				case wde.KeyDownEvent:
 				case wde.KeyUpEvent:
 				case wde.KeyTypedEvent:
-					fmt.Println("typed", e.Letter, e.Code)
+					fmt.Println("typed", e.Glyph, e.Letter, e.Chord)
 				case wde.CloseEvent:
 					fmt.Println("close")
 					dw.Close()

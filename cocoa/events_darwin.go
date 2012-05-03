@@ -32,11 +32,18 @@ func getButton(b int) (which wde.Button) {
 	return
 }
 
+func addToChord(chord *string, keys string) {
+	if *chord != "" {
+		*chord += "+"
+	}
+	*chord += keys
+}
+
 func (w *Window) EventChan() (events <-chan interface{}) {
 	downKeys := make(map[int]bool)
 	ec := make(chan interface{})
 	go func(ec chan<- interface{}) {
-		eventloop:
+	eventloop:
 		for {
 			e := C.getNextEvent(w.cw)
 			switch e.kind {
@@ -76,20 +83,53 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				me.Where.Y = int(e.data[1])
 				ec <- me
 			case C.GMDKeyDown:
+				var chord string
+				var letter string
 				var ke wde.KeyEvent
-				ke.Letter = fmt.Sprintf("%c", e.data[0])
-				ke.Code = int(e.data[1])
-				if !downKeys[ke.Code] {	
+				flags := int(e.data[2]) + 256
+				keycode := int(e.data[1])
+
+				blankLetter := containsInt(blankLetterCodes, keycode)
+				if !blankLetter {
+					letter = fmt.Sprintf("%c", e.data[0])
+				}
+
+				if flags&(1<<19) == 524288 {
+					chord = "alt"
+				}
+				if flags&(1<<18) == 262144 {
+					addToChord(&chord, "control")
+					if !blankLetter {
+						// the way Cocoa behaves: if the modifiers include anything but control, I want the glyph (it will be uppercase with Shift or fancy symbol with Alt)
+						// but if there is a control modifier, then I have to look it up by code, because Cocoa refuses to send back a Glyph with control.
+						letter = keyMapping[keycode]
+					}
+				}
+				if flags&(1<<17) == 131072 {
+					addToChord(&chord, "shift")
+				}
+
+				addToChord(&chord, keyMapping[keycode])
+
+				// the following shortcuts trigger "marked text" in Cocoa and don't return actual characters, so I am setting them manually here.
+				for _, v := range []string{"e", "i", "u", "n", "`"} {
+					if chord == "alt+"+v {
+						letter = v
+					}
+				}
+
+				ke.Glyph = keyMapping[keycode]
+
+				if !downKeys[keycode] {
 					ec <- wde.KeyDownEvent(ke)
 				}
-				ec <- wde.KeyTypedEvent(ke)
-				downKeys[ke.Code] = true
+				ec <- wde.KeyTypedEvent{KeyEvent: ke, Chord: chord, Letter: letter}
+				downKeys[keycode] = true
 			case C.GMDKeyUp:
 				var ke wde.KeyUpEvent
-				ke.Letter = fmt.Sprintf("%c", e.data[0])
-				ke.Code = int(e.data[1])
+				ke.Glyph = fmt.Sprintf("%c", e.data[0])
 				ec <- ke
-				downKeys[ke.Code] = false
+				downKeys[int(e.data[1])] = false
 			case C.GMDResize:
 				var re wde.ResizeEvent
 				re.Width = int(e.data[0])
