@@ -32,11 +32,20 @@ func getButton(b int) (which wde.Button) {
 	return
 }
 
-func addToChord(chord *string, keys string) {
+func addToChord(chord *string, keys wde.Glyph) {
 	if *chord != "" {
 		*chord += "+"
 	}
-	*chord += keys
+	*chord += string(keys)
+}
+
+func containsGlyph(haystack []wde.Glyph, needle wde.Glyph) bool {
+	for _, v := range haystack {
+		if needle == v {
+			return true
+		}
+	}
+	return false
 }
 
 func (w *Window) EventChan() (events <-chan interface{}) {
@@ -102,7 +111,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 					if !blankLetter {
 						// the way Cocoa behaves: if the modifiers include anything but control, I want the glyph (it will be uppercase with Shift or fancy symbol with Alt)
 						// but if there is a control modifier, then I have to look it up by code, because Cocoa refuses to send back a Glyph with control.
-						letter = keyMapping[keycode]
+						letter = string(keyMapping[keycode])
 					}
 				}
 				if flags&(1<<23) == 8388608 {
@@ -119,7 +128,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				if !downKeys[keycode] {
 					ec <- wde.KeyDownEvent(ke)
 				}
-				if ke.Glyph != "alt" && ke.Glyph != "control" && ke.Glyph != "shift" && ke.Glyph != "super" && ke.Glyph != "function" {
+				if !containsGlyph([]wde.Glyph{wde.KeyLeftAlt, wde.KeyRightAlt, wde.KeyLeftShift, wde.KeyRightShift, wde.KeyLeftControl, wde.KeyRightControl, wde.KeyLeftSuper, wde.KeyRightSuper, wde.KeyFunction}, ke.Glyph) {
 					// only send a typed event if the last keypress is not a modifier key
 					ec <- wde.KeyTypedEvent{KeyEvent: ke, Chord: chord, Letter: letter}
 				}

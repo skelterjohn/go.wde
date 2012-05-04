@@ -57,7 +57,7 @@ type MouseEnteredEvent MouseMovedEvent
 type MouseExitedEvent MouseMovedEvent
 
 type KeyEvent struct {
-	Glyph string
+	Glyph Glyph
 }
 
 type KeyDownEvent KeyEvent
