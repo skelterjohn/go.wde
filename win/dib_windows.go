@@ -37,9 +37,9 @@ func dibModel(c color.Color) color.Color {
 	if a == 0 {
 		return DIBColor{0, 0, 0}
 	}
-	r = (r * 0xffff) / a
-	g = (g * 0xffff) / a
-	b = (b * 0xffff) / a
+	r = (r / 0xffff) * a
+	g = (g / 0xffff) * a
+	b = (b / 0xffff) * a
 	return DIBColor{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}
 }
 
