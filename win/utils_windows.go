@@ -126,12 +126,3 @@ func RegClassOnlyOnce(className string) error {
 
 	return nil
 }
-
-func HandleWndMessages() {
-	var m w32.MSG
-
-	for w32.GetMessage(&m, 0, 0, 0) != 0 {
-		w32.TranslateMessage(&m)
-		w32.DispatchMessage(&m)
-	}
-}

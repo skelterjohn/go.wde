@@ -128,6 +128,15 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	)
 }
 
+func (this *Window) HandleWndMessages() {
+	var m w32.MSG
+
+	for w32.GetMessage(&m, this.hwnd, 0, 0) != 0 {
+		w32.TranslateMessage(&m)
+		w32.DispatchMessage(&m)
+	}
+}
+
 func (this *Window) Pos() (x, y int) {
 	rect := w32.GetWindowRect(this.hwnd)
 	return int(rect.Left), int(rect.Top)
