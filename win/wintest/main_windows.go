@@ -23,18 +23,8 @@ import (
 )
 
 func wgen(width, height int) (w wde.Window, err error) {
-	ready := make(chan struct{})
-
-	go func(ready chan struct{}) {
-		w, err = win.NewWindow(width, height)
-		ready <- struct{}{}
-		if winw, ok := w.(*win.Window); ok {
-			winw.HandleWndMessages()
-		} else {
-			panic("windows wgen returned non windows window")
-		}
-	}(ready)
-	<-ready
+	
+	w, err = win.NewWindow(width, height)
 
 	return
 }
