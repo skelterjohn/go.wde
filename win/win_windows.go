@@ -20,8 +20,8 @@ import (
 	"errors"
 	"github.com/AllenDang/w32"
 	"image"
-	"runtime"
 	"image/draw"
+	"runtime"
 	"unsafe"
 )
 
@@ -37,21 +37,8 @@ type Window struct {
 	buffer *DIB
 	events chan interface{}
 }
-/*
-go func(ready chan struct{}) {
-		w, err = win.NewWindow(width, height)
-		ready <- struct{}{}
-		if winw, ok := w.(*win.Window); ok {
-			winw.HandleWndMessages()
-		} else {
-			panic("windows wgen returned non windows window")
-		}
-	}(ready)
-	<-ready
-*/
 
 func makeTheWindow(width, height int) (w *Window, err error) {
-
 	err = RegClassOnlyOnce(WIN_CLASSNAME)
 	if err != nil {
 		return
@@ -68,9 +55,7 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 		events: make(chan interface{}, 16),
 	}
 	w.InitEventData()
-
 	RegMsgHandler(w)
-
 	w.Center()
 
 	return
@@ -87,7 +72,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 		w.HandleWndMessages()
 	}(ready)
 
-	err = <- ready
+	err = <-ready
 	return
 }
 
@@ -114,7 +99,7 @@ func (this *Window) Screen() draw.Image {
 }
 
 func (this *Window) FlushImage() {
-	w32.InvalidateRect(this.hwnd, nil, true)
+	w32.InvalidateRect(this.hwnd, nil, false)
 	w32.UpdateWindow(this.hwnd)
 }
 
