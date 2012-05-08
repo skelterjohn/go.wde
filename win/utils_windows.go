@@ -24,11 +24,6 @@ import (
 	"unsafe"
 )
 
-const (
-	HORZSIZE = 4
-	VERTSIZE = 6
-)
-
 var (
 	gWindows         map[w32.HWND]*Window
 	gClasses         []string
@@ -47,7 +42,7 @@ func init() {
 }
 
 func RegMsgHandler(window *Window) {
-	gWindows[window.Handle()] = window
+	gWindows[window.hwnd] = window
 }
 
 func UnRegMsgHandler(hwnd w32.HWND) {
@@ -62,14 +57,10 @@ func GetMsgHandler(hwnd w32.HWND) *Window {
 	return nil
 }
 
-func GetAppInstance() w32.HINSTANCE {
-	return gAppInstance
-}
-
 func CreateWindow(className string, parent *Window, exStyle, style uint, width, height int) (w32.HWND, error) {
 	var parentHwnd w32.HWND
 	if parent != nil {
-		parentHwnd = parent.Handle()
+		parentHwnd = parent.hwnd
 	}
 	var hwnd w32.HWND
 	hwnd = w32.CreateWindowEx(
@@ -134,13 +125,4 @@ func RegClassOnlyOnce(className string) error {
 	}
 
 	return nil
-}
-
-func HandleWndMessages() {
-	var m w32.MSG
-
-	for w32.GetMessage(&m, 0, 0, 0) != 0 {
-		w32.TranslateMessage(&m)
-		w32.DispatchMessage(&m)
-	}
 }
