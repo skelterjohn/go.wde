@@ -43,6 +43,7 @@
     EventHolder* eh = [[[EventHolder alloc] initWithEvent:e] autorelease];
     [eventQ addObject:eh];
     
+    
     if ([eventQ count] == 0) {
         [lock unlockWithCondition:0];
     } else {
@@ -124,13 +125,39 @@
     [self nq:e];
 }
 
-- (GMDEvent)keyEvent:(NSEvent*)theEvent
-{
-    NSString* chars = [theEvent characters];
+- (void)flagsChanged:(NSEvent *)theEvent {
     int keycode = [theEvent keyCode];
     GMDEvent e;
-    e.data[0] = [chars characterAtIndex:0];
     e.data[1] = keycode;
+    e.data[2] = [theEvent modifierFlags];
+    if ((keycode == 58 && (e.data[2] & NSAlternateKeyMask)) || 
+        (keycode == 61 && (e.data[2] & NSAlternateKeyMask)) || 
+        (keycode == 54 && (e.data[2] & NSCommandKeyMask)) || 
+        (keycode == 55 && (e.data[2] & NSCommandKeyMask)) || 
+        (keycode == 63 && (e.data[2] & NSFunctionKeyMask)) || 
+        (keycode == 59 && (e.data[2] & NSControlKeyMask)) || 
+        (keycode == 62 && (e.data[2] & NSControlKeyMask)) || 
+        (keycode == 60 && (e.data[2] & NSShiftKeyMask)) || 
+        (keycode == 56 && (e.data[2] & NSShiftKeyMask))) {
+        e.kind = GMDKeyDown;
+    } else if (keycode == 58 || keycode == 61 || keycode == 54 || keycode == 55 || keycode == 59 ||  keycode == 62 || keycode == 56 || keycode == 60 || keycode == 63) {
+        e.kind = GMDKeyUp;
+    }
+
+    [self nq:e];
+}
+
+- (GMDEvent)keyEvent:(NSEvent*)theEvent
+{
+    int keycode = [theEvent keyCode];
+    GMDEvent e;
+    if ([[theEvent characters] length] == 0) {
+        e.data[0] = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
+    } else {
+        e.data[0] = [[theEvent characters] characterAtIndex:0];
+    }
+    e.data[1] = keycode;
+    e.data[2] = [theEvent modifierFlags];
     return e;
 }
 

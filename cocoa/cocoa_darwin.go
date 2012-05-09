@@ -166,5 +166,6 @@ func Run() {
 }
 
 func Stop() {
+	C.releaseMacDraw()
 	C.NSAppStop()
 }

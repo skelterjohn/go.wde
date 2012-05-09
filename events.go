@@ -57,13 +57,17 @@ type MouseEnteredEvent MouseMovedEvent
 type MouseExitedEvent MouseMovedEvent
 
 type KeyEvent struct {
-	Code   int
-	Letter string
+	Glyph Glyph
 }
 
 type KeyDownEvent KeyEvent
 type KeyUpEvent KeyEvent
-type KeyTypedEvent KeyEvent
+type KeyTypedEvent struct {
+  KeyEvent
+  Letter string 
+  Chord string
+}
+
 
 type ResizeEvent struct {
 	Width, Height int
