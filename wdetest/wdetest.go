@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-package wdetest
+package main
 
 import (
 	"fmt"
@@ -26,13 +26,20 @@ import (
 	"time"
 )
 
-func Run() {
+func main() {
+	go wdetest()
+	wde.Run()
+
+	println("done")
+}
+
+func wdetest() {
 	var wg sync.WaitGroup
 
 	size := 200
 
 	x := func() {
-		offset := time.Duration(rand.Intn(1e9 + 1))
+		offset := time.Duration(rand.Intn(1e9))
 
 		dw, err := wde.NewWindow(size, size)
 		if err != nil {
@@ -134,12 +141,6 @@ func Run() {
 	wg.Add(1)
 	go x()
 
-	go func() {
-		wg.Wait()
-		wde.Stop()
-	}()
-
-	wde.Run()
-
-	println("done")
+	wg.Wait()
+	wde.Stop()
 }
