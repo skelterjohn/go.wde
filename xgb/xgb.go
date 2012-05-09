@@ -31,15 +31,15 @@ import (
 )
 
 func init() {
-	wde.NewWindow = func(width, height int) (w wde.Window, err error) {
+	wde.BackendNewWindow = func(width, height int) (w wde.Window, err error) {
 		w, err = NewWindow(width, height)
 		return
 	}
 	ch := make(chan struct{}, 1)
-	wde.Run = func() {
+	wde.BackendRun = func() {
 		<-ch
 	}
-	wde.Stop = func() {
+	wde.BackendStop = func() {
 		ch <- struct{}{}
 	}
 }

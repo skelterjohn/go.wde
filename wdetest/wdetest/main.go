@@ -1,5 +1,5 @@
 /*
-   Copyright 2012 the go.wde authors
+   Copyright 2012 John Asmuth
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package main
 
 import (
-	_ "github.com/skelterjohn/go.wde/cocoa"
 	"github.com/skelterjohn/go.wde/wdetest"
 )
 

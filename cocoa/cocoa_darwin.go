@@ -24,11 +24,11 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"github.com/skelterjohn/go.wde"
 	"image"
 	"image/draw"
-	"sync"
-	"github.com/skelterjohn/go.wde"
 	"runtime"
+	"sync"
 	"unsafe"
 )
 
@@ -36,12 +36,12 @@ var appChanStart = make(chan bool)
 var appChanFinish = make(chan bool)
 
 func init() {
-	wde.NewWindow = func(width, height int) (w wde.Window, err error) {
+	wde.BackendNewWindow = func(width, height int) (w wde.Window, err error) {
 		w, err = NewWindow(width, height)
 		return
 	}
-	wde.Run = Run
-	wde.Stop = Stop
+	wde.BackendRun = Run
+	wde.BackendStop = Stop
 	runtime.LockOSThread()
 	C.initMacDraw()
 	SetAppName("go")
