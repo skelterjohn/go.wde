@@ -20,10 +20,24 @@ import (
 	"errors"
 	"github.com/AllenDang/w32"
 	"image"
-	"runtime"
 	"image/draw"
+	"runtime"
 	"unsafe"
 )
+
+func init() {
+	wde.NewWindow = func(width, height int) (w wde.Window, err error) {
+		w, err = NewWindow(width, height)
+		return
+	}
+	ch := make(chan struct{}, 1)
+	wde.Run = func() {
+		<-ch
+	}
+	wde.Stop = func() {
+		ch <- struct{}{}
+	}
+}
 
 const (
 	WIN_CLASSNAME   = "wde_win"
@@ -37,6 +51,7 @@ type Window struct {
 	buffer *DIB
 	events chan interface{}
 }
+
 /*
 go func(ready chan struct{}) {
 		w, err = win.NewWindow(width, height)
@@ -87,7 +102,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 		w.HandleWndMessages()
 	}(ready)
 
-	err = <- ready
+	err = <-ready
 	return
 }
 

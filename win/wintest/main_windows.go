@@ -17,18 +17,10 @@
 package main
 
 import (
-	"github.com/skelterjohn/go.wde"
 	"github.com/skelterjohn/go.wde/wdetest"
-	"github.com/skelterjohn/go.wde/win"
+	_ "github.com/skelterjohn/go.wde/win"
 )
 
-func wgen(width, height int) (w wde.Window, err error) {
-	
-	w, err = win.NewWindow(width, height)
-
-	return
-}
-
 func main() {
-	wdetest.Run(wgen)
+	wdetest.Run()
 }
