@@ -32,7 +32,7 @@ func Run() {
 	size := 200
 
 	x := func() {
-		offset := time.Duration(rand.Intn(1e9))
+		offset := time.Duration(rand.Intn(1e9 + 1))
 
 		dw, err := wde.NewWindow(size, size)
 		if err != nil {
