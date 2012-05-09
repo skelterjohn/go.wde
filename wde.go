@@ -52,7 +52,6 @@ type Window interface {
  wde.Run(), wde.Stop() and wde.NewWindow() without referring to the
  backend explicitly.
 */
-
 var Run = func() {
 	panic("no wde backend imported")
 }
