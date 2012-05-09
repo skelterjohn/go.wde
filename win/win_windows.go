@@ -23,6 +23,7 @@ import (
 	"image/draw"
 	"runtime"
 	"unsafe"
+	"github.com/skelterjohn/go.wde"
 )
 
 func init() {
