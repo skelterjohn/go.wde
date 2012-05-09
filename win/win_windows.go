@@ -20,47 +20,75 @@ import (
 	"errors"
 	"github.com/AllenDang/w32"
 	"image"
+	"runtime"
 	"image/draw"
 	"unsafe"
 )
 
 const (
-	WIN_CLASSNAME = "wde_win"
+	WIN_CLASSNAME   = "wde_win"
+	TITLEBAR_HEIGHT = 22
 )
 
 type Window struct {
 	EventData
 
-	hwnd       w32.HWND
-	trackMouse bool
-	buffer     *DIB
-	events     chan interface{}
+	hwnd   w32.HWND
+	buffer *DIB
+	events chan interface{}
 }
+/*
+go func(ready chan struct{}) {
+		w, err = win.NewWindow(width, height)
+		ready <- struct{}{}
+		if winw, ok := w.(*win.Window); ok {
+			winw.HandleWndMessages()
+		} else {
+			panic("windows wgen returned non windows window")
+		}
+	}(ready)
+	<-ready
+*/
 
-func NewWindow(width, height int) (*Window, error) {
-	err := RegClassOnlyOnce(WIN_CLASSNAME)
+func makeTheWindow(width, height int) (w *Window, err error) {
+
+	err = RegClassOnlyOnce(WIN_CLASSNAME)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	hwnd, err := CreateWindow(WIN_CLASSNAME, nil, w32.WS_EX_CLIENTEDGE, w32.WS_OVERLAPPEDWINDOW, width, height)
-	//hwnd, err := CreateWindow(WIN_CLASSNAME, nil, 0, w32.WS_POPUP, width, height)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	window := &Window{
+	w = &Window{
 		hwnd:   hwnd,
-		buffer: NewDIB(image.Rect(0, 0, width, height+22)),
+		buffer: NewDIB(image.Rect(0, 0, width, height+TITLEBAR_HEIGHT)),
 		events: make(chan interface{}, 16),
 	}
-	window.InitEventData()
+	w.InitEventData()
 
-	RegMsgHandler(window)
+	RegMsgHandler(w)
 
-	window.Center()
+	w.Center()
 
-	return window, nil
+	return
+}
+
+func NewWindow(width, height int) (w *Window, err error) {
+	ready := make(chan error, 1)
+
+	go func(ready chan error) {
+		runtime.LockOSThread()
+		var err error
+		w, err = makeTheWindow(width, height)
+		ready <- err
+		w.HandleWndMessages()
+	}(ready)
+
+	err = <- ready
+	return
 }
 
 func (this *Window) SetTitle(title string) {
@@ -69,12 +97,10 @@ func (this *Window) SetTitle(title string) {
 
 func (this *Window) SetSize(width, height int) {
 	x, y := this.Pos()
-	w32.MoveWindow(this.hwnd, x, y, width, height+22, true)
+	w32.MoveWindow(this.hwnd, x, y, width, height+TITLEBAR_HEIGHT, true)
 }
 
 func (this *Window) Size() (width, height int) {
-	// rect := w32.GetWindowRect(this.hwnd)
-	// return int(rect.Right - rect.Left), int(rect.Bottom - rect.Top)
 	bounds := this.buffer.Bounds()
 	return bounds.Dx(), bounds.Dy()
 }
@@ -131,13 +157,18 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	)
 }
 
+func (this *Window) HandleWndMessages() {
+	var m w32.MSG
+
+	for w32.GetMessage(&m, this.hwnd, 0, 0) != 0 {
+		w32.TranslateMessage(&m)
+		w32.DispatchMessage(&m)
+	}
+}
+
 func (this *Window) Pos() (x, y int) {
 	rect := w32.GetWindowRect(this.hwnd)
 	return int(rect.Left), int(rect.Top)
-}
-
-func (this *Window) Handle() w32.HWND {
-	return this.hwnd
 }
 
 func (this *Window) SetPos(x, y int) {
