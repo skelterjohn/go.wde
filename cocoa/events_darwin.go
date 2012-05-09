@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-package gmd
+package cocoa
 
 // #include "gomacdraw/gmd.h"
 import "C"

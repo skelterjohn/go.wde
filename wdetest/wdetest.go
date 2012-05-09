@@ -26,7 +26,7 @@ import (
 	"time"
 )
 
-func Run(wgen func(width, height int) (wde.Window, error)) {
+func Run() {
 	var wg sync.WaitGroup
 
 	size := 200
@@ -34,7 +34,7 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 	x := func() {
 		offset := time.Duration(rand.Intn(1e9))
 
-		dw, err := wgen(size, size)
+		dw, err := wde.NewWindow(size, size)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -134,7 +134,12 @@ func Run(wgen func(width, height int) (wde.Window, error)) {
 	wg.Add(1)
 	go x()
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		wde.Stop()
+	}()
+
+	wde.Run()
 
 	println("done")
 }

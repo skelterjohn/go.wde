@@ -30,3 +30,25 @@ type Window interface {
 	EventChan() (events <-chan interface{})
 	Close() (err error)
 }
+
+/*
+ Some wde backends (cocoa) require that this function be called in the 
+ main thread.
+
+	func main() {
+		go theRestOfYourProgram()
+		wde.GUIMain()
+	}
+*/
+
+var Run = func() {
+	panic("no wde backend imported")
+}
+
+var Stop = func() {
+	panic("no wde backend imported")
+}
+
+var NewWindow = func(width, height int) (Window, error) {
+	panic("no wde backend imported")
+}

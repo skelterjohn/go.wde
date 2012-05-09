@@ -25,9 +25,24 @@ import (
 	"github.com/BurntSushi/xgbutil/keybind"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/BurntSushi/xgbutil/xwindow"
+	"github.com/skelterjohn/go.wde"
 	"image"
 	"image/draw"
 )
+
+func init() {
+	wde.NewWindow = func(width, height int) (w wde.Window, err error) {
+		w, err = NewWindow(width, height)
+		return
+	}
+	ch := make(chan struct{}, 1)
+	wde.Run = func() {
+		<-ch
+	}
+	wde.Stop = func() {
+		ch <- struct{}{}
+	}
+}
 
 const AllEventsMask = xgb.EventMaskKeyPress |
 	xgb.EventMaskKeyRelease |

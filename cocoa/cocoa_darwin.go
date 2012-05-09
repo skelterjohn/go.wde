@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-package gmd
+package cocoa
 
 // #cgo darwin LDFLAGS: -framework gomacdraw
 // #include "gomacdraw/gmd.h"
@@ -25,9 +25,9 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	"sync"
 	"image/draw"
-
+	"sync"
+	"github.com/skelterjohn/go.wde"
 	"runtime"
 	"unsafe"
 )
@@ -36,8 +36,16 @@ var appChanStart = make(chan bool)
 var appChanFinish = make(chan bool)
 
 func init() {
+	wde.NewWindow = func(width, height int) (w wde.Window, err error) {
+		w, err = NewWindow(width, height)
+		return
+	}
+	wde.Run = Run
+	wde.Stop = Stop
 	runtime.LockOSThread()
 	C.initMacDraw()
+	SetAppName("go")
+
 }
 
 func SetAppName(name string) {
@@ -47,10 +55,10 @@ func SetAppName(name string) {
 }
 
 type Window struct {
-	cw C.GMDWindow
-	im *image.RGBA
+	cw     C.GMDWindow
+	im     *image.RGBA
 	oplock sync.Mutex
-	ec chan interface{}
+	ec     chan interface{}
 }
 
 func NewWindow(width, height int) (w *Window, err error) {
@@ -101,7 +109,7 @@ func (w *Window) resizeBuffer(width, height int) (im draw.Image) {
 	defer w.oplock.Unlock()
 
 	ci := C.getWindowScreen(w.cw)
-	
+
 	w.im = image.NewRGBA(image.Rectangle{
 		image.Point{},
 		image.Point{width, height},
@@ -110,7 +118,7 @@ func (w *Window) resizeBuffer(width, height int) (im draw.Image) {
 	ptr := unsafe.Pointer(&w.im.Pix[0])
 
 	C.setScreenData(ci, ptr)
-	
+
 	im = w.im
 	return
 }
@@ -122,16 +130,16 @@ func (w *Window) Screen() (im draw.Image) {
 		goto newbuffer
 	}
 
-	imw = w.im.Bounds().Max.X-w.im.Bounds().Min.X
-	imh = w.im.Bounds().Max.Y-w.im.Bounds().Min.Y
+	imw = w.im.Bounds().Max.X - w.im.Bounds().Min.X
+	imh = w.im.Bounds().Max.Y - w.im.Bounds().Min.Y
 
 	if imw == width && imh == height {
 		return w.im
 	}
 
-	newbuffer:
+newbuffer:
 	im = w.resizeBuffer(width, height)
-	
+
 	return
 }
 

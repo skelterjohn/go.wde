@@ -17,23 +17,10 @@
 package main
 
 import (
-	"github.com/skelterjohn/go.wde"
-	"github.com/skelterjohn/go.wde/cocoa"
+	_ "github.com/skelterjohn/go.wde/cocoa"
 	"github.com/skelterjohn/go.wde/wdetest"
 )
 
-func wgen(width, height int) (w wde.Window, err error) {
-	w, err = gmd.NewWindow(width, height)
-	return
-}
-
 func main() {
-	gmd.SetAppName("gmd")
-
-	go func() {
-		wdetest.Run(wgen)
-		gmd.Stop()
-	}()
-
-	gmd.Run()
+	wdetest.Run()
 }

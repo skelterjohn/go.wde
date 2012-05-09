@@ -21,19 +21,18 @@ import (
 	"image/color"
 	"github.com/skelterjohn/geom"
 	"github.com/skelterjohn/go.wde"
-	"github.com/skelterjohn/go.wde/cocoa"
+	_ "github.com/skelterjohn/go.wde/cocoa"
 	"github.com/skelterjohn/go.uik"
 	"github.com/skelterjohn/go.uik/widgets"
 	"github.com/skelterjohn/go.uik/layouts"
 )
 
 func main() {
-	gmd.SetAppName("go.uik")
 
 	go func() {
 
-		uik.WindowGenerator = func(parent wde.Window, width, height int) (window wde.Window, err error) {
-			window, err = gmd.NewWindow(width, height)
+		uik.WindowGenerator = func(parent wde.Window, width, height int) (w wde.Window, err error) {
+			w, err = wde.NewWindow(width, height)
 			return
 		}
 
@@ -157,8 +156,8 @@ func main() {
 		<-done
 
 		w.W.Close()
-		gmd.Stop()
+		wde.Stop()
 	}()
 
-	gmd.Run()
+	wde.Run()
 }
