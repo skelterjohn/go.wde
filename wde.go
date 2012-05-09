@@ -33,22 +33,41 @@ type Window interface {
 
 /*
  Some wde backends (cocoa) require that this function be called in the 
- main thread.
+ main thread. To make your code as cross-platform as possible, it is
+ recommended that your main function look like the the code below.
 
 	func main() {
 		go theRestOfYourProgram()
-		wde.GUIMain()
+		wde.Run()
 	}
+
+ wde.Run() will return when wde.Stop() is called.
+
+ For this to work, you must import one of the go.wde backends. For
+ instance,
+
+	import _ "github.com/skelterjohn/go.wde/xgb"
+
+ will register the xgb backend with go.wde, allowing you to call
+ wde.Run(), wde.Stop() and wde.NewWindow() without referring to the
+ backend explicitly.
 */
 
 var Run = func() {
 	panic("no wde backend imported")
 }
 
+/*
+ Call this when you want wde.Run() to return. Usually to allow your
+ program to exit gracefully.
+*/
 var Stop = func() {
 	panic("no wde backend imported")
 }
 
+/*
+ Create a new window with the specified width and height.
+*/
 var NewWindow = func(width, height int) (Window, error) {
 	panic("no wde backend imported")
 }

@@ -22,5 +22,5 @@ import (
 )
 
 func main() {
-   wdetest.Run()
+	wdetest.Run()
 }
