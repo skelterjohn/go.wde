@@ -130,7 +130,7 @@ func (this *Window) Screen() draw.Image {
 }
 
 func (this *Window) FlushImage() {
-	w32.InvalidateRect(this.hwnd, nil, true)
+	w32.InvalidateRect(this.hwnd, nil, false)
 	w32.UpdateWindow(this.hwnd)
 }
 
