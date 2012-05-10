@@ -45,6 +45,8 @@ func (w *Window) handleEvents() {
 	var lastX, lastY int32 = noX, 0
 	var button wde.Button
 
+	downKeys := map[string]bool{}
+
 	for {
 		e, err := w.conn.WaitForEvent()
 
@@ -131,18 +133,23 @@ func (w *Window) handleEvents() {
 			}
 
 		case xgb.KeyPressEvent:
-			var kde wde.KeyDownEvent
-			kde.Letter = keybind.LookupString(w.xu, e.State, e.Detail)
-			kde.Code = int(e.Detail)
-			w.events <- kde
-			kpe := wde.KeyTypedEvent(kde)
+			var ke wde.KeyEvent
+			code := keybind.LookupString(w.xu, e.State, e.Detail)
+			ke.Key = keyForCode(code)
+			w.events <- wde.KeyDownEvent(ke)
+			downKeys[ke.Key] = true
+			kpe := wde.KeyTypedEvent{
+				KeyEvent: ke,
+				Glyph:    letterForCode(code),
+				Chord:    wde.ConstructChord(downKeys),
+			}
 			w.events <- kpe
 
 		case xgb.KeyReleaseEvent:
-			var kpe wde.KeyUpEvent
-			kpe.Letter = keybind.LookupString(w.xu, e.State, e.Detail)
-			kpe.Code = int(e.Detail)
-			w.events <- kpe
+			var ke wde.KeyUpEvent
+			ke.Key = keyForCode(keybind.LookupString(w.xu, e.State, e.Detail))
+			delete(downKeys, ke.Key)
+			w.events <- ke
 
 		case xgb.ConfigureNotifyEvent:
 			var re wde.ResizeEvent

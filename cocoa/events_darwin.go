@@ -22,7 +22,7 @@ import "C"
 import (
 	"fmt"
 	"github.com/skelterjohn/go.wde"
-	"strings"
+	// "strings"
 )
 
 func getButton(b int) (which wde.Button) {
@@ -33,14 +33,7 @@ func getButton(b int) (which wde.Button) {
 	return
 }
 
-func addToChord(chord *string, keys wde.Glyph) {
-	if *chord != "" {
-		*chord += "+"
-	}
-	*chord += string(keys)
-}
-
-func containsGlyph(haystack []wde.Glyph, needle wde.Glyph) bool {
+func containsGlyph(haystack []string, needle string) bool {
 	for _, v := range haystack {
 		if needle == v {
 			return true
@@ -50,7 +43,7 @@ func containsGlyph(haystack []wde.Glyph, needle wde.Glyph) bool {
 }
 
 func (w *Window) EventChan() (events <-chan interface{}) {
-	downKeys := make(map[int]bool)
+	downKeys := make(map[string]bool)
 	ec := make(chan interface{})
 	go func(ec chan<- interface{}) {
 	eventloop:
@@ -93,10 +86,8 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				me.Where.Y = int(e.data[1])
 				ec <- me
 			case C.GMDKeyDown:
-				var chord string
 				var letter string
 				var ke wde.KeyEvent
-				flags := int(e.data[2]) + 256
 				keycode := int(e.data[1])
 
 				blankLetter := containsInt(blankLetterCodes, keycode)
@@ -104,53 +95,25 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 					letter = fmt.Sprintf("%c", e.data[0])
 				}
 
-				chordCount := 0
+				ke.Key = keyMapping[keycode]
 
-				if flags&(1<<19) == 524288 {
-					chord = "alt"
-					chordCount++
-				}
-				if flags&(1<<18) == 262144 {
-					addToChord(&chord, "control")
-					chordCount++
-					if !blankLetter {
-						// the way Cocoa behaves: if the modifiers include anything but control, I want the glyph (it will be uppercase with Shift or fancy symbol with Alt)
-						// but if there is a control modifier, then I have to look it up by code, because Cocoa refuses to send back a Glyph with control.
-						letter = string(keyMapping[keycode])
-					}
-				}
-				if flags&(1<<23) == 8388608 {
-					addToChord(&chord, "function")
-					chordCount++
-				}
-				if flags&(1<<17) == 131072 {
-					addToChord(&chord, "shift")
-					chordCount++
-				}
-
-				km := string(keyMapping[keycode])
-				if !strings.HasPrefix(km, "left_") && !strings.HasPrefix(km, "right_") {
-					addToChord(&chord, keyMapping[keycode])
-					chordCount++
-				}
-				
-				if chordCount == 1 {
-					chord = ""
-				}
-
-				ke.Glyph = keyMapping[keycode]
-
-				if !downKeys[keycode] {
+				if !downKeys[ke.Key] {
 					ec <- wde.KeyDownEvent(ke)
 				}
-				ec <- wde.KeyTypedEvent{KeyEvent: ke, Chord: chord, Letter: letter}
-				
-				downKeys[keycode] = true
+
+				downKeys[ke.Key] = true
+
+				ec <- wde.KeyTypedEvent{
+					KeyEvent: ke,
+					Chord:    wde.ConstructChord(downKeys),
+					Glyph:    letter,
+				}
+
 			case C.GMDKeyUp:
 				var ke wde.KeyUpEvent
-				ke.Glyph = keyMapping[int(e.data[1])]
+				ke.Key = keyMapping[int(e.data[1])]
+				delete(downKeys, ke.Key)
 				ec <- ke
-				downKeys[int(e.data[1])] = false
 			case C.GMDResize:
 				var re wde.ResizeEvent
 				re.Width = int(e.data[0])

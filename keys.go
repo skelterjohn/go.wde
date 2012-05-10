@@ -16,109 +16,170 @@
 
 package wde
 
-type Glyph string
-const (
-  KeyFunction Glyph = "function"
-  KeyLeftSuper Glyph = "left_super"
-  KeyRightSuper Glyph = "right_super"
-  KeyLeftAlt Glyph = "left_alt"
-  KeyRightAlt Glyph = "right_alt"
-  KeyLeftControl Glyph = "left_control"
-  KeyRightControl Glyph = "right_control"
-  KeyLeftShift Glyph = "left_shift"
-  KeyRightShift Glyph = "right_shift"
-  KeyUpArrow Glyph = "up_arrow"
-  KeyDownArrow Glyph = "down_arrow"
-  KeyLeftArrow Glyph = "left_arrow"
-  KeyRightArrow Glyph = "right_arrow"
-  KeyInsert Glyph = "insert"
-  KeyTab Glyph = "tab"
-  KeySpace Glyph = "space"
-  KeyA Glyph = "a"
-  KeyB Glyph = "b"
-  KeyC Glyph = "c"
-  KeyD Glyph = "d"
-  KeyE Glyph = "e"
-  KeyF Glyph = "f"
-  KeyG Glyph = "g"
-  KeyH Glyph = "h"
-  KeyI Glyph = "i"
-  KeyJ Glyph = "j"
-  KeyK Glyph = "k"
-  KeyL Glyph = "l"
-  KeyM Glyph = "m"
-  KeyN Glyph = "n"
-  KeyO Glyph = "o"
-  KeyP Glyph = "p"
-  KeyQ Glyph = "q"
-  KeyR Glyph = "r"
-  KeyS Glyph = "s"
-  KeyT Glyph = "t"
-  KeyU Glyph = "u"
-  KeyV Glyph = "v"
-  KeyW Glyph = "w"
-  KeyX Glyph = "x"
-  KeyY Glyph = "y"
-  KeyZ Glyph = "z"
-  Key1 Glyph = "1"
-  Key2 Glyph = "2"
-  Key3 Glyph = "3"
-  Key4 Glyph = "4"
-  Key5 Glyph = "5"
-  Key6 Glyph = "6"
-  Key7 Glyph = "7"
-  Key8 Glyph = "8"
-  Key9 Glyph = "9"
-  Key0 Glyph = "0"
-  KeyPad1 Glyph = "1"
-  KeyPad2 Glyph = "2"
-  KeyPad3 Glyph = "3"
-  KeyPad4 Glyph = "4"
-  KeyPad5 Glyph = "5"
-  KeyPad6 Glyph = "6"
-  KeyPad7 Glyph = "7"
-  KeyPad8 Glyph = "8"
-  KeyPad9 Glyph = "9"
-  KeyPad0 Glyph = "0"
-  KeyPadSlash Glyph = "0"
-  KeyPadStar Glyph = "0"
-  KeyPadMinus Glyph = "0"
-  KeyPadPlus Glyph = "0"
-  KeyPadPeriod Glyph = "0"
-  KeyBackTick Glyph = "0"
-  KeyF1 Glyph = "f1"
-  KeyF2 Glyph = "f2"
-  KeyF3 Glyph = "f3"
-  KeyF4 Glyph = "f4"
-  KeyF5 Glyph = "f5"
-  KeyF6 Glyph = "f6"
-  KeyF7 Glyph = "f7"
-  KeyF8 Glyph = "f8"
-  KeyF9 Glyph = "f9"
-  KeyF10 Glyph = "f10"
-  KeyF11 Glyph = "f11"
-  KeyF12 Glyph = "f12"
-  KeyF13 Glyph = "f13"
-  KeyF14 Glyph = "f14"
-  KeyF15 Glyph = "f15"
-  KeyMinus Glyph = "-"
-  KeyPlus Glyph = "+"
-  KeyLeftBracket Glyph = "["
-  KeyRightBracket Glyph = "]"
-  KeyBackslash Glyph = `\`
-  KeySemicolon Glyph = ";"
-  KeyQuote Glyph = "'"
-  KeyComma Glyph = ","
-  KeyPeriod Glyph = "."
-  KeySlash Glyph = "/"
-  KeyReturn Glyph = "return"
-  KeyEscape Glyph = "escape"
-  KeyNumlock Glyph = "numlock"
-  KeyDelete Glyph = "delete"
-  KeyBackspace Glyph = "backspace"
-  KeyHome Glyph = "home"
-  KeyEnd Glyph = "end"
-  KeyPageUp Glyph = "page_up"
-  KeyPageDown Glyph = "page_down"
+import (
+	"sort"
+	"strings"
 )
 
+const (
+	KeyFunction     = "function"
+	KeyLeftSuper    = "left_super"
+	KeyRightSuper   = "right_super"
+	KeyLeftAlt      = "left_alt"
+	KeyRightAlt     = "right_alt"
+	KeyLeftControl  = "left_control"
+	KeyRightControl = "right_control"
+	KeyLeftShift    = "left_shift"
+	KeyRightShift   = "right_shift"
+	KeyUpArrow      = "up_arrow"
+	KeyDownArrow    = "down_arrow"
+	KeyLeftArrow    = "left_arrow"
+	KeyRightArrow   = "right_arrow"
+	KeyInsert       = "insert"
+	KeyTab          = "tab"
+	KeySpace        = "space"
+	KeyA            = "a"
+	KeyB            = "b"
+	KeyC            = "c"
+	KeyD            = "d"
+	KeyE            = "e"
+	KeyF            = "f"
+	KeyG            = "g"
+	KeyH            = "h"
+	KeyI            = "i"
+	KeyJ            = "j"
+	KeyK            = "k"
+	KeyL            = "l"
+	KeyM            = "m"
+	KeyN            = "n"
+	KeyO            = "o"
+	KeyP            = "p"
+	KeyQ            = "q"
+	KeyR            = "r"
+	KeyS            = "s"
+	KeyT            = "t"
+	KeyU            = "u"
+	KeyV            = "v"
+	KeyW            = "w"
+	KeyX            = "x"
+	KeyY            = "y"
+	KeyZ            = "z"
+	Key1            = "1"
+	Key2            = "2"
+	Key3            = "3"
+	Key4            = "4"
+	Key5            = "5"
+	Key6            = "6"
+	Key7            = "7"
+	Key8            = "8"
+	Key9            = "9"
+	Key0            = "0"
+	KeyPadEnd       = "kp_end"
+	KeyPadDown      = "kp_down"
+	KeyPadNext      = "kp_next"
+	KeyPadLeft      = "kp_left"
+	KeyPadBegin     = "kp_begin"
+	KeyPadRight     = "kp_right"
+	KeyPadHome      = "kp_home"
+	KeyPadUp        = "kp_up"
+	KeyPadPrior     = "kp_prior"
+	KeyPadInsert    = "kpInsert"
+	KeyPadSlash     = "kpSlash"
+	KeyPadStar      = "kpStar"
+	KeyPadMinus     = "kpMinus"
+	KeyPadPlus      = "kpPlus"
+	KeyPadDot       = "kpDot"
+	KeyPadEqual     = "kpEqual"
+	KeyPadEnter     = "kpEnter"
+	KeyBackTick     = "`"
+	KeyF1           = "f1"
+	KeyF2           = "f2"
+	KeyF3           = "f3"
+	KeyF4           = "f4"
+	KeyF5           = "f5"
+	KeyF6           = "f6"
+	KeyF7           = "f7"
+	KeyF8           = "f8"
+	KeyF9           = "f9"
+	KeyF10          = "f10"
+	KeyF11          = "f11"
+	KeyF12          = "f12"
+	KeyF13          = "f13"
+	KeyF14          = "f14"
+	KeyF15          = "f15"
+	KeyF16          = "f16"
+	KeyMinus        = "-"
+	KeyEqual        = "="
+	KeyLeftBracket  = "["
+	KeyRightBracket = "]"
+	KeyBackslash    = `\`
+	KeySemicolon    = ";"
+	KeyQuote        = "'"
+	KeyComma        = ","
+	KeyPeriod       = "."
+	KeySlash        = "/"
+	KeyReturn       = "return"
+	KeyEscape       = "escape"
+	KeyNumlock      = "numlock"
+	KeyDelete       = "delete"
+	KeyBackspace    = "backspace"
+	KeyHome         = "home"
+	KeyEnd          = "end"
+	KeyPrior        = "prior"
+	KeyNext         = "next"
+	KeyCapsLock     = "caps"
+)
+
+var chordPrecedence = []string{
+	"super",
+	"shift",
+	"alt",
+	"control",
+	"function",
+}
+
+var chordIndices map[string]int
+
+func init() {
+	chordIndices = map[string]int{}
+	for i, k := range chordPrecedence {
+		chordIndices[k] = i + 1
+	}
+}
+
+type ChordSorter []string
+
+func (c ChordSorter) Len() int {
+	return len(c)
+}
+func (c ChordSorter) Swap(i, j int) {
+	c[i], c[j] = c[j], c[i]
+}
+func (c ChordSorter) Less(i, j int) (less bool) {
+	ip := chordIndices[c[i]]
+	jp := chordIndices[c[j]]
+	return ip > jp
+}
+
+func ConstructChord(keys map[string]bool) (chord string) {
+	unikeys := map[string]bool{}
+	for key := range keys {
+		if strings.HasPrefix(key, "left_") {
+			key = key[5:]
+		}
+		if strings.HasPrefix(key, "right_") {
+			key = key[6:]
+		}
+		unikeys[key] = true
+	}
+	if len(unikeys) <= 1 {
+		return
+	}
+	allkeys := ChordSorter{}
+	for key := range unikeys {
+		allkeys = append(allkeys, key)
+	}
+	sort.Sort(allkeys)
+	chord = strings.Join(allkeys, "+")
+	return
+}

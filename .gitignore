@@ -1,4 +1,2 @@
-cocoa/.DS_Store
-cocoa/framework/gmd.xcworkspace/xcuserdata/michael.xcuserdatad/
-cocoa/framework/gmdTest/gmdTest.xcodeproj/xcuserdata/michael.xcuserdatad/
-cocoa/framework/gomacdraw/gomacdraw.xcodeproj/xcuserdata/michael.xcuserdatad/
+_cgo
+_go_.6
