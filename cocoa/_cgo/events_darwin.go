@@ -22,7 +22,6 @@ import "C"
 import (
 	"fmt"
 	"github.com/skelterjohn/go.wde"
-	"strings"
 )
 
 func getButton(b int) (which wde.Button) {
@@ -104,15 +103,11 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 					letter = fmt.Sprintf("%c", e.data[0])
 				}
 
-				chordCount := 0
-
 				if flags&(1<<19) == 524288 {
 					chord = "alt"
-					chordCount++
 				}
 				if flags&(1<<18) == 262144 {
 					addToChord(&chord, "control")
-					chordCount++
 					if !blankLetter {
 						// the way Cocoa behaves: if the modifiers include anything but control, I want the glyph (it will be uppercase with Shift or fancy symbol with Alt)
 						// but if there is a control modifier, then I have to look it up by code, because Cocoa refuses to send back a Glyph with control.
@@ -121,30 +116,25 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				}
 				if flags&(1<<23) == 8388608 {
 					addToChord(&chord, "function")
-					chordCount++
 				}
 				if flags&(1<<17) == 131072 {
 					addToChord(&chord, "shift")
-					chordCount++
 				}
 
-				km := string(keyMapping[keycode])
-				if !strings.HasPrefix(km, "left_") && !strings.HasPrefix(km, "right_") {
+				println(containsGlyph([]wde.Glyph{wde.KeyLeftAlt, wde.KeyRightAlt, wde.KeyLeftShift, wde.KeyRightShift, wde.KeyLeftControl, wde.KeyRightControl, wde.KeyLeftSuper, wde.KeyRightSuper, wde.KeyFunction}, ke.Glyph))
 					addToChord(&chord, keyMapping[keycode])
-					chordCount++
-				}
-				
-				if chordCount == 1 {
-					chord = ""
-				}
+				//}
 
 				ke.Glyph = keyMapping[keycode]
 
 				if !downKeys[keycode] {
 					ec <- wde.KeyDownEvent(ke)
 				}
-				ec <- wde.KeyTypedEvent{KeyEvent: ke, Chord: chord, Letter: letter}
-				
+				//if !containsGlyph([]wde.Glyph{wde.KeyLeftAlt, wde.KeyRightAlt, wde.KeyLeftShift, wde.KeyRightShift, wde.KeyLeftControl, wde.KeyRightControl, wde.KeyLeftSuper, wde.KeyRightSuper, wde.KeyFunction}, ke.Glyph) {
+					// only send a typed event if the last keypress is not a modifier key
+					ec <- wde.KeyTypedEvent{KeyEvent: ke, Chord: chord, Letter: letter}
+				//}
+
 				downKeys[keycode] = true
 			case C.GMDKeyUp:
 				var ke wde.KeyUpEvent

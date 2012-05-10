@@ -1,0 +1,1 @@
+_CGO_LDFLAGS=-framework gomacdraw

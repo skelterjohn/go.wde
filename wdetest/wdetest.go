@@ -71,9 +71,11 @@ func wdetest() {
 				case wde.MouseExitedEvent:
 					fmt.Println("mouse exited", e.Where.X, e.Where.Y)
 				case wde.KeyDownEvent:
+					// fmt.Println("KeyDownEvent", e.Glyph)
 				case wde.KeyUpEvent:
+					// fmt.Println("KeyUpEvent", e.Glyph)
 				case wde.KeyTypedEvent:
-					fmt.Println("typed", e.Letter, e.Code)
+					fmt.Println("typed", e.Glyph, e.Letter, e.Chord)
 				case wde.CloseEvent:
 					fmt.Println("close")
 					dw.Close()
