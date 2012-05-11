@@ -21,6 +21,7 @@ import (
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"unsafe"
+	"fmt"
 )
 
 type EventData struct {
@@ -121,19 +122,19 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 
 	case w32.WM_KEYDOWN:
 		// TODO: letter
-		kde := wde.KeyDownEvent{
-			int(wparam),
-			"",
+		ke := wde.KeyEvent{
+			fmt.Sprintf("%d", wparam),
 		}
-		wnd.events <- kde
-		kpe := wde.KeyTypedEvent(kde)
+		wnd.events <- wde.KeyDownEvent(ke)
+		kpe := wde.KeyTypedEvent{
+			KeyEvent: ke,
+		}
 		wnd.events <- kpe
 
 	case w32.WM_KEYUP:
 		// TODO: letter
 		wnd.events <- wde.KeyUpEvent{
-			int(wparam),
-			"",
+			fmt.Sprintf("%d", wparam),
 		}
 
 	case w32.WM_SIZE:
