@@ -42,10 +42,12 @@ func init() {
 	}
 	wde.BackendRun = Run
 	wde.BackendStop = Stop
+	wde.BackendGetClipboardText = GetClipboardText
+	wde.BackendSetClipboardText = SetClipboardText
+	
 	runtime.LockOSThread()
 	C.initMacDraw()
 	SetAppName("go")
-
 }
 
 func SetAppName(name string) {
@@ -159,6 +161,14 @@ func (w *Window) Close() (err error) {
 		err = errors.New(fmt.Sprintf("error:%d", ecode))
 	}
 	return
+}
+
+func GetClipboardText() string {
+	return C.GoString(C.getClipboardText())
+}
+
+func SetClipboardText(text string) {
+	C.setClipboardText(C.CString(text))
 }
 
 func Run() {

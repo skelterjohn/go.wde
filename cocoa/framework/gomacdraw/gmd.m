@@ -157,3 +157,17 @@ void getScreenSize(GMDImage screen, int* width, int* height) {
     *height = size.height;
     [pool release];
 }
+
+const char* getClipboardText() {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    [pool release];
+    return [[[NSPasteboard generalPasteboard] stringForType:NSPasteboardTypeString] UTF8String];
+}
+
+void setClipboardText(const char* text) {
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+    [pasteBoard clearContents];
+    [pasteBoard setString:[[NSString alloc] initWithUTF8String:text] forType:NSPasteboardTypeString];
+    [pool release];    
+}

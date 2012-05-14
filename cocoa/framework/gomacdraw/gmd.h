@@ -61,3 +61,6 @@ void setScreenPixel(GMDImage screen, int x, int y, int r, int g, int b, int a);
 void getScreenSize(GMDImage screen, int* width, int* height);
 
 void setScreenData(GMDImage screen, void* data);
+
+const char* getClipboardText();
+void setClipboardText(const char* text);
