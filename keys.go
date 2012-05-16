@@ -130,6 +130,10 @@ const (
 	KeyCapsLock     = "caps"
 )
 
+var PasteChord = "control+v"
+var CopyChord = "control+c"
+var CutChord = "control+x"
+
 var chordPrecedence = []string{
 	"super",
 	"shift",

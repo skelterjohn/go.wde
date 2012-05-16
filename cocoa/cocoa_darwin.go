@@ -48,6 +48,11 @@ func init() {
 	runtime.LockOSThread()
 	C.initMacDraw()
 	SetAppName("go")
+	
+	// I'll uncomment these once the 'super' key glitch is fixed
+	// wde.PasteChord = "super+v"
+	// wde.CopyChord = "super+c"
+	// wde.CutChord = "super+x"
 }
 
 func SetAppName(name string) {
