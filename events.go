@@ -64,7 +64,16 @@ type KeyDownEvent KeyEvent
 type KeyUpEvent KeyEvent
 type KeyTypedEvent struct {
 	KeyEvent
+	/*
+		The glyph is the string corresponding to what the user wants to have typed in
+		whatever data entry is active.
+	*/
 	Glyph string
+	/*
+		The "+" joined set of keys (not glyphs) participating in the chord completed
+		by this key event. The keys will be in a consistent order, no matter what
+		order they are pressed in.
+	*/
 	Chord string
 }
 
