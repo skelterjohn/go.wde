@@ -155,7 +155,7 @@ func (w *Window) handleEvents() {
 			var re wde.ResizeEvent
 			re.Width = int(e.Width)
 			re.Height = int(e.Height)
-			if true || re.Width != w.width || re.Height != w.height {
+			if re.Width != w.width || re.Height != w.height {
 				w.width, w.height = re.Width, re.Height
 				w.buffer = image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{re.Width, re.Height}})
 				w.events <- re
