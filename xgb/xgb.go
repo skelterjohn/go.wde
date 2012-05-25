@@ -161,11 +161,16 @@ func (w *Window) Screen() (im draw.Image) {
 }
 
 func (w *Window) FlushImage() {
-	w.bufferLck.Lock()
-	defer w.bufferLck.Unlock()
 
-	if w.closed || w.buffer.Pixmap == 0 {
+	if w.closed {
 		return
+	}
+	if w.buffer.Pixmap == 0 {
+		w.bufferLck.Lock()
+		if err := w.buffer.XSurfaceSet(w.win.Id); err != nil {
+			fmt.Println(err)
+		}
+		w.bufferLck.Unlock()
 	}
 	w.buffer.XDraw()
 	w.buffer.XPaint(w.win.Id)

@@ -157,10 +157,6 @@ func (w *Window) handleEvents() {
 				w.bufferLck.Lock()
 				w.buffer.Destroy()
 				w.buffer = xgraphics.New(w.xu, image.Rect(0, 0, re.Width, re.Height))
-				err := w.buffer.XSurfaceSet(w.win.Id)
-				if err != nil {
-					fmt.Println(err)
-				}
 				w.bufferLck.Unlock()
 
 				w.events <- re
