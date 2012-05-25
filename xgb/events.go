@@ -17,17 +17,17 @@
 package xgb
 
 import (
-	"code.google.com/p/jamslam-x-go-binding/xgb"
 	"fmt"
-	"github.com/BurntSushi/xgbutil"
+	"github.com/BurntSushi/xgb/xproto"
+	"github.com/BurntSushi/xgbutil/icccm"
 	"github.com/BurntSushi/xgbutil/keybind"
-	"github.com/BurntSushi/xgbutil/xprop"
+	"github.com/BurntSushi/xgbutil/xevent"
+	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/skelterjohn/go.wde"
 	"image"
-	"io"
 )
 
-func buttonForDetail(detail xgb.Button) wde.Button {
+func buttonForDetail(detail xproto.Button) wde.Button {
 	switch detail {
 	case 1:
 		return wde.LeftButton
@@ -50,18 +50,14 @@ func (w *Window) handleEvents() {
 	for {
 		e, err := w.conn.WaitForEvent()
 
-		// if err != nil {
-		// 	fmt.Println("err:", err)
-		// }
-		if err == io.EOF {
-			break
+		if err != nil {
+			fmt.Println("[go.wde X error] ", err)
+			continue
 		}
-
-		xgbutil.BeSafe(&err)
 
 		switch e := e.(type) {
 
-		case xgb.ButtonPressEvent:
+		case xproto.ButtonPressEvent:
 			button = button | buttonForDetail(e.Detail)
 			var bpe wde.MouseDownEvent
 			bpe.Which = buttonForDetail(e.Detail)
@@ -71,7 +67,7 @@ func (w *Window) handleEvents() {
 			lastY = int32(e.EventY)
 			w.events <- bpe
 
-		case xgb.ButtonReleaseEvent:
+		case xproto.ButtonReleaseEvent:
 			button = button & ^buttonForDetail(e.Detail)
 			var bue wde.MouseUpEvent
 			bue.Which = buttonForDetail(e.Detail)
@@ -81,7 +77,7 @@ func (w *Window) handleEvents() {
 			lastY = int32(e.EventY)
 			w.events <- bue
 
-		case xgb.LeaveNotifyEvent:
+		case xproto.LeaveNotifyEvent:
 			var wee wde.MouseExitedEvent
 			wee.Where.X = int(e.EventX)
 			wee.Where.Y = int(e.EventY)
@@ -95,7 +91,7 @@ func (w *Window) handleEvents() {
 			lastX = int32(e.EventX)
 			lastY = int32(e.EventY)
 			w.events <- wee
-		case xgb.EnterNotifyEvent:
+		case xproto.EnterNotifyEvent:
 			var wee wde.MouseEnteredEvent
 			wee.Where.X = int(e.EventX)
 			wee.Where.Y = int(e.EventY)
@@ -110,7 +106,7 @@ func (w *Window) handleEvents() {
 			lastY = int32(e.EventY)
 			w.events <- wee
 
-		case xgb.MotionNotifyEvent:
+		case xproto.MotionNotifyEvent:
 			var mme wde.MouseMovedEvent
 			mme.Where.X = int(e.EventX)
 			mme.Where.Y = int(e.EventY)
@@ -132,7 +128,7 @@ func (w *Window) handleEvents() {
 				w.events <- mde
 			}
 
-		case xgb.KeyPressEvent:
+		case xproto.KeyPressEvent:
 			var ke wde.KeyEvent
 			code := keybind.LookupString(w.xu, e.State, e.Detail)
 			ke.Key = keyForCode(code)
@@ -145,48 +141,40 @@ func (w *Window) handleEvents() {
 			}
 			w.events <- kpe
 
-		case xgb.KeyReleaseEvent:
+		case xproto.KeyReleaseEvent:
 			var ke wde.KeyUpEvent
 			ke.Key = keyForCode(keybind.LookupString(w.xu, e.State, e.Detail))
 			delete(downKeys, ke.Key)
 			w.events <- ke
 
-		case xgb.ConfigureNotifyEvent:
+		case xproto.ConfigureNotifyEvent:
 			var re wde.ResizeEvent
 			re.Width = int(e.Width)
 			re.Height = int(e.Height)
 			if re.Width != w.width || re.Height != w.height {
 				w.width, w.height = re.Width, re.Height
-				w.buffer = image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{re.Width, re.Height}})
+
+				w.bufferLck.Lock()
+				w.buffer.Destroy()
+				w.buffer = xgraphics.New(w.xu, image.Rect(0, 0, re.Width, re.Height))
+				err := w.buffer.XSurfaceSet(w.win.Id)
+				if err != nil {
+					fmt.Println(err)
+				}
+				w.bufferLck.Unlock()
+
 				w.events <- re
 			}
 
-		case xgb.ClientMessageEvent:
-			if e.Format != 32 {
-				break
-			}
-			name, err := xprop.AtomName(w.xu, e.Type)
-			if err != nil {
-				// TODO: log
-				break
-			}
-			if name != "WM_PROTOCOLS" {
-				break
-			}
-			name2, err := xprop.AtomName(w.xu, xgb.Id(e.Data.Data32[0]))
-			if err != nil {
-				// TODO: log
-				break
-			}
-			if name2 == "WM_DELETE_WINDOW" {
+		case xproto.ClientMessageEvent:
+			if icccm.IsDeleteProtocol(w.xu, xevent.ClientMessageEvent{&e}) {
 				w.events <- wde.CloseEvent{}
 			}
-
-		case xgb.DestroyNotifyEvent:
-		case xgb.ReparentNotifyEvent:
-		case xgb.MapNotifyEvent:
-		case xgb.UnmapNotifyEvent:
-		case xgb.PropertyNotifyEvent:
+		case xproto.DestroyNotifyEvent:
+		case xproto.ReparentNotifyEvent:
+		case xproto.MapNotifyEvent:
+		case xproto.UnmapNotifyEvent:
+		case xproto.PropertyNotifyEvent:
 
 		default:
 			fmt.Printf("unhandled event: type %T\n%+v\n", e, e)

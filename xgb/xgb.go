@@ -17,8 +17,9 @@
 package xgb
 
 import (
-	"code.google.com/p/jamslam-x-go-binding/xgb"
 	"fmt"
+	"github.com/BurntSushi/xgb"
+	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/ewmh"
 	"github.com/BurntSushi/xgbutil/icccm"
@@ -28,6 +29,7 @@ import (
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"image/draw"
+	"sync"
 )
 
 func init() {
@@ -44,20 +46,21 @@ func init() {
 	}
 }
 
-const AllEventsMask = xgb.EventMaskKeyPress |
-	xgb.EventMaskKeyRelease |
-	xgb.EventMaskButtonPress |
-	xgb.EventMaskButtonRelease |
-	xgb.EventMaskEnterWindow |
-	xgb.EventMaskLeaveWindow |
-	xgb.EventMaskPointerMotion |
-	xgb.EventMaskStructureNotify
+const AllEventsMask = xproto.EventMaskKeyPress |
+	xproto.EventMaskKeyRelease |
+	xproto.EventMaskButtonPress |
+	xproto.EventMaskButtonRelease |
+	xproto.EventMaskEnterWindow |
+	xproto.EventMaskLeaveWindow |
+	xproto.EventMaskPointerMotion |
+	xproto.EventMaskStructureNotify
 
 type Window struct {
-	id            xgb.Id
+	win           *xwindow.Window
 	xu            *xgbutil.XUtil
 	conn          *xgb.Conn
-	buffer        draw.Image
+	buffer        *xgraphics.Image
+	bufferLck     *sync.Mutex
 	width, height int
 	closed        bool
 
@@ -68,9 +71,8 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	w = new(Window)
 	w.width, w.height = width, height
-	w.buffer = image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
 
-	w.xu, err = xgbutil.Dial("")
+	w.xu, err = xgbutil.NewConn()
 	if err != nil {
 		return
 	}
@@ -78,14 +80,31 @@ func NewWindow(width, height int) (w *Window, err error) {
 	w.conn = w.xu.Conn()
 	screen := w.xu.Screen()
 
-	w.id = w.conn.NewId()
-	w.conn.CreateWindow(xgb.WindowClassCopyFromParent, w.id, screen.Root, 600, 500, uint16(width), uint16(height), 0, xgb.WindowClassInputOutput, screen.RootVisual, 0, []uint32{})
+	w.win, err = xwindow.Generate(w.xu)
+	if err != nil {
+		return
+	}
 
-	xwindow.Listen(w.xu, w.id, AllEventsMask)
+	err = w.win.CreateChecked(screen.Root, 600, 500, width, height, 0)
+	if err != nil {
+		return
+	}
+
+	w.win.Listen(AllEventsMask)
+
+	err = icccm.WmProtocolsSet(w.xu, w.win.Id, []string{"WM_DELETE_WINDOW"})
+	if err != nil {
+		fmt.Println(err)
+		err = nil
+	}
+
+	w.bufferLck = &sync.Mutex{}
+	w.buffer = xgraphics.New(w.xu, image.Rect(0, 0, width, height))
+	w.buffer.XSurfaceSet(w.win.Id)
 
 	keyMap, modMap := keybind.MapsGet(w.xu)
-	w.xu.KeyMapSet(keyMap)
-	w.xu.ModMapSet(modMap)
+	keybind.KeyMapSet(w.xu, keyMap)
+	keybind.ModMapSet(w.xu, modMap)
 
 	w.events = make(chan interface{})
 
@@ -101,7 +120,7 @@ func (w *Window) SetTitle(title string) {
 	if w.closed {
 		return
 	}
-	err := ewmh.WmNameSet(w.xu, w.id, title)
+	err := ewmh.WmNameSet(w.xu, w.win.Id, title)
 	if err != nil {
 		// TODO: log
 	}
@@ -112,10 +131,8 @@ func (w *Window) SetSize(width, height int) {
 	if w.closed {
 		return
 	}
-	err := xwindow.Resize(w.xu, w.id, width, height)
-	if err != nil {
-		// TODO: log
-	}
+
+	w.win.Resize(width, height)
 	w.width, w.height = width, height
 	return
 }
@@ -132,13 +149,7 @@ func (w *Window) Show() {
 	if w.closed {
 		return
 	}
-	w.conn.MapWindow(w.id)
-	if true {
-		err := icccm.WmProtocolsSet(w.xu, w.id, []string{"WM_DELETE_WINDOW"})
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
+	w.win.Map()
 }
 
 func (w *Window) Screen() (im draw.Image) {
@@ -150,17 +161,21 @@ func (w *Window) Screen() (im draw.Image) {
 }
 
 func (w *Window) FlushImage() {
-	if w.closed {
+	w.bufferLck.Lock()
+	defer w.bufferLck.Unlock()
+
+	if w.closed || w.buffer.Pixmap == 0 {
 		return
 	}
-	xgraphics.PaintImg(w.xu, w.id, w.buffer)
+	w.buffer.XDraw()
+	w.buffer.XPaint(w.win.Id)
 }
 
 func (w *Window) Close() (err error) {
 	if w.closed {
 		return
 	}
-	w.conn.DestroyWindow(w.id)
+	w.win.Destroy()
 	w.closed = true
 	return
 }
