@@ -35,8 +35,7 @@ func init() {
 }
 
 func (w *Window) SetIconName(name string) {
-	// this doesn't work
-	err := ewmh.WmIconNameSet(w.xu, w.id, name)
+	err := ewmh.WmIconNameSet(w.xu, w.win.Id, name)
 	if err != nil {
 		println(err.Error())
 	}
@@ -59,5 +58,5 @@ func (w *Window) SetIcon(icon image.Image) {
 		Height: height,
 		Data:   data,
 	}
-	ewmh.WmIconSet(w.xu, w.id, []ewmh.WmIcon{wmicon})
+	ewmh.WmIconSet(w.xu, w.win.Id, []ewmh.WmIcon{wmicon})
 }
