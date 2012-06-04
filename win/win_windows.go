@@ -55,21 +55,7 @@ type Window struct {
 	events chan interface{}
 }
 
-/*
-go func(ready chan struct{}) {
-		w, err = win.NewWindow(width, height)
-		ready <- struct{}{}
-		if winw, ok := w.(*win.Window); ok {
-			winw.HandleWndMessages()
-		} else {
-			panic("windows wgen returned non windows window")
-		}
-	}(ready)
-	<-ready
-*/
-
 func makeTheWindow(width, height int) (w *Window, err error) {
-
 	err = RegClassOnlyOnce(WIN_CLASSNAME)
 	if err != nil {
 		return
@@ -86,9 +72,7 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 		events: make(chan interface{}, 16),
 	}
 	w.InitEventData()
-
 	RegMsgHandler(w)
-
 	w.Center()
 
 	return
