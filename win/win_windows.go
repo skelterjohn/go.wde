@@ -38,6 +38,8 @@ func init() {
 	wde.BackendStop = func() {
 		ch <- struct{}{}
 	}
+	wde.BackendGetClipboardText = GetClipboardText
+	wde.BackendSetClipboardText = SetClipboardText
 }
 
 const (

@@ -126,3 +126,37 @@ func RegClassOnlyOnce(className string) error {
 
 	return nil
 }
+
+func GetClipboardText() string {
+	if !w32.OpenClipboard(w32.HWND(0)) {
+		return ""
+	}
+	defer w32.CloseClipboard()
+
+	if !w32.IsClipboardFormatAvailable(w32.CF_UNICODETEXT) {
+		return ""
+	}
+
+	traw := w32.GetClipboardData(w32.CF_UNICODETEXT)
+	tptr := (*uint16)(unsafe.Pointer(traw))
+	return w32.UTF16PtrToString(tptr)
+}
+
+func SetClipboardText(text string) {
+	if !w32.OpenClipboard(w32.HWND(0)) {
+		return
+	}
+	defer w32.CloseClipboard()
+
+	w32.EmptyClipboard()
+
+	tuftlen := uint32(len(text) * 2 + 1)
+	cptrglob := w32.GlobalAlloc(w32.GMEM_MOVEABLE, tuftlen)
+
+	cptr := unsafe.Pointer(w32.GlobalLock(cptrglob))
+	tptr := unsafe.Pointer(syscall.StringToUTF16Ptr(text))
+	w32.MoveMemory(cptr, tptr, tuftlen)
+	w32.GlobalUnlock(cptrglob)
+
+	w32.SetClipboardData(w32.CF_UNICODETEXT, w32.HANDLE(cptrglob))
+}
