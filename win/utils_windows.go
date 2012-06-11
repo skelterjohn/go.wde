@@ -150,7 +150,7 @@ func SetClipboardText(text string) {
 
 	w32.EmptyClipboard()
 
-	tuftlen := uint32(len(text) * 2 + 1)
+	tuftlen := uint32(len(text)*2 + 1)
 	cptrglob := w32.GlobalAlloc(w32.GMEM_MOVEABLE, tuftlen)
 
 	cptr := unsafe.Pointer(w32.GlobalLock(cptrglob))
