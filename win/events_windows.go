@@ -129,7 +129,6 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 			Glyph:    glyphForCode(wparam),
 			Chord:    "",
 		}
-		println(wparam, "|", kpe.Key, "|", kpe.Glyph)
 		wnd.events <- kpe
 
 	case w32.WM_KEYUP:
