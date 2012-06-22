@@ -42,8 +42,8 @@ func (w *Window) SetIconName(name string) {
 }
 
 func (w *Window) SetIcon(icon image.Image) {
-	width := icon.Bounds().Max.X - icon.Bounds().Min.X
-	height := icon.Bounds().Max.Y - icon.Bounds().Min.Y
+	width := icon.Bounds().Dx()
+	height := icon.Bounds().Dy()
 	data := make([]int, width*height)
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
