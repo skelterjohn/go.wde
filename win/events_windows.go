@@ -17,11 +17,11 @@
 package win
 
 import (
+	"fmt"
 	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"unsafe"
-	"fmt"
 )
 
 type EventData struct {

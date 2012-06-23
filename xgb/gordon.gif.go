@@ -8,7 +8,7 @@ import (
 
 // gordon_gif returns the decompressed binary data.
 // It panics if an error occurred.
-func gordon_gif() []byte {
+func gordon_gif() ([]byte, error) {
 	gz, err := gzip.NewReader(bytes.NewBuffer([]byte{
 		0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x00, 0xff, 0x00, 0xb4,
 		0x07, 0x4b, 0xf8, 0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x80, 0x00, 0x40,
@@ -180,12 +180,12 @@ func gordon_gif() []byte {
 	}))
 
 	if err != nil {
-		panic("Decompression failed: " + err.Error())
+		return nil, err
 	}
 
 	var b bytes.Buffer
 	io.Copy(&b, gz)
 	gz.Close()
 
-	return b.Bytes()
+	return b.Bytes(), nil
 }

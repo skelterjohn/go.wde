@@ -17,7 +17,7 @@
 package xgb
 
 import (
-	"fmt"
+	"errors"
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil/icccm"
 	"github.com/BurntSushi/xgbutil/keybind"
@@ -25,6 +25,7 @@ import (
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/skelterjohn/go.wde"
 	"image"
+	"log"
 )
 
 func buttonForDetail(detail xproto.Button) wde.Button {
@@ -40,8 +41,7 @@ func buttonForDetail(detail xproto.Button) wde.Button {
 }
 
 func (w *Window) handleEvents() {
-	var noX int32 = 1<<31 - 1
-	noX++
+	var noX int32 = -1 << 31
 	var lastX, lastY int32 = noX, 0
 	var button wde.Button
 
@@ -51,7 +51,7 @@ func (w *Window) handleEvents() {
 		e, err := w.conn.WaitForEvent()
 
 		if err != nil {
-			fmt.Println("[go.wde X error] ", err)
+			log.Println(errors.New("[go.wde X error] " + err.Error()))
 			continue
 		}
 
@@ -173,7 +173,7 @@ func (w *Window) handleEvents() {
 		case xproto.PropertyNotifyEvent:
 
 		default:
-			fmt.Printf("unhandled event: type %T\n%+v\n", e, e)
+			log.Printf("unhandled event: type %T\n%+v\n", e, e)
 		}
 
 	}

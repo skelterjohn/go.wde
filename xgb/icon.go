@@ -21,29 +21,32 @@ import (
 	"github.com/BurntSushi/xgbutil/ewmh"
 	"image"
 	"image/gif"
+	"log"
 )
 
 var Gordon image.Image
 
 func init() {
-	gordonGifData := gordon_gif()
-	var err error
+	gordonGifData, err := gordon_gif()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	Gordon, err = gif.Decode(bytes.NewReader(gordonGifData))
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 }
 
 func (w *Window) SetIconName(name string) {
 	err := ewmh.WmIconNameSet(w.xu, w.win.Id, name)
 	if err != nil {
-		println(err.Error())
+		log.Println(err)
 	}
 }
 
 func (w *Window) SetIcon(icon image.Image) {
-	width := icon.Bounds().Max.X - icon.Bounds().Min.X
-	height := icon.Bounds().Max.Y - icon.Bounds().Min.Y
+	width := icon.Bounds().Dx()
+	height := icon.Bounds().Dy()
 	data := make([]int, width*height)
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
