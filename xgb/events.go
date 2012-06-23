@@ -41,7 +41,7 @@ func buttonForDetail(detail xproto.Button) wde.Button {
 }
 
 func (w *Window) handleEvents() {
-	var noX int32 = -1<<31
+	var noX int32 = -1 << 31
 	var lastX, lastY int32 = noX, 0
 	var button wde.Button
 
