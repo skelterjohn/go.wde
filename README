@@ -2,6 +2,16 @@ go.wde
 
 (W)indows, (d)rawing and (e)vents for Go.
 
-Works on linux and windows with no setup beyond "go get".
+SETUP:
+
+To setup this project on Works on linux and windows, run the following commands (you may need to run them as root):
+
+go get github.com/skelterjohn/go.wde
+go get github.com/BurntSushi/xgbutil
+go get code.google.com/p/freetype-go/freetype
+go get code.google.com/p/graphics-go/graphics
+
+If you get an error like "exec: "hg": executable file not found in $PATH", you need to install mercurial.
 
 To enable on os x, you must first install gomacdraw.framework. There is an installer located in go.wde/cocoa/framework/gomacdraw.pkg.
+
