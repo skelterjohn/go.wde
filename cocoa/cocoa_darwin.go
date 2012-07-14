@@ -143,7 +143,7 @@ newbuffer:
 	return
 }
 
-func (w *Window) FlushImage() {
+func (w *Window) FlushImage(bounds ...image.Rectangle) {
 	w.oplock.Lock()
 	defer w.oplock.Unlock()
 

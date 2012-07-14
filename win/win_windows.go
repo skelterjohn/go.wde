@@ -129,7 +129,7 @@ func (this *Window) Screen() draw.Image {
 	return this.buffer
 }
 
-func (this *Window) FlushImage() {
+func (this *Window) FlushImage(bounds ...image.Rectangle) {
 	w32.InvalidateRect(this.hwnd, nil, false)
 	w32.UpdateWindow(this.hwnd)
 }
