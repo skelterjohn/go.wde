@@ -17,6 +17,7 @@
 package wde
 
 import (
+	"image"
 	"image/draw"
 )
 
@@ -26,7 +27,7 @@ type Window interface {
 	Size() (width, height int)
 	Show()
 	Screen() (im draw.Image)
-	FlushImage()
+	FlushImage(bounds ...image.Rectangle)
 	EventChan() (events <-chan interface{})
 	Close() (err error)
 }

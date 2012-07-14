@@ -160,7 +160,7 @@ func (w *Window) Screen() (im draw.Image) {
 	return
 }
 
-func (w *Window) FlushImage() {
+func (w *Window) FlushImage(bounds ...image.Rectangle) {
 
 	if w.closed {
 		return
