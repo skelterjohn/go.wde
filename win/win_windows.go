@@ -133,8 +133,6 @@ func (this *Window) FlushImage(bounds ...image.Rectangle) {
 	hdc := w32.GetDC(this.hwnd)
 	this.blitImage(hdc)
 	w32.DeleteDC(hdc)
-	// w32.InvalidateRect(this.hwnd, nil, false)
-	// w32.UpdateWindow(this.hwnd)
 }
 
 func (this *Window) EventChan() <-chan interface{} {
