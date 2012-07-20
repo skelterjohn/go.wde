@@ -145,10 +145,6 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
 
 	case w32.WM_PAINT:
-		var paint w32.PAINTSTRUCT
-		hdc := w32.BeginPaint(hwnd, &paint)
-		wnd.blitImage(hdc)
-		w32.EndPaint(hwnd, &paint)
 		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
 
 	case w32.WM_CLOSE:

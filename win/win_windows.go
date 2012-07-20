@@ -130,8 +130,9 @@ func (this *Window) Screen() draw.Image {
 }
 
 func (this *Window) FlushImage(bounds ...image.Rectangle) {
-	w32.InvalidateRect(this.hwnd, nil, false)
-	w32.UpdateWindow(this.hwnd)
+	hdc := w32.GetDC(this.hwnd)
+	this.blitImage(hdc)
+	w32.DeleteDC(hdc)
 }
 
 func (this *Window) EventChan() <-chan interface{} {
