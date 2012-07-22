@@ -42,7 +42,6 @@ func init() {
 
 const (
 	WIN_CLASSNAME   = "wde_win"
-	TITLEBAR_HEIGHT = 22
 )
 
 type Window struct {
@@ -73,6 +72,15 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 		return
 	}
 
+	cr := &w32.RECT{
+		w32.CW_USEDEFAULT,
+		w32.CW_USEDEFAULT,
+		w32.CW_USEDEFAULT + width,
+		w32.CW_USEDEFAULT + height,
+	}
+	w32.AdjustWindowRectEx(cr, w32.WS_OVERLAPPEDWINDOW, false, w32.WS_EX_CLIENTEDGE)
+	width = cr.Right - cr.Left
+	height = cr.Bottom - cr.Top
 	hwnd, err := CreateWindow(WIN_CLASSNAME, nil, w32.WS_EX_CLIENTEDGE, w32.WS_OVERLAPPEDWINDOW, width, height)
 	if err != nil {
 		return
@@ -80,7 +88,7 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 
 	w = &Window{
 		hwnd:   hwnd,
-		buffer: NewDIB(image.Rect(0, 0, width, height+TITLEBAR_HEIGHT)),
+		buffer: NewDIB(image.Rect(0, 0, width, height)),
 		events: make(chan interface{}, 16),
 	}
 	w.InitEventData()
@@ -113,7 +121,7 @@ func (this *Window) SetTitle(title string) {
 
 func (this *Window) SetSize(width, height int) {
 	x, y := this.Pos()
-	w32.MoveWindow(this.hwnd, x, y, width, height+TITLEBAR_HEIGHT, true)
+	w32.MoveWindow(this.hwnd, x, y, width, height, true)
 }
 
 func (this *Window) Size() (width, height int) {
