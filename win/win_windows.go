@@ -41,7 +41,7 @@ func init() {
 }
 
 const (
-	WIN_CLASSNAME   = "wde_win"
+	WIN_CLASSNAME = "wde_win"
 )
 
 type Window struct {

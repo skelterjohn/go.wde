@@ -20,8 +20,8 @@ import (
 	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
 	"image"
+	"syscall"
 	"unsafe"
-	"fmt"
 )
 
 type EventData struct {
@@ -49,6 +49,9 @@ func buttonForDetail(button uint) wde.Button {
 	return 0
 }
 
+var keyDown string
+var keysDown = map[string]bool{}
+
 func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 	wnd := GetMsgHandler(hwnd)
 	if wnd == nil {
@@ -57,6 +60,8 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 
 	var rc uintptr
 	switch msg {
+	case w32.WM_SHOWWINDOW:
+		w32.SetFocus(hwnd)
 	case w32.WM_LBUTTONDOWN, w32.WM_RBUTTONDOWN, w32.WM_MBUTTONDOWN:
 		wnd.button = wnd.button | buttonForDetail(msg)
 		var bpe wde.MouseDownEvent
@@ -120,21 +125,55 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		wee.Where.X = wnd.lastY
 		wnd.events <- wee
 
-	case w32.WM_KEYDOWN:
-		// TODO: letter
+	case w32.WM_SYSKEYDOWN:
+		keyDown = keyFromVirtualKeyCode(wparam)
+		keysDown[wde.KeyLeftAlt] = true
+		keysDown[keyDown] = true
 		ke := wde.KeyEvent{
-			fmt.Sprintf("%d", wparam),
+			keyDown,
 		}
 		wnd.events <- wde.KeyDownEvent(ke)
+	case w32.WM_KEYDOWN:
+		keyDown = keyFromVirtualKeyCode(wparam)
+		keysDown[keyDown] = true
+		ke := wde.KeyEvent{
+			keyDown,
+		}
+		wnd.events <- wde.KeyDownEvent(ke)
+	case w32.WM_SYSCHAR:
+		glyph := syscall.UTF16ToString([]uint16{uint16(wparam)})
+		ke := wde.KeyEvent{
+			keyDown,
+		}
 		kpe := wde.KeyTypedEvent{
-			KeyEvent: ke,
+			ke,
+			glyph,
+			wde.ConstructChord(keysDown),
 		}
 		wnd.events <- kpe
-
-	case w32.WM_KEYUP:
-		// TODO: letter
+	case w32.WM_CHAR:
+		glyph := syscall.UTF16ToString([]uint16{uint16(wparam)})
+		ke := wde.KeyEvent{
+			keyDown,
+		}
+		kpe := wde.KeyTypedEvent{
+			ke,
+			glyph,
+			wde.ConstructChord(keysDown),
+		}
+		wnd.events <- kpe
+	case w32.WM_SYSKEYUP:
+		keyUp := keyFromVirtualKeyCode(wparam)
+		delete(keysDown, wde.KeyLeftAlt)
+		delete(keysDown, keyUp)
 		wnd.events <- wde.KeyUpEvent{
-			fmt.Sprintf("%d", wparam),
+			keyUp,
+		}
+	case w32.WM_KEYUP:
+		keyUp := keyFromVirtualKeyCode(wparam)
+		delete(keysDown, keyUp)
+		wnd.events <- wde.KeyUpEvent{
+			keyUp,
 		}
 
 	case w32.WM_SIZE:
