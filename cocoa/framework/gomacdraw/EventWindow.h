@@ -29,5 +29,6 @@
 
 - (void)nq:(GMDEvent)eh;
 - (GMDEvent)dq;
+- (BOOL)isInFullScreenMode;
 
 @end
