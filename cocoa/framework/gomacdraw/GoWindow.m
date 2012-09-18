@@ -29,7 +29,9 @@
 }
 - (void)setSize:(CGSize)size
 {
-    size.height += 22;
+    if (![[self eventWindow] isInFullScreenMode]) {
+        size.height += 22;
+    }
     
     CGRect frame = [[self window] frame];
     frame.size = size;
@@ -67,7 +69,9 @@
 - (CGSize)size
 {
     CGSize size = [[self window] frame].size;
-    size.height -= 22;
+    if (![[self eventWindow] isInFullScreenMode]) {
+        size.height -= 22;
+    }
     return size;
 }
 
@@ -84,7 +88,9 @@
     NSImage* img = [[[NSImage alloc] autorelease] initWithCGImage:cgimg size:NSZeroSize];
     
     CGRect frame = [[self window] frame];
-    frame.size.height -= 22;
+    if (![[self eventWindow] isInFullScreenMode]) {
+        frame.size.height -= 22;
+    }
     frame.origin = CGPointMake(0, 0);
     
     [imageView setFrame:frame];

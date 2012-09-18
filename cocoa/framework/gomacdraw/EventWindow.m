@@ -72,7 +72,11 @@
     GMDEvent e;
     CGPoint loc = [theEvent locationInWindow];
     e.data[0] = (int)loc.x;
-    e.data[1] = [self frame].size.height - (int)loc.y - (22 + 1); // not 22 so we allow 0
+    if ([self isInFullScreenMode]) {
+        e.data[1] = [self frame].size.height - (int)loc.y - 1;
+    } else {
+        e.data[1] = [self frame].size.height - (int)loc.y - (22 + 1); // not 22 so we allow 0
+    }
     e.data[2] = (int)[theEvent buttonNumber];
     return e;
 }
@@ -102,7 +106,10 @@
 {
     CGRect frameOrigin = [self frame];
     frameOrigin.origin = CGPointMake(0, 0);
-    frameOrigin.size.height -= 22;
+    if ([self isInFullScreenMode]) {
+        frameOrigin.size.height -= 22;
+
+    }
     if (!CGRectContainsPoint(frameOrigin, [theEvent locationInWindow])) {
         return;
     }
@@ -183,7 +190,11 @@
     GMDEvent e;
     e.kind = GMDResize;
     e.data[0] = [self frame].size.width;
-    e.data[1] = [self frame].size.height-22;
+    if ([self isInFullScreenMode]) {
+        e.data[1] = [self frame].size.height;
+    } else {
+        e.data[1] = [self frame].size.height-22;
+    }
     [self nq:e];
     //[gw newBuffer];
 }
@@ -193,6 +204,15 @@
     GMDEvent e;
     e.kind = GMDClose;
     [self nq:e];
+}
+
+- (BOOL)isInFullScreenMode
+{
+    if (([self styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 @end
