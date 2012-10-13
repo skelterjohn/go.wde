@@ -41,7 +41,7 @@ func init() {
 }
 
 const (
-	WIN_CLASSNAME   = "wde_win"
+	WIN_CLASSNAME = "wde_win"
 )
 
 type Window struct {
@@ -127,6 +127,10 @@ func (this *Window) SetSize(width, height int) {
 func (this *Window) Size() (width, height int) {
 	bounds := this.buffer.Bounds()
 	return bounds.Dx(), bounds.Dy()
+}
+
+func (w *Window) LockSize(lock bool) {
+
 }
 
 func (this *Window) Show() {
