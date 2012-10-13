@@ -25,6 +25,7 @@ type Window interface {
 	SetTitle(title string)
 	SetSize(width, height int)
 	Size() (width, height int)
+	LockSize(lock bool)
 	Show()
 	Screen() (im draw.Image)
 	FlushImage(bounds ...image.Rectangle)

@@ -97,6 +97,10 @@ func (w *Window) Size() (width, height int) {
 	return
 }
 
+func (w *Window) LockSize(lock bool) {
+
+}
+
 func (w *Window) Show() {
 	w.oplock.Lock()
 	defer w.oplock.Unlock()
