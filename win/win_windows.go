@@ -173,7 +173,7 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	bi.BmiHeader.BiWidth = width
 	bi.BmiHeader.BiHeight = height
 	bi.BmiHeader.BiPlanes = 1
-	bi.BmiHeader.BiBitCount = 24
+	bi.BmiHeader.BiBitCount = 32
 	bi.BmiHeader.BiCompression = w32.BI_RGB
 
 	w32.SetDIBitsToDevice(hdc,
