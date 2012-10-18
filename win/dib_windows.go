@@ -21,43 +21,6 @@ import (
 	"image/color"
 )
 
-var (
-	DIBModel color.Model = color.ModelFunc(dibModel)
-)
-
-func dibModel(c color.Color) color.Color {
-	if _, ok := c.(DIBColor); ok {
-		return c
-	}
-	r, g, b, a := c.RGBA()
-	// take alpha channel into account
-	if a == 0xffff {
-		return DIBColor{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}
-	}
-	if a == 0 {
-		return DIBColor{0, 0, 0}
-	}
-	r = (r / 0xffff) * a
-	g = (g / 0xffff) * a
-	b = (b / 0xffff) * a
-	return DIBColor{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8)}
-}
-
-type DIBColor struct {
-	R, G, B uint8
-}
-
-func (c DIBColor) RGBA() (r, g, b, a uint32) {
-	r = uint32(c.R)
-	r |= r << 8
-	g = uint32(c.G)
-	g |= g << 8
-	b = uint32(c.B)
-	b |= b << 8
-	a = 0xffff
-	return
-}
-
 type DIB struct {
 	// Pix holds the image's pixels, in B, G, R order. The pixel at
 	// (x, y) starts at Pix[(p.Rect.Max.Y-y-p.Rect.Min.Y-1)*p.Stride + (x-p.Rect.Min.X)*3].
@@ -70,15 +33,11 @@ type DIB struct {
 
 func NewDIB(r image.Rectangle) *DIB {
 	w, h := r.Dx(), r.Dy()
-	// make sure that every scan line is a multiple of 4 bytes
-	scanline := (w*3 + 3) & ^0x03
-	buf := make([]uint8, scanline*h)
-	return &DIB{buf, scanline, r}
+	buf := make([]uint8, 4*w*h)
+	return &DIB{buf, 4 * w, r}
 }
 
-func (p *DIB) ColorModel() color.Model {
-	return DIBModel
-}
+func (p *DIB) ColorModel() color.Model { return color.RGBAModel }
 
 func (p *DIB) Bounds() image.Rectangle {
 	return p.Rect
@@ -86,16 +45,16 @@ func (p *DIB) Bounds() image.Rectangle {
 
 func (p *DIB) At(x, y int) color.Color {
 	if !(image.Point{x, y}.In(p.Rect)) {
-		return DIBColor{}
+		return color.RGBA{}
 	}
 	i := p.PixOffset(x, y)
-	return DIBColor{p.Pix[i+2], p.Pix[i+1], p.Pix[i+0]}
+	return color.RGBA{p.Pix[i+2], p.Pix[i+1], p.Pix[i+0], p.Pix[i+3]}
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *DIB) PixOffset(x, y int) int {
-	return (p.Rect.Max.Y-y-p.Rect.Min.Y-1)*p.Stride + (x-p.Rect.Min.X)*3
+	return (y-p.Rect.Min.Y)*p.Stride + (x-p.Rect.Min.X)*4
 }
 
 func (p *DIB) Set(x, y int, c color.Color) {
@@ -103,13 +62,14 @@ func (p *DIB) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := DIBModel.Convert(c).(DIBColor)
+	c1 := color.RGBAModel.Convert(c).(color.RGBA)
 	p.Pix[i+0] = c1.B
 	p.Pix[i+1] = c1.G
 	p.Pix[i+2] = c1.R
+	p.Pix[i+3] = c1.A
 }
 
-func (p *DIB) SetDIB(x, y int, c DIBColor) {
+func (p *DIB) SetDIB(x, y int, c color.RGBA) {
 	if !(image.Point{x, y}.In(p.Rect)) {
 		return
 	}
@@ -117,6 +77,7 @@ func (p *DIB) SetDIB(x, y int, c DIBColor) {
 	p.Pix[i+0] = c.B
 	p.Pix[i+1] = c.G
 	p.Pix[i+2] = c.R
+	p.Pix[i+3] = c.A
 }
 
 // SubImage returns an image representing the portion of the image p visible
@@ -139,5 +100,40 @@ func (p *DIB) SubImage(r image.Rectangle) image.Image {
 
 // Opaque scans the entire image and returns whether or not it is fully opaque.
 func (p *DIB) Opaque() bool {
+	if p.Rect.Empty() {
+		return true
+	}
+	i0, i1 := 3, p.Rect.Dx()*4
+	for y := p.Rect.Min.Y; y < p.Rect.Max.Y; y++ {
+		for i := i0; i < i1; i += 4 {
+			if p.Pix[i] != 0xff {
+				return false
+			}
+		}
+		i0 += p.Stride
+		i1 += p.Stride
+	}
 	return true
+}
+
+func (p *DIB) CopyRGBA(src *image.RGBA, r image.Rectangle) {
+	sp := image.ZP
+	i0 := (r.Min.X - p.Rect.Min.X) * 4
+	i1 := (r.Max.X - p.Rect.Min.X) * 4
+	si0 := (sp.X - src.Rect.Min.X) * 4
+	yMax := r.Max.Y - p.Rect.Min.Y
+
+	y := r.Min.Y - p.Rect.Min.Y
+	sy := sp.Y - src.Rect.Min.Y
+	for ; y != yMax; y, sy = y+1, sy+1 {
+		dpix := p.Pix[y*p.Stride:]
+		spix := src.Pix[sy*src.Stride:]
+
+		for i, si := i0, si0; i < i1; i, si = i+4, si+4 {
+			dpix[i+0] = spix[si+2]
+			dpix[i+1] = spix[si+1]
+			dpix[i+2] = spix[si+0]
+			dpix[i+3] = spix[si+3]
+		}
+	}
 }
