@@ -27,10 +27,15 @@ type Window interface {
 	Size() (width, height int)
 	LockSize(lock bool)
 	Show()
-	Screen() (im draw.Image)
+	Screen() (im Image)
 	FlushImage(bounds ...image.Rectangle)
 	EventChan() (events <-chan interface{})
 	Close() (err error)
+}
+
+type Image interface {
+	draw.Image
+	CopyRGBA(*image.RGBA, image.Rectangle)
 }
 
 /*

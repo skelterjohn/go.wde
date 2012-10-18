@@ -115,3 +115,25 @@ func (p *DIB) Opaque() bool {
 	}
 	return true
 }
+
+func (p *DIB) CopyRGBA(src *image.RGBA, r image.Rectangle) {
+	sp := image.ZP
+	i0 := (r.Min.X - p.Rect.Min.X) * 4
+	i1 := (r.Max.X - p.Rect.Min.X) * 4
+	si0 := (sp.X - src.Rect.Min.X) * 4
+	yMax := r.Max.Y - p.Rect.Min.Y
+
+	y := r.Min.Y - p.Rect.Min.Y
+	sy := sp.Y - src.Rect.Min.Y
+	for ; y != yMax; y, sy = y+1, sy+1 {
+		dpix := p.Pix[y*p.Stride:]
+		spix := src.Pix[sy*src.Stride:]
+
+		for i, si := i0, si0; i < i1; i, si = i+4, si+4 {
+			dpix[i+0] = spix[si+2]
+			dpix[i+1] = spix[si+1]
+			dpix[i+2] = spix[si+0]
+			dpix[i+3] = spix[si+3]
+		}
+	}
+}

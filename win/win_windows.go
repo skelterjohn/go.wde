@@ -21,7 +21,6 @@ import (
 	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
 	"image"
-	"image/draw"
 	"runtime"
 	"unsafe"
 )
@@ -137,7 +136,7 @@ func (this *Window) Show() {
 	w32.ShowWindow(this.hwnd, w32.SW_SHOWDEFAULT)
 }
 
-func (this *Window) Screen() draw.Image {
+func (this *Window) Screen() wde.Image {
 	return this.buffer
 }
 

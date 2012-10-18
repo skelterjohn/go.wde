@@ -28,7 +28,6 @@ import (
 	"github.com/BurntSushi/xgbutil/xwindow"
 	"github.com/skelterjohn/go.wde"
 	"image"
-	"image/draw"
 	"sync"
 )
 
@@ -156,11 +155,11 @@ func (w *Window) Show() {
 	w.win.Map()
 }
 
-func (w *Window) Screen() (im draw.Image) {
+func (w *Window) Screen() (im wde.Image) {
 	if w.closed {
 		return
 	}
-	im = w.buffer
+	im = &Image{w.buffer}
 	return
 }
 
@@ -187,4 +186,30 @@ func (w *Window) Close() (err error) {
 	w.win.Destroy()
 	w.closed = true
 	return
+}
+
+type Image struct {
+	*xgraphics.Image
+}
+
+func (buffer *Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
+	sp := image.ZP
+	i0 := (r.Min.X - buffer.Rect.Min.X) * 4
+	i1 := (r.Max.X - buffer.Rect.Min.X) * 4
+	si0 := (sp.X - src.Rect.Min.X) * 4
+	yMax := r.Max.Y - buffer.Rect.Min.Y
+
+	y := r.Min.Y - buffer.Rect.Min.Y
+	sy := sp.Y - src.Rect.Min.Y
+	for ; y != yMax; y, sy = y+1, sy+1 {
+		dpix := buffer.Pix[y*buffer.Stride:]
+		spix := src.Pix[sy*src.Stride:]
+
+		for i, si := i0, si0; i < i1; i, si = i+4, si+4 {
+			dpix[i+0] = spix[si+2]
+			dpix[i+1] = spix[si+1]
+			dpix[i+2] = spix[si+0]
+			dpix[i+3] = spix[si+3]
+		}
+	}
 }
