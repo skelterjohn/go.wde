@@ -193,7 +193,16 @@ type Image struct {
 }
 
 func (buffer Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
+        // clip r against each image's bounds and move sp accordingly (see draw.clip())
 	sp := image.ZP
+	orig := r.Min
+	r = r.Intersect(buffer.Bounds())
+	r = r.Intersect(src.Bounds().Add(orig.Sub(sp)))
+	dx := r.Min.X - orig.X
+	dy := r.Min.Y - orig.Y
+	(sp).X += dx
+	(sp).Y += dy
+
 	i0 := (r.Min.X - buffer.Rect.Min.X) * 4
 	i1 := (r.Max.X - buffer.Rect.Min.X) * 4
 	si0 := (sp.X - src.Rect.Min.X) * 4
