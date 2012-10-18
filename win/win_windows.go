@@ -21,7 +21,6 @@ import (
 	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
 	"image"
-	"image/draw"
 	"runtime"
 	"unsafe"
 )
@@ -130,14 +129,20 @@ func (this *Window) Size() (width, height int) {
 }
 
 func (w *Window) LockSize(lock bool) {
-
+        prevStyle := int(w32.GetWindowLongPtr(w.hwnd, w32.GWL_STYLE))
+        if lock {
+            prevStyle &= ^(w32.WS_MAXIMIZEBOX|w32.WS_SIZEBOX)
+        } else {
+            prevStyle |= w32.WS_MAXIMIZEBOX|w32.WS_SIZEBOX
+        }
+        w32.SetWindowLongPtr(w.hwnd, w32.GWL_STYLE, uintptr(prevStyle))
 }
 
 func (this *Window) Show() {
 	w32.ShowWindow(this.hwnd, w32.SW_SHOWDEFAULT)
 }
 
-func (this *Window) Screen() draw.Image {
+func (this *Window) Screen() wde.Image {
 	return this.buffer
 }
 
@@ -173,7 +178,7 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	bi.BmiHeader.BiWidth = width
 	bi.BmiHeader.BiHeight = height
 	bi.BmiHeader.BiPlanes = 1
-	bi.BmiHeader.BiBitCount = 24
+	bi.BmiHeader.BiBitCount = 32
 	bi.BmiHeader.BiCompression = w32.BI_RGB
 
 	w32.SetDIBitsToDevice(hdc,
