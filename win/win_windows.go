@@ -129,7 +129,13 @@ func (this *Window) Size() (width, height int) {
 }
 
 func (w *Window) LockSize(lock bool) {
-
+        prevStyle := int(w32.GetWindowLongPtr(w.hwnd, w32.GWL_STYLE))
+        if lock {
+            prevStyle &= ^(w32.WS_MAXIMIZEBOX|w32.WS_SIZEBOX)
+        } else {
+            prevStyle |= w32.WS_MAXIMIZEBOX|w32.WS_SIZEBOX
+        }
+        w32.SetWindowLongPtr(w.hwnd, w32.GWL_STYLE, uintptr(prevStyle))
 }
 
 func (this *Window) Show() {

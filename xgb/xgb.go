@@ -192,7 +192,7 @@ type Image struct {
 	*xgraphics.Image
 }
 
-func (buffer *Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
+func (buffer Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
 	sp := image.ZP
 	i0 := (r.Min.X - buffer.Rect.Min.X) * 4
 	i1 := (r.Max.X - buffer.Rect.Min.X) * 4
