@@ -117,7 +117,16 @@ func (p *DIB) Opaque() bool {
 }
 
 func (p *DIB) CopyRGBA(src *image.RGBA, r image.Rectangle) {
+        // clip r against each image's bounds and move sp accordingly (see draw.clip())
 	sp := image.ZP
+	orig := r.Min
+	r = r.Intersect(p.Bounds())
+	r = r.Intersect(src.Bounds().Add(orig.Sub(sp)))
+	dx := r.Min.X - orig.X
+	dy := r.Min.Y - orig.Y
+	(sp).X += dx
+	(sp).Y += dy
+
 	i0 := (r.Min.X - p.Rect.Min.X) * 4
 	i1 := (r.Max.X - p.Rect.Min.X) * 4
 	si0 := (sp.X - src.Rect.Min.X) * 4
