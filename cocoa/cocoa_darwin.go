@@ -54,9 +54,17 @@ func SetAppName(name string) {
 	C.setAppName(cname)
 }
 
+type Image struct {
+	*image.RGBA
+}
+
+func (im Image) CopyRGBA(src *image.RGBA, bounds image.Rectangle) {
+	draw.Draw(im.RGBA, bounds, src, image.Point{0, 0}, draw.Src)
+}
+
 type Window struct {
 	cw     C.GMDWindow
-	im     *image.RGBA
+	im     Image
 	oplock sync.Mutex
 	ec     chan interface{}
 }
@@ -108,16 +116,16 @@ func (w *Window) Show() {
 	C.showWindow(w.cw)
 }
 
-func (w *Window) resizeBuffer(width, height int) (im draw.Image) {
+func (w *Window) resizeBuffer(width, height int) (im wde.Image) {
 	w.oplock.Lock()
 	defer w.oplock.Unlock()
 
 	ci := C.getWindowScreen(w.cw)
 
-	w.im = image.NewRGBA(image.Rectangle{
+	w.im = Image{image.NewRGBA(image.Rectangle{
 		image.Point{},
 		image.Point{width, height},
-	})
+	})}
 
 	ptr := unsafe.Pointer(&w.im.Pix[0])
 
@@ -127,10 +135,10 @@ func (w *Window) resizeBuffer(width, height int) (im draw.Image) {
 	return
 }
 
-func (w *Window) Screen() (im draw.Image) {
+func (w *Window) Screen() (im wde.Image) {
 	width, height := w.Size()
 	var imw, imh int
-	if w.im == nil {
+	if w.im.RGBA == nil {
 		goto newbuffer
 	}
 

@@ -35,7 +35,9 @@ type Window interface {
 
 type Image interface {
 	draw.Image
-	CopyRGBA(*image.RGBA, image.Rectangle)
+	// CopyRGBA() copies the source image to this image, translating
+	// the source image to the provided bounds.
+	CopyRGBA(src *image.RGBA, bounds image.Rectangle)
 }
 
 /*
