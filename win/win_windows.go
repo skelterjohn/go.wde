@@ -176,7 +176,7 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	var bi w32.BITMAPINFO
 	bi.BmiHeader.BiSize = uint(unsafe.Sizeof(bi.BmiHeader))
 	bi.BmiHeader.BiWidth = width
-	bi.BmiHeader.BiHeight = height
+	bi.BmiHeader.BiHeight = -height
 	bi.BmiHeader.BiPlanes = 1
 	bi.BmiHeader.BiBitCount = 32
 	bi.BmiHeader.BiCompression = w32.BI_RGB
