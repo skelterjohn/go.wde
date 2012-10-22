@@ -122,9 +122,12 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 
 	case w32.WM_KEYDOWN:
 		// TODO: letter
-		ke := wde.KeyEvent{
-			fmt.Sprintf("%d", wparam),
+		key, exists := codeKeys[wparam]
+		if !exists {
+				key = fmt.Sprintf("%d", wparam)
 		}
+		ke := wde.KeyEvent{key}
+		
 		wnd.events <- wde.KeyDownEvent(ke)
 		kpe := wde.KeyTypedEvent{
 			KeyEvent: ke,
@@ -133,9 +136,11 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 
 	case w32.WM_KEYUP:
 		// TODO: letter
-		wnd.events <- wde.KeyUpEvent{
-			fmt.Sprintf("%d", wparam),
+		key, exists := codeKeys[wparam]
+		if !exists {
+				key = fmt.Sprintf("%d", wparam)
 		}
+		wnd.events <- wde.KeyUpEvent{key}
 
 	case w32.WM_SIZE:
 		width := int(lparam) & 0xFFFF
