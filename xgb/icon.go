@@ -44,18 +44,18 @@ func (w *Window) SetIconName(name string) {
 func (w *Window) SetIcon(icon image.Image) {
 	width := icon.Bounds().Max.X - icon.Bounds().Min.X
 	height := icon.Bounds().Max.Y - icon.Bounds().Min.Y
-	data := make([]int, width*height)
+	data := make([]uint, width*height)
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
 			i := x + y*width
 			c := icon.At(x, y)
 			r, g, b, a := c.RGBA()
-			data[i] = int(a + r<<8 + g<<16 + b<<24)
+			data[i] = uint(a + r<<8 + g<<16 + b<<24)
 		}
 	}
 	wmicon := ewmh.WmIcon{
-		Width:  width,
-		Height: height,
+		Width:  uint(width),
+		Height: uint(height),
 		Data:   data,
 	}
 	ewmh.WmIconSet(w.xu, w.win.Id, []ewmh.WmIcon{wmicon})
