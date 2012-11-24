@@ -19,6 +19,8 @@ package win
 import (
 	"errors"
 	"github.com/AllenDang/w32"
+	"github.com/AllenDang/w32/gdi32"
+	"github.com/AllenDang/w32/user32"
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"runtime"
@@ -77,7 +79,7 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 		w32.CW_USEDEFAULT + width,
 		w32.CW_USEDEFAULT + height,
 	}
-	w32.AdjustWindowRectEx(cr, w32.WS_OVERLAPPEDWINDOW, false, w32.WS_EX_CLIENTEDGE)
+	user32.AdjustWindowRectEx(cr, w32.WS_OVERLAPPEDWINDOW, false, w32.WS_EX_CLIENTEDGE)
 	width = cr.Right - cr.Left
 	height = cr.Bottom - cr.Top
 	hwnd, err := CreateWindow(WIN_CLASSNAME, nil, w32.WS_EX_CLIENTEDGE, w32.WS_OVERLAPPEDWINDOW, width, height)
@@ -115,12 +117,12 @@ func NewWindow(width, height int) (w *Window, err error) {
 }
 
 func (this *Window) SetTitle(title string) {
-	w32.SetWindowText(this.hwnd, title)
+	user32.SetWindowText(this.hwnd, title)
 }
 
 func (this *Window) SetSize(width, height int) {
 	x, y := this.Pos()
-	w32.MoveWindow(this.hwnd, x, y, width, height, true)
+	user32.MoveWindow(this.hwnd, x, y, width, height, true)
 }
 
 func (this *Window) Size() (width, height int) {
@@ -129,17 +131,17 @@ func (this *Window) Size() (width, height int) {
 }
 
 func (w *Window) LockSize(lock bool) {
-        prevStyle := int(w32.GetWindowLongPtr(w.hwnd, w32.GWL_STYLE))
-        if lock {
-            prevStyle &= ^(w32.WS_MAXIMIZEBOX|w32.WS_SIZEBOX)
-        } else {
-            prevStyle |= w32.WS_MAXIMIZEBOX|w32.WS_SIZEBOX
-        }
-        w32.SetWindowLongPtr(w.hwnd, w32.GWL_STYLE, uintptr(prevStyle))
+	prevStyle := int(user32.GetWindowLongPtr(w.hwnd, w32.GWL_STYLE))
+	if lock {
+		prevStyle &= ^(w32.WS_MAXIMIZEBOX | w32.WS_SIZEBOX)
+	} else {
+		prevStyle |= w32.WS_MAXIMIZEBOX | w32.WS_SIZEBOX
+	}
+	user32.SetWindowLongPtr(w.hwnd, w32.GWL_STYLE, uintptr(prevStyle))
 }
 
 func (this *Window) Show() {
-	w32.ShowWindow(this.hwnd, w32.SW_SHOWDEFAULT)
+	user32.ShowWindow(this.hwnd, w32.SW_SHOWDEFAULT)
 }
 
 func (this *Window) Screen() wde.Image {
@@ -147,9 +149,9 @@ func (this *Window) Screen() wde.Image {
 }
 
 func (this *Window) FlushImage(bounds ...image.Rectangle) {
-	hdc := w32.GetDC(this.hwnd)
+	hdc := user32.GetDC(this.hwnd)
 	this.blitImage(hdc)
-	w32.DeleteDC(hdc)
+	gdi32.DeleteDC(hdc)
 }
 
 func (this *Window) EventChan() <-chan interface{} {
@@ -157,7 +159,7 @@ func (this *Window) EventChan() <-chan interface{} {
 }
 
 func (this *Window) Close() error {
-	err := w32.SendMessage(this.hwnd, w32.WM_CLOSE, 0, 0)
+	err := user32.SendMessage(this.hwnd, w32.WM_CLOSE, 0, 0)
 	if err != 0 {
 		return errors.New("Error closing window")
 	}
@@ -181,7 +183,7 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	bi.BmiHeader.BiBitCount = 32
 	bi.BmiHeader.BiCompression = w32.BI_RGB
 
-	w32.SetDIBitsToDevice(hdc,
+	gdi32.SetDIBitsToDevice(hdc,
 		0, 0,
 		width, height,
 		0, 0,
@@ -194,14 +196,14 @@ func (this *Window) blitImage(hdc w32.HDC) {
 func (this *Window) HandleWndMessages() {
 	var m w32.MSG
 
-	for w32.GetMessage(&m, this.hwnd, 0, 0) != 0 {
-		w32.TranslateMessage(&m)
-		w32.DispatchMessage(&m)
+	for user32.GetMessage(&m, this.hwnd, 0, 0) != 0 {
+		user32.TranslateMessage(&m)
+		user32.DispatchMessage(&m)
 	}
 }
 
 func (this *Window) Pos() (x, y int) {
-	rect := w32.GetWindowRect(this.hwnd)
+	rect := user32.GetWindowRect(this.hwnd)
 	return int(rect.Left), int(rect.Top)
 }
 
@@ -213,12 +215,12 @@ func (this *Window) SetPos(x, y int) {
 	if h == 0 {
 		h = 25
 	}
-	w32.MoveWindow(this.hwnd, x, y, w, h, true)
+	user32.MoveWindow(this.hwnd, x, y, w, h, true)
 }
 
 func (this *Window) Center() {
-	sWidth := w32.GetSystemMetrics(w32.SM_CXFULLSCREEN)
-	sHeight := w32.GetSystemMetrics(w32.SM_CYFULLSCREEN)
+	sWidth := user32.GetSystemMetrics(w32.SM_CXFULLSCREEN)
+	sHeight := user32.GetSystemMetrics(w32.SM_CYFULLSCREEN)
 
 	if sWidth != 0 && sHeight != 0 {
 		w, h := this.Size()
