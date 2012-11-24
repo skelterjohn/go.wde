@@ -17,11 +17,13 @@
 package win
 
 import (
+	"fmt"
 	"github.com/AllenDang/w32"
+	"github.com/AllenDang/w32/comctl32"
+	"github.com/AllenDang/w32/user32"
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"unsafe"
-	"fmt"
 )
 
 type EventData struct {
@@ -52,7 +54,7 @@ func buttonForDetail(button uint) wde.Button {
 func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 	wnd := GetMsgHandler(hwnd)
 	if wnd == nil {
-		return uintptr(w32.DefWindowProc(hwnd, msg, wparam, lparam))
+		return uintptr(user32.DefWindowProc(hwnd, msg, wparam, lparam))
 	}
 
 	var rc uintptr
@@ -97,7 +99,7 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 			tme.DwFlags = w32.TME_LEAVE
 			tme.HwndTrack = hwnd
 			tme.DwHoverTime = w32.HOVER_DEFAULT
-			w32.TrackMouseEvent(&tme)
+			comctl32.TrackMouseEvent(&tme)
 			wnd.trackMouse = true
 			wnd.events <- wde.MouseEnteredEvent(mme)
 		} else {
@@ -124,10 +126,10 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		// TODO: letter
 		key, exists := codeKeys[wparam]
 		if !exists {
-				key = fmt.Sprintf("%d", wparam)
+			key = fmt.Sprintf("%d", wparam)
 		}
 		ke := wde.KeyEvent{key}
-		
+
 		wnd.events <- wde.KeyDownEvent(ke)
 		kpe := wde.KeyTypedEvent{
 			KeyEvent: ke,
@@ -138,7 +140,7 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		// TODO: letter
 		key, exists := codeKeys[wparam]
 		if !exists {
-				key = fmt.Sprintf("%d", wparam)
+			key = fmt.Sprintf("%d", wparam)
 		}
 		wnd.events <- wde.KeyUpEvent{key}
 
@@ -147,21 +149,21 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		height := int(lparam>>16) & 0xFFFF
 		wnd.buffer = NewDIB(image.Rect(0, 0, width, height))
 		wnd.events <- wde.ResizeEvent{width, height}
-		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
+		rc = user32.DefWindowProc(hwnd, msg, wparam, lparam)
 
 	case w32.WM_PAINT:
-		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
+		rc = user32.DefWindowProc(hwnd, msg, wparam, lparam)
 
 	case w32.WM_CLOSE:
 		UnRegMsgHandler(hwnd)
-		w32.DestroyWindow(hwnd)
+		user32.DestroyWindow(hwnd)
 		wnd.events <- wde.CloseEvent{}
 
 	case w32.WM_DESTROY:
-		w32.PostQuitMessage(0)
+		user32.PostQuitMessage(0)
 
 	default:
-		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
+		rc = user32.DefWindowProc(hwnd, msg, wparam, lparam)
 	}
 
 	return rc
