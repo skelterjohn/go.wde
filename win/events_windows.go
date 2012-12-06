@@ -17,11 +17,11 @@
 package win
 
 import (
+	"fmt"
 	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"unsafe"
-	"fmt"
 )
 
 type EventData struct {
@@ -37,7 +37,7 @@ func (this *EventData) InitEventData() {
 	this.lastX = this.noX
 }
 
-func buttonForDetail(button uint) wde.Button {
+func buttonForDetail(button uint32) wde.Button {
 	switch button {
 	case w32.WM_LBUTTONDOWN, w32.WM_LBUTTONUP:
 		return wde.LeftButton
@@ -49,7 +49,7 @@ func buttonForDetail(button uint) wde.Button {
 	return 0
 }
 
-func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
+func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 	wnd := GetMsgHandler(hwnd)
 	if wnd == nil {
 		return uintptr(w32.DefWindowProc(hwnd, msg, wparam, lparam))
@@ -93,7 +93,7 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 
 		if !wnd.trackMouse {
 			var tme w32.TRACKMOUSEEVENT
-			tme.CbSize = uint(unsafe.Sizeof(tme))
+			tme.CbSize = uint32(unsafe.Sizeof(tme))
 			tme.DwFlags = w32.TME_LEAVE
 			tme.HwndTrack = hwnd
 			tme.DwHoverTime = w32.HOVER_DEFAULT
@@ -124,10 +124,10 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		// TODO: letter
 		key, exists := codeKeys[wparam]
 		if !exists {
-				key = fmt.Sprintf("%d", wparam)
+			key = fmt.Sprintf("%d", wparam)
 		}
 		ke := wde.KeyEvent{key}
-		
+
 		wnd.events <- wde.KeyDownEvent(ke)
 		kpe := wde.KeyTypedEvent{
 			KeyEvent: ke,
@@ -138,7 +138,7 @@ func WndProc(hwnd w32.HWND, msg uint, wparam, lparam uintptr) uintptr {
 		// TODO: letter
 		key, exists := codeKeys[wparam]
 		if !exists {
-				key = fmt.Sprintf("%d", wparam)
+			key = fmt.Sprintf("%d", wparam)
 		}
 		wnd.events <- wde.KeyUpEvent{key}
 

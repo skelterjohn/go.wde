@@ -74,12 +74,12 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 	cr := &w32.RECT{
 		w32.CW_USEDEFAULT,
 		w32.CW_USEDEFAULT,
-		w32.CW_USEDEFAULT + width,
-		w32.CW_USEDEFAULT + height,
+		w32.CW_USEDEFAULT + int32(width),
+		w32.CW_USEDEFAULT + int32(height),
 	}
 	w32.AdjustWindowRectEx(cr, w32.WS_OVERLAPPEDWINDOW, false, w32.WS_EX_CLIENTEDGE)
-	width = cr.Right - cr.Left
-	height = cr.Bottom - cr.Top
+	width = int(cr.Right - cr.Left)
+	height = int(cr.Bottom - cr.Top)
 	hwnd, err := CreateWindow(WIN_CLASSNAME, nil, w32.WS_EX_CLIENTEDGE, w32.WS_OVERLAPPEDWINDOW, width, height)
 	if err != nil {
 		return
@@ -129,13 +129,13 @@ func (this *Window) Size() (width, height int) {
 }
 
 func (w *Window) LockSize(lock bool) {
-        prevStyle := int(w32.GetWindowLongPtr(w.hwnd, w32.GWL_STYLE))
-        if lock {
-            prevStyle &= ^(w32.WS_MAXIMIZEBOX|w32.WS_SIZEBOX)
-        } else {
-            prevStyle |= w32.WS_MAXIMIZEBOX|w32.WS_SIZEBOX
-        }
-        w32.SetWindowLongPtr(w.hwnd, w32.GWL_STYLE, uintptr(prevStyle))
+	prevStyle := int(w32.GetWindowLongPtr(w.hwnd, w32.GWL_STYLE))
+	if lock {
+		prevStyle &= ^(w32.WS_MAXIMIZEBOX | w32.WS_SIZEBOX)
+	} else {
+		prevStyle |= w32.WS_MAXIMIZEBOX | w32.WS_SIZEBOX
+	}
+	w32.SetWindowLongPtr(w.hwnd, w32.GWL_STYLE, uintptr(prevStyle))
 }
 
 func (this *Window) Show() {
@@ -174,9 +174,9 @@ func (this *Window) blitImage(hdc w32.HDC) {
 	height := bounds.Dy()
 
 	var bi w32.BITMAPINFO
-	bi.BmiHeader.BiSize = uint(unsafe.Sizeof(bi.BmiHeader))
-	bi.BmiHeader.BiWidth = width
-	bi.BmiHeader.BiHeight = -height
+	bi.BmiHeader.BiSize = uint32(unsafe.Sizeof(bi.BmiHeader))
+	bi.BmiHeader.BiWidth = int32(width)
+	bi.BmiHeader.BiHeight = int32(-height)
 	bi.BmiHeader.BiPlanes = 1
 	bi.BmiHeader.BiBitCount = 32
 	bi.BmiHeader.BiCompression = w32.BI_RGB

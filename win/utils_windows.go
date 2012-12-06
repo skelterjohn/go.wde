@@ -89,7 +89,7 @@ func RegisterClass(className string, wndproc uintptr) error {
 	icon := w32.LoadIcon(gAppInstance, w32.MakeIntResource(w32.IDI_APPLICATION))
 
 	var wc w32.WNDCLASSEX
-	wc.Size = uint(unsafe.Sizeof(wc))
+	wc.Size = uint32(unsafe.Sizeof(wc))
 	wc.Style = w32.CS_HREDRAW | w32.CS_VREDRAW
 	wc.WndProc = wndproc
 	wc.Instance = gAppInstance
