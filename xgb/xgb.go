@@ -61,6 +61,7 @@ type Window struct {
 	buffer        *xgraphics.Image
 	bufferLck     *sync.Mutex
 	width, height int
+	lockedSize    bool
 	closed        bool
 
 	events chan interface{}
@@ -131,8 +132,11 @@ func (w *Window) SetSize(width, height int) {
 		return
 	}
 
-	w.win.Resize(width, height)
 	w.width, w.height = width, height
+	if w.lockedSize {
+		w.updateSizeHints()
+	}
+	w.win.Resize(width, height)
 	return
 }
 
@@ -145,7 +149,20 @@ func (w *Window) Size() (width, height int) {
 }
 
 func (w *Window) LockSize(lock bool) {
+	w.lockedSize = lock
+	w.updateSizeHints()
+}
 
+func (w *Window) updateSizeHints() {
+	hints := new(icccm.NormalHints)
+	if w.lockedSize {
+		hints.Flags = icccm.SizeHintPMinSize | icccm.SizeHintPMaxSize
+		hints.MinWidth = uint(w.width)
+		hints.MaxWidth = uint(w.width)
+		hints.MinHeight = uint(w.height)
+		hints.MaxHeight = uint(w.height)
+	}
+	icccm.WmNormalHintsSet(w.xu, w.win.Id, hints)
 }
 
 func (w *Window) Show() {
