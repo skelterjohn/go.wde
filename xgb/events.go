@@ -35,6 +35,10 @@ func buttonForDetail(detail xproto.Button) wde.Button {
 		return wde.MiddleButton
 	case 3:
 		return wde.RightButton
+	case 4:
+		return wde.WheelUpButton
+	case 5:
+		return wde.WheelDownButton
 	}
 	return 0
 }
