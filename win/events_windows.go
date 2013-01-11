@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
-	"log"
 	"image"
 	"unsafe"
 )
@@ -86,7 +85,6 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		mue.Where.X = int(lparam) & 0xFFFF
 		mue.Where.Y = int(lparam>>16) & 0xFFFF
 		delta := int16((wparam>>16) & 0xFFFF)
-		log.Println(delta)
 		if delta > 0 {
 			mde.Which = wde.WheelUpButton
 			mue.Which = wde.WheelUpButton
