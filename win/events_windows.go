@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
+	"log"
 	"image"
 	"unsafe"
 )
@@ -76,6 +77,27 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		wnd.lastX = bpe.Where.X
 		wnd.lastY = bpe.Where.Y
 		wnd.events <- bpe
+
+	case w32.WM_MOUSEWHEEL:
+		var mde wde.MouseDownEvent
+		var mue wde.MouseUpEvent
+		mde.Where.X = int(lparam) & 0xFFFF
+		mde.Where.Y = int(lparam>>16) & 0xFFFF
+		mue.Where.X = int(lparam) & 0xFFFF
+		mue.Where.Y = int(lparam>>16) & 0xFFFF
+		delta := int16((wparam>>16) & 0xFFFF)
+		log.Println(delta)
+		if delta > 0 {
+			mde.Which = wde.WheelUpButton
+			mue.Which = wde.WheelUpButton
+		} else {
+			mde.Which = wde.WheelDownButton
+			mue.Which = wde.WheelDownButton
+		}
+		wnd.lastX = mde.Where.X
+		wnd.lastX = mde.Where.Y
+		wnd.events <- mde
+		wnd.events <- mue
 
 	case w32.WM_MOUSEMOVE:
 		var mme wde.MouseMovedEvent
