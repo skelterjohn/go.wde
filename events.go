@@ -26,6 +26,8 @@ const (
 	LeftButton Button = 1 << iota
 	MiddleButton
 	RightButton
+	WheelUpButton
+	WheelDownButton
 )
 
 type Event int
