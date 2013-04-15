@@ -84,6 +84,3 @@ type ResizeEvent struct {
 }
 
 type CloseEvent struct{}
-
-// The window needs to be redrawn
-type RepaintEvent struct{}
