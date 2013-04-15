@@ -170,7 +170,7 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
 
 	case w32.WM_PAINT:
-		wnd.FlushImage()
+		wnd.Repaint()
 		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
 
 	case w32.WM_CLOSE:
