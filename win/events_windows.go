@@ -84,7 +84,7 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		mde.Where.Y = int(lparam>>16) & 0xFFFF
 		mue.Where.X = int(lparam) & 0xFFFF
 		mue.Where.Y = int(lparam>>16) & 0xFFFF
-		delta := int16((wparam>>16) & 0xFFFF)
+		delta := int16((wparam >> 16) & 0xFFFF)
 		if delta > 0 {
 			mde.Which = wde.WheelUpButton
 			mue.Which = wde.WheelUpButton
@@ -170,6 +170,7 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
 
 	case w32.WM_PAINT:
+		wnd.Repaint()
 		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
 
 	case w32.WM_CLOSE:

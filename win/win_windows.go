@@ -46,9 +46,10 @@ const (
 type Window struct {
 	EventData
 
-	hwnd   w32.HWND
-	buffer *DIB
-	events chan interface{}
+	hwnd       w32.HWND
+	buffer     *DIB
+	bufferback *DIB
+	events     chan interface{}
 }
 
 /*
@@ -86,9 +87,10 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 	}
 
 	w = &Window{
-		hwnd:   hwnd,
-		buffer: NewDIB(image.Rect(0, 0, width, height)),
-		events: make(chan interface{}, 16),
+		hwnd:       hwnd,
+		buffer:     NewDIB(image.Rect(0, 0, width, height)),
+		bufferback: NewDIB(image.Rect(0, 0, width, height)),
+		events:     make(chan interface{}, 16),
 	}
 	w.InitEventData()
 
@@ -147,8 +149,11 @@ func (this *Window) Screen() wde.Image {
 }
 
 func (this *Window) FlushImage(bounds ...image.Rectangle) {
+	this.bufferback = NewDIB(this.buffer.Bounds())
+	*this.bufferback = *this.buffer
+
 	hdc := w32.GetDC(this.hwnd)
-	this.blitImage(hdc)
+	this.blitImage(hdc, this.buffer)
 	w32.DeleteDC(hdc)
 }
 
@@ -168,8 +173,8 @@ func (this *Window) Close() error {
 // Non - interface methods
 /////////////////////////////
 
-func (this *Window) blitImage(hdc w32.HDC) {
-	bounds := this.buffer.Bounds()
+func (this *Window) blitImage(hdc w32.HDC, buffer *DIB) {
+	bounds := buffer.Bounds()
 	width := bounds.Dx()
 	height := bounds.Dy()
 
@@ -186,7 +191,7 @@ func (this *Window) blitImage(hdc w32.HDC) {
 		width, height,
 		0, 0,
 		0, uint(height),
-		this.buffer.Pix, &bi,
+		buffer.Pix, &bi,
 		w32.DIB_RGB_COLORS,
 	)
 }
@@ -224,4 +229,10 @@ func (this *Window) Center() {
 		w, h := this.Size()
 		this.SetPos((sWidth/2)-(w/2), (sHeight/2)-(h/2))
 	}
+}
+
+func (this *Window) Repaint() {
+	hdc := w32.GetDC(this.hwnd)
+	this.blitImage(hdc, this.bufferback)
+	w32.DeleteDC(hdc)
 }
