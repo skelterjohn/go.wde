@@ -162,8 +162,9 @@ func (this *Window) EventChan() <-chan interface{} {
 }
 
 func (this *Window) Close() error {
-	err := w32.SendMessage(this.hwnd, w32.WM_CLOSE, 0, 0)
-	if err != 0 {
+	this.UnRegMsgHandler(hwnd)
+	w32.DestroyWindow(this.hwnd)
+	if err == false {
 		return errors.New("Error closing window")
 	}
 	return nil
