@@ -143,7 +143,10 @@ var chordIndices map[string]int
 func init() {
 	chordIndices = map[string]int{}
 	for i, k := range chordPrecedence {
-		chordIndices[k] = i + 1
+		// we give these negative values so that when a lookup is done on something
+		// that is not in this list, it gets 0 (the default), and comes after each
+		// of the keys indicated in chordPrecedence.
+		chordIndices[k] = i - len(chordPrecedence)
 	}
 }
 
@@ -158,7 +161,13 @@ func (c ChordSorter) Swap(i, j int) {
 func (c ChordSorter) Less(i, j int) (less bool) {
 	ip := chordIndices[c[i]]
 	jp := chordIndices[c[j]]
-	return ip > jp
+	if ip == 0 && jp == 0 {
+		if len(c[i]) != len(c[j]) {
+			return len(c[i]) > len(c[j])
+		}
+		return c[i] < c[j]
+	}
+	return ip < jp
 }
 
 func ConstructChord(keys map[string]bool) (chord string) {
@@ -179,6 +188,7 @@ func ConstructChord(keys map[string]bool) (chord string) {
 	for key := range unikeys {
 		allkeys = append(allkeys, key)
 	}
+
 	sort.Sort(allkeys)
 	chord = strings.Join(allkeys, "+")
 	return
