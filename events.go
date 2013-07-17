@@ -32,38 +32,54 @@ const (
 
 type Event int
 
+// MouseEvent is used for data common to all mouse events, and should not appear as an event received by the caller program.
 type MouseEvent struct {
 	Event
 	Where image.Point
 }
 
+// MouseMovedEvent is for when the mouse moves within the window.
 type MouseMovedEvent struct {
 	MouseEvent
 	From image.Point
 }
 
+// MouseButtonEvent is used for data common to all mouse button events, and should not appear as an event received by the caller program.
 type MouseButtonEvent struct {
 	MouseEvent
 	Which Button
 }
 
+// MouseDownEvent is for when the mouse is clicked within the window.
 type MouseDownEvent MouseButtonEvent
+
+// MouseUpEvent is for when the mouse is unclicked within the window.
 type MouseUpEvent MouseButtonEvent
 
+// MouseDraggedEvent is for when the mouse is moved while a button is pressed.
 type MouseDraggedEvent struct {
 	MouseMovedEvent
 	Which Button
 }
 
+// MouseEnteredEvent is for when the mouse enters a window.
 type MouseEnteredEvent MouseMovedEvent
+
+// MouseExitedEvent is for when the mouse exits a window.
 type MouseExitedEvent MouseMovedEvent
 
+// KeyEvent is used for data common to all key events, and should not appear as an event received by the caller program.
 type KeyEvent struct {
 	Key string
 }
 
+// KeyDownEvent is for when a key is pressed.
 type KeyDownEvent KeyEvent
+
+// KeyUpEvent is for when a key is unpressed.
 type KeyUpEvent KeyEvent
+
+// KeyTypedEvent is for when a key is typed.
 type KeyTypedEvent struct {
 	KeyEvent
 	/*
@@ -79,8 +95,10 @@ type KeyTypedEvent struct {
 	Chord string
 }
 
+// ResizeEvent is for when the window changes size.
 type ResizeEvent struct {
 	Width, Height int
 }
 
+// CloseEvent is for when the window is closed.
 type CloseEvent struct{}
