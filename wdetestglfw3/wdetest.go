@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"github.com/skelterjohn/go.wde"
 	_ "github.com/grd/go.wde/wdeglfw3"
-	glfw "github.com/grd/glfw3"
 	"image/color"
 	"math/rand"
 	"runtime"
@@ -46,8 +45,10 @@ func wdetest() {
 			fmt.Println(err)
 			return
 		}
+
 		dw.SetTitle("hi!")
 		dw.SetSize(size, size)
+
 		dw.Show()
 
 		events := dw.EventChan()
@@ -145,7 +146,6 @@ func wdetest() {
 
 	wg.Wait()
 	wde.Stop()
-	glfw.Terminate()
 
 	println("done")
 }

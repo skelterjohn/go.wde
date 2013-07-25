@@ -17,10 +17,12 @@
 package glfw3
 
 import (
+	"github.com/go-gl/gl"
 	glfw "github.com/grd/glfw3"
 	"github.com/skelterjohn/go.wde"
 	"image"
-	"image/draw"
+	"image/color"
+//	"image/draw"
 //	"os"
 )
 
@@ -37,6 +39,9 @@ func init() {
 	wde.BackendStop = glfw.Terminate
 
 	go doRun()
+	
+	// Don't show the window context before using the Show function.
+	go glfw.WindowHint(glfw.Visible, glfw.False)
 }
 
 func doRun() {
@@ -84,7 +89,6 @@ func doRun() {
 
 type Window struct {
 	win           *glfw.Window
-	buffer        Image
 	lockedSize    bool
 
 	events chan interface{}
@@ -98,7 +102,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 	
 	w.win, err = glfw.CreateWindow(width, height, "", nil, nil)
 	if err != nil {
-		return
+		return nil, err
 	}
 	
 	windowSlice = append(windowSlice, w)
@@ -110,6 +114,8 @@ func NewWindow(width, height int) (w *Window, err error) {
     // Make the window's context current
     w.win.MakeContextCurrent()
 
+	w.openglSetDefaults()
+	
 	return
 }
 
@@ -134,22 +140,28 @@ func (w *Window) Show() {
 }
 
 func (w *Window) Screen() (im wde.Image) {
-	im = w.buffer
+	//
+	// The returning image is NOT the actual buffer.
+	// Because it is OpenGL and that doesn't mix with the image package
+	// So the image is a phony with only the boundaries implemented and a 
+	// few functions are re-designed to make use of OpenGL and to satisfy
+	// the wde.Image interface.
+	//
+
+	im = new(Image)
+	
+	//
+	// OpenGL settings for 2D access
+	//
+	
+	gl.Disable(gl.DEPTH_TEST)
+	gl.Clear(gl.COLOR_BUFFER_BIT)
 	return
 }
 
 func (w *Window) FlushImage(bounds ...image.Rectangle) {
-/*
-	if w.buffer.Pixmap == 0 {
-		w.bufferLck.Lock()
-		if err := w.buffer.XSurfaceSet(w.win.Id); err != nil {
-			fmt.Println(err)
-		}
-		w.bufferLck.Unlock()
-	}
-	w.buffer.XDraw()
-	w.buffer.XPaint(w.win.Id)
-*/
+	// TODO: Howto implement ...image.Rectangle
+	w.win.SwapBuffers()
 }
 
 func (w *Window) Close() (err error) {
@@ -157,9 +169,51 @@ func (w *Window) Close() (err error) {
 	return
 }
 
-type Image struct {
-	draw.Image
+
+func (w *Window) openglSetDefaults() {
+
+	// Setup a 2D projection
+
+	XSize, YSize := w.Size()
+
+	gl.MatrixMode (gl.PROJECTION)
+
+	gl.LoadIdentity ()
+
+	gl.Ortho(0, float64(XSize), float64(YSize), 0, 0, 1)
+
+	gl.Disable(gl.DEPTH_TEST)
+
+	gl.MatrixMode (gl.MODELVIEW)
+
+	gl.LoadIdentity()
+
+	// Displacement trick for exact pixelization
+
+	gl.Translatef(0.375, 0.375, 0)
 }
+
+
+type Image struct {
+	image.RGBA
+}
+
+
+func (p *Image) Set(x, y int, c color.Color) {
+	r, g, b, a := c.RGBA()
+	
+	gl.Color4us(uint16(r), uint16(g), uint16(b), uint16(a))
+	
+	gl.Begin(gl.POINTS)
+
+//	x1 := float32(x) + 0.5
+//	y1 := float32(y) + 0.5
+// 	gl.Vertex2f(x1, y1)
+	gl.Vertex2i(x, y)
+ 
+ 	gl.End()
+}
+
 
 func (buffer Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
 /*
