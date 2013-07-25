@@ -18,8 +18,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/skelterjohn/go.wde"
 	_ "github.com/grd/go.wde/wdeglfw3"
+	"github.com/skelterjohn/go.wde"
 	"image/color"
 	"math/rand"
 	"runtime"
