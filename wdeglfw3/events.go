@@ -79,6 +79,28 @@ func buttonForDetail(detail glfw.MouseButton) wde.Button {
 	return 0
 }
 
+func onCursorEnter(w *glfw.Window, entered bool) {
+	var event interface{}
+
+	if entered {
+		var ene wde.MouseEnteredEvent
+		x, y := w.GetCursorPosition()
+		ene.Where.X = int(math.Floor(x))
+		ene.Where.Y = int(math.Floor(y))
+		event = ene
+	} else {
+		var exe wde.MouseExitedEvent
+		x, y := w.GetCursorPosition()
+		exe.Where.X = int(math.Floor(x))
+		exe.Where.Y = int(math.Floor(y))
+		event = exe
+	}
+
+	if ws, ok := windowMap[w.C()]; ok {
+		ws.events <- event
+	}
+}
+
 func (w *Window) handleEvents() {
 	/*
 		var noX int32 = 1<<31 - 1

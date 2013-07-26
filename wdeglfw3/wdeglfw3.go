@@ -72,8 +72,10 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	w.events = make(chan interface{})
 
-	w.win.SetMouseButtonCallback(onMouseBtn)
+	// Callback functions for events
 
+	w.win.SetMouseButtonCallback(onMouseBtn)
+	w.win.SetCursorEnterCallback(onCursorEnter)
 	w.checkShouldClose()
 
 	return
