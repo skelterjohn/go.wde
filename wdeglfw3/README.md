@@ -17,7 +17,9 @@ Open issues:
 
 8 - LockSize() in struct wdeglfw3.Window modifies Window.lockedSize.
     What is the functionality of this function?
-    
+   
+9 - Add Icons to the windows.
+ 
 
 Solved issues:
 --------------

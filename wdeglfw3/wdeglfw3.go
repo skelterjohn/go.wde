@@ -17,7 +17,6 @@
 package glfw3
 
 import (
-	"fmt"
 	"github.com/go-gl/gl"
 	glfw "github.com/grd/glfw3"
 	"github.com/skelterjohn/go.wde"
@@ -46,43 +45,7 @@ func init() {
 }
 
 func doRun() {
-	exit := false
-
-	for glfw.Inited == false {
-		// wait for it to be true.
-	}
-
-	for exit == false {
-
-		/*
-			exit = true
-
-			// Loop until the user closes the window
-			for i, window := range windowSlice {
-				if window.win == nil {
-					windowSlice = append(windowSlice[0:i], windowSlice[i+1:len(windowSlice)]...)
-					exit = false
-					break
-				}
-
-				if !window.win.ShouldClose() {
-					exit = false
-				} else {
-					window.win.Destroy()
-					windowSlice[i] = nil
-				}
-
-
-				//
-				// Render here
-				//
-
-
-				// Swap front and back buffers
-				window.win.SwapBuffers()
-
-			}
-		*/
+	for {
 		// Poll for and process events
 		glfw.PollEvents()
 	}
@@ -91,11 +54,8 @@ func doRun() {
 type Window struct {
 	win        *glfw.Window
 	lockedSize bool
-	i          int
 	events     chan interface{}
 }
-
-var windowSlice = make([]*Window, 1, 4)
 
 var windowMap = make(map[uintptr]*Window)
 
@@ -108,15 +68,13 @@ func NewWindow(width, height int) (w *Window, err error) {
 		return nil, err
 	}
 
-	windowSlice = append(windowSlice, w)
-
 	windowMap[w.win.C()] = w
-
-	fmt.Println(windowMap)
 
 	w.events = make(chan interface{})
 
 	w.win.SetMouseButtonCallback(onMouseBtn)
+
+	w.checkShouldClose()
 
 	return
 }
@@ -202,6 +160,18 @@ func (w *Window) openglSetDefaults() {
 	// Displacement trick for exact pixelization
 
 	gl.Translatef(0.375, 0.375, 0)
+}
+
+func (w *Window) checkShouldClose() {
+	go func() {
+		for {
+			if w.win.ShouldClose() {
+				var cev wde.CloseEvent
+				w.events <- cev
+				break
+			}
+		}
+	}()
 }
 
 type Image struct {
