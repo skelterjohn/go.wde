@@ -9,10 +9,15 @@ Open issues:
 
 3 - The event system of glfw3 works very different than that of go.wde
     However the callback functions might/should solve that
+    Answ1: Added Window.C() in package glfw3 to get access of the underlying C
+    structure pointer.
 
 6 - How to properly shutdown the app? Why is this a problem? 
     Because glfw3.Main() is blocking a proper shutdown.
 
+8 - LockSize() in struct wdeglfw3.Window modifies Window.lockedSize.
+    What is the functionality of this function?
+    
 
 Solved issues:
 --------------

@@ -17,22 +17,10 @@
 package glfw3
 
 import (
-	"fmt"
 	glfw "github.com/grd/glfw3"
 	"github.com/skelterjohn/go.wde"
-	//	"image"
 	"math"
 )
-
-func windowStruct(w *glfw.Window) *Window {
-	for _, window := range windowSlice {
-		if window != nil && window.win == w {
-			return window
-		}
-	}
-	panic("window got lost")
-	return nil
-}
 
 func getMouseButton(button glfw.MouseButton) wde.Button {
 	switch button {
@@ -56,8 +44,9 @@ func onMouseBtn(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod
 		x, y := w.GetCursorPosition()
 		bue.Where.X = int(math.Floor(x))
 		bue.Where.Y = int(math.Floor(y))
-		ws := windowStruct(w)
-		ws.events <- bue
+		if ws, ok := windowMap[w.C()]; ok {
+			ws.events <- bue
+		}
 
 	case glfw.Press:
 		var bde wde.MouseDownEvent
@@ -65,11 +54,10 @@ func onMouseBtn(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod
 		x, y := w.GetCursorPosition()
 		bde.Where.X = int(math.Floor(x))
 		bde.Where.Y = int(math.Floor(y))
-		ws := windowStruct(w)
-		ws.events <- bde
+		if ws, ok := windowMap[w.C()]; ok {
+			ws.events <- bde
+		}
 	}
-
-	fmt.Printf("mouse button: %d, action: %d, modifier: %d\n", button, action, mod)
 }
 
 func buttonForDetail(detail glfw.MouseButton) wde.Button {

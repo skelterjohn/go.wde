@@ -17,14 +17,12 @@
 package glfw3
 
 import (
+	"fmt"
 	"github.com/go-gl/gl"
 	glfw "github.com/grd/glfw3"
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"image/color"
-
-//	"image/draw"
-//	"os"
 )
 
 func init() {
@@ -93,11 +91,13 @@ func doRun() {
 type Window struct {
 	win        *glfw.Window
 	lockedSize bool
-
-	events chan interface{}
+	i          int
+	events     chan interface{}
 }
 
 var windowSlice = make([]*Window, 1, 4)
+
+var windowMap = make(map[uintptr]*Window)
 
 func NewWindow(width, height int) (w *Window, err error) {
 
@@ -109,6 +109,10 @@ func NewWindow(width, height int) (w *Window, err error) {
 	}
 
 	windowSlice = append(windowSlice, w)
+
+	windowMap[w.win.C()] = w
+
+	fmt.Println(windowMap)
 
 	w.events = make(chan interface{})
 
