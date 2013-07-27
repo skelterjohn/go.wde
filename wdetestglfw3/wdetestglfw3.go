@@ -30,6 +30,8 @@ import (
 func main() {
 	go wdetest()
 	wde.Run()
+
+	println("done")
 }
 
 func wdetest() {
@@ -45,10 +47,8 @@ func wdetest() {
 			fmt.Println(err)
 			return
 		}
-
 		dw.SetTitle("hi!")
 		dw.SetSize(size, size)
-
 		dw.Show()
 
 		events := dw.EventChan()
@@ -146,6 +146,4 @@ func wdetest() {
 
 	wg.Wait()
 	wde.Stop()
-
-	println("done")
 }

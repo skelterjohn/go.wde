@@ -17,11 +17,12 @@
 package glfw3
 
 import (
+	//	"fmt"
 	"github.com/go-gl/gl"
 	glfw "github.com/grd/glfw3"
 	"github.com/skelterjohn/go.wde"
 	"image"
-	"image/color"
+	"os"
 )
 
 func init() {
@@ -34,14 +35,17 @@ func init() {
 
 	wde.BackendRun = glfw.Main
 
-	wde.BackendStop = glfw.Terminate
+	wde.BackendStop = func() {
+		glfw.Terminate()
+		os.Exit(0)
+	}
 
 	go doRun()
 
 	// Don't show the window context before using the Show function.
 	go glfw.WindowHint(glfw.Visible, glfw.False)
 
-	go displayBlocker()
+	go flushBuffer()
 }
 
 func doRun() {
@@ -53,6 +57,7 @@ func doRun() {
 
 type Window struct {
 	win        *glfw.Window
+	buffer     Image
 	lockedSize bool
 	events     chan interface{}
 }
@@ -70,9 +75,13 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	windowMap[w.win.C()] = w
 
-	w.events = make(chan interface{})
+	w.buffer.RGBA = image.NewRGBA(image.Rect(0, 0, width, height))
 
-	// Callback functions for events
+	//
+	// Events and callback functions for events
+	//
+
+	w.events = make(chan interface{})
 
 	w.win.SetMouseButtonCallback(onMouseBtn)
 	w.win.SetCursorEnterCallback(onCursorEnter)
@@ -101,67 +110,20 @@ func (w *Window) Show() {
 	w.win.Show()
 }
 
-func (w *Window) Screen() (im wde.Image) {
-
-	<-windowStartChange
-
-	//
-	// The returning image is NOT the actual buffer.
-	// Because it is OpenGL and that doesn't mix with the image package
-	// So the image is a phony with only the boundaries implemented and a
-	// few functions are re-designed to make use of OpenGL and to satisfy
-	// the wde.Image interface.
-	//
-
-	im = new(Image)
-
-	// OpenGL settings for 2D access
-	w.openglSetDefaults()
-
-	// Make the window's context current for drawing into it.
-
-	w.win.MakeContextCurrent()
-
-	return
+func (w *Window) Screen() wde.Image {
+	return w.buffer
 }
 
 func (w *Window) FlushImage(bounds ...image.Rectangle) {
 
 	// TODO: Howto implement ...image.Rectangle
 
-	w.win.SwapBuffers()
-
-	windowStartChange <- true
+	windowFlushBuffer <- w
 }
 
 func (w *Window) Close() (err error) {
 	w.win.Destroy()
 	return
-}
-
-func (w *Window) openglSetDefaults() {
-
-	gl.Clear(gl.COLOR_BUFFER_BIT)
-
-	// Setup a 2D projection
-
-	XSize, YSize := w.Size()
-
-	gl.MatrixMode(gl.PROJECTION)
-
-	gl.LoadIdentity()
-
-	gl.Ortho(0, float64(XSize), float64(YSize), 0, 0, 1)
-
-	gl.Disable(gl.DEPTH_TEST)
-
-	gl.MatrixMode(gl.MODELVIEW)
-
-	gl.LoadIdentity()
-
-	// Displacement trick for exact pixelization
-
-	gl.Translatef(0.375, 0.375, 0)
 }
 
 func (w *Window) checkShouldClose() {
@@ -177,56 +139,63 @@ func (w *Window) checkShouldClose() {
 }
 
 type Image struct {
-	image.RGBA
-}
-
-func (p *Image) Set(x, y int, c color.Color) {
-	r, g, b, a := c.RGBA()
-
-	gl.Color4us(uint16(r), uint16(g), uint16(b), uint16(a))
-
-	gl.Begin(gl.POINTS)
-
-	gl.Vertex2i(x, y)
-
-	gl.End()
+	*image.RGBA
 }
 
 func (buffer Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
-	/*
-	           // clip r against each image's bounds and move sp accordingly (see draw.clip())
-	   	sp := image.ZP
-	   	orig := r.Min
-	   	r = r.Intersect(buffer.Bounds())
-	   	r = r.Intersect(src.Bounds().Add(orig.Sub(sp)))
-	   	dx := r.Min.X - orig.X
-	   	dy := r.Min.Y - orig.Y
-	   	(sp).X += dx
-	   	(sp).Y += dy
+	// clip r against each image's bounds and move sp accordingly (see draw.clip())
+	sp := image.ZP
+	orig := r.Min
+	r = r.Intersect(buffer.Bounds())
+	r = r.Intersect(src.Bounds().Add(orig.Sub(sp)))
+	dx := r.Min.X - orig.X
+	dy := r.Min.Y - orig.Y
+	(sp).X += dx
+	(sp).Y += dy
 
-	   	i0 := (r.Min.X - buffer.Rect.Min.X) * 4
-	   	i1 := (r.Max.X - buffer.Rect.Min.X) * 4
-	   	si0 := (sp.X - src.Rect.Min.X) * 4
-	   	yMax := r.Max.Y - buffer.Rect.Min.Y
+	i0 := (r.Min.X - buffer.Rect.Min.X) * 4
+	i1 := (r.Max.X - buffer.Rect.Min.X) * 4
+	si0 := (sp.X - src.Rect.Min.X) * 4
+	yMax := r.Max.Y - buffer.Rect.Min.Y
 
-	   	y := r.Min.Y - buffer.Rect.Min.Y
-	   	sy := sp.Y - src.Rect.Min.Y
-	   	for ; y != yMax; y, sy = y+1, sy+1 {
-	   		dpix := buffer.Pix[y*buffer.Stride:]
-	   		spix := src.Pix[sy*src.Stride:]
+	y := r.Min.Y - buffer.Rect.Min.Y
+	sy := sp.Y - src.Rect.Min.Y
+	for ; y != yMax; y, sy = y+1, sy+1 {
+		dpix := buffer.Pix[y*buffer.Stride:]
+		spix := src.Pix[sy*src.Stride:]
 
-	   		for i, si := i0, si0; i < i1; i, si = i+4, si+4 {
-	   			dpix[i+0] = spix[si+2]
-	   			dpix[i+1] = spix[si+1]
-	   			dpix[i+2] = spix[si+0]
-	   			dpix[i+3] = spix[si+3]
-	   		}
-	   	}
-	*/
+		for i, si := i0, si0; i < i1; i, si = i+4, si+4 {
+			dpix[i+0] = spix[si+2]
+			dpix[i+1] = spix[si+1]
+			dpix[i+2] = spix[si+0]
+			dpix[i+3] = spix[si+3]
+		}
+	}
 }
 
-var windowStartChange = make(chan bool)
+var windowFlushBuffer = make(chan *Window)
 
-func displayBlocker() {
-	windowStartChange <- true
+func flushBuffer() {
+	for {
+		w := <-windowFlushBuffer
+
+		if w.win.ShouldClose() {
+			continue
+		}
+
+		w.win.MakeContextCurrent()
+
+		// extra code for upside down image correction
+
+		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+		gl.RasterPos2f(-1, 1)
+		gl.PixelZoom(1, -1)
+
+		// end of extra code
+
+		width, height := w.Size()
+		gl.DrawPixels(width, height, gl.RGBA, gl.UNSIGNED_BYTE, &w.buffer.Pix[0])
+
+		w.win.SwapBuffers()
+	}
 }
