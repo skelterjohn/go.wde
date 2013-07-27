@@ -47,7 +47,7 @@ func wdetest() {
 			fmt.Println(err)
 			return
 		}
-		dw.SetTitle("hi!")
+		dw.SetTitle("hi GLFW!")
 		dw.SetSize(size, size)
 		dw.Show()
 

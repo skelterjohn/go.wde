@@ -56,10 +56,9 @@ func doRun() {
 }
 
 type Window struct {
-	win        *glfw.Window
-	buffer     Image
-	lockedSize bool
-	events     chan interface{}
+	win    *glfw.Window
+	buffer Image
+	events chan interface{}
 }
 
 var windowMap = make(map[uintptr]*Window)
@@ -85,6 +84,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	w.win.SetMouseButtonCallback(onMouseBtn)
 	w.win.SetCursorEnterCallback(onCursorEnter)
+	w.win.SetFramebufferSizeCallback(onFramebufferSize)
 	w.checkShouldClose()
 
 	return
@@ -103,7 +103,14 @@ func (w *Window) Size() (width, height int) {
 }
 
 func (w *Window) LockSize(lock bool) {
-	w.lockedSize = lock
+	// glfw supports only window size locking when the
+	// parameter is set before the creation of the window.
+	// It doesn't work on an existing window.
+	if lock {
+		glfw.WindowHint(glfw.Resizable, glfw.False)
+	} else {
+		glfw.WindowHint(glfw.Resizable, glfw.True)
+	}
 }
 
 func (w *Window) Show() {
@@ -116,9 +123,17 @@ func (w *Window) Screen() wde.Image {
 
 func (w *Window) FlushImage(bounds ...image.Rectangle) {
 
+	if w.win.ShouldClose() {
+		return
+	}
+
 	// TODO: Howto implement ...image.Rectangle
 
+	// flush the buffer
 	windowFlushBuffer <- w
+
+	// waiting for the flushing is done before filling it again
+	<-windowFlushBufferDone
 }
 
 func (w *Window) Close() (err error) {
@@ -173,29 +188,26 @@ func (buffer Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
 	}
 }
 
-var windowFlushBuffer = make(chan *Window)
+var (
+	windowFlushBuffer     = make(chan *Window)
+	windowFlushBufferDone = make(chan bool)
+)
 
 func flushBuffer() {
 	for {
 		w := <-windowFlushBuffer
 
-		if w.win.ShouldClose() {
-			continue
-		}
-
 		w.win.MakeContextCurrent()
 
-		// extra code for upside down image correction
+		pnt := w.buffer.Rect.Max
 
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 		gl.RasterPos2f(-1, 1)
 		gl.PixelZoom(1, -1)
-
-		// end of extra code
-
-		width, height := w.Size()
-		gl.DrawPixels(width, height, gl.RGBA, gl.UNSIGNED_BYTE, &w.buffer.Pix[0])
+		gl.DrawPixels(pnt.X, pnt.Y, gl.RGBA, gl.UNSIGNED_BYTE, &w.buffer.Pix[0])
 
 		w.win.SwapBuffers()
+
+		windowFlushBufferDone <- true
 	}
 }

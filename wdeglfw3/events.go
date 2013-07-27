@@ -19,6 +19,7 @@ package glfw3
 import (
 	glfw "github.com/grd/glfw3"
 	"github.com/skelterjohn/go.wde"
+	"image"
 	"math"
 )
 
@@ -97,6 +98,14 @@ func onCursorEnter(w *glfw.Window, entered bool) {
 	}
 
 	if ws, ok := windowMap[w.C()]; ok {
+		ws.events <- event
+	}
+}
+
+func onFramebufferSize(w *glfw.Window, width int, height int) {
+	event := wde.ResizeEvent{width, height}
+	if ws, ok := windowMap[w.C()]; ok {
+		ws.buffer.RGBA = image.NewRGBA(image.Rect(0, 0, width, height))
 		ws.events <- event
 	}
 }
