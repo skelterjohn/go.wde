@@ -23,6 +23,8 @@ import (
 	"math"
 )
 
+var lastCursorPosition image.Point
+
 func getMouseButton(button glfw.MouseButton) wde.Button {
 	switch button {
 	case glfw.MouseButtonLeft:
@@ -100,6 +102,17 @@ func onCursorEnter(w *glfw.Window, entered bool) {
 	if ws, ok := windowMap[w.C()]; ok {
 		ws.events <- event
 	}
+}
+
+func onCursorPosition(w *glfw.Window, xpos float64, ypos float64) {
+	cursorPosition := image.Point{int(xpos), int(ypos)}
+	if ws, ok := windowMap[w.C()]; ok {
+		var event wde.MouseMovedEvent
+		event.From = lastCursorPosition
+		event.Where = cursorPosition
+		ws.events <- event
+	}
+	lastCursorPosition = cursorPosition
 }
 
 func onFramebufferSize(w *glfw.Window, width int, height int) {

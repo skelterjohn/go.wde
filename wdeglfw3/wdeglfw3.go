@@ -76,14 +76,12 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	w.buffer.RGBA = image.NewRGBA(image.Rect(0, 0, width, height))
 
-	//
 	// Events and callback functions for events
-	//
 
 	w.events = make(chan interface{})
-
 	w.win.SetMouseButtonCallback(onMouseBtn)
 	w.win.SetCursorEnterCallback(onCursorEnter)
+	w.win.SetCursorPositionCallback(onCursorPosition)
 	w.win.SetFramebufferSizeCallback(onFramebufferSize)
 	w.checkShouldClose()
 
@@ -132,7 +130,7 @@ func (w *Window) FlushImage(bounds ...image.Rectangle) {
 	// flush the buffer
 	windowFlushBuffer <- w
 
-	// waiting for the flushing is done before filling it again
+	// waiting for the flushing is done before filling the buffer again
 	<-windowFlushBufferDone
 }
 
@@ -195,16 +193,21 @@ var (
 
 func flushBuffer() {
 	for {
+
 		w := <-windowFlushBuffer
 
 		w.win.MakeContextCurrent()
 
-		pnt := w.buffer.Rect.Max
+		imgWidth := w.buffer.Rect.Max.X
+		imgHeight := w.buffer.Rect.Max.Y
 
-		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+		windowWidth, windowHeight := w.Size()
+
+		// gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 		gl.RasterPos2f(-1, 1)
 		gl.PixelZoom(1, -1)
-		gl.DrawPixels(pnt.X, pnt.Y, gl.RGBA, gl.UNSIGNED_BYTE, &w.buffer.Pix[0])
+		gl.Viewport(0, 0, windowWidth, windowHeight)
+		gl.DrawPixels(imgWidth, imgHeight, gl.RGBA, gl.UNSIGNED_BYTE, &w.buffer.Pix[0])
 
 		w.win.SwapBuffers()
 
