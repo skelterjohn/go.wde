@@ -7,6 +7,10 @@
   issue is known ().
 - glfw supports clipboard messaging. This is not implemented (yet) in go.wde 
   but IMO it should be part of the event system.
+- glfw key numpad works with numbers and go.wde with arrows/ins/del/pageup/etc.
+  So numpad key 5 has now go.wde mapping!
+- go.wde has a key called KeyFunction and I don't know what it is. There is no
+  direct glfw counterpart for this AFAIK.
 
 ### Open issues:
 
