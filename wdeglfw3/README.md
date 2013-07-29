@@ -11,6 +11,9 @@
   So numpad key 5 has now go.wde mapping!
 - go.wde has a key called KeyFunction and I don't know what it is. There is no
   direct glfw counterpart for this AFAIK.
+- I have no idea how to get the status of capslock, numlock, pause, scrollock.
+  This means that when the user presses the letter 'a', it is unclear that the 
+  output is 'a' or 'A'. This of course US English only.
 
 ### Open issues:
 
