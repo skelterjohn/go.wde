@@ -37,7 +37,8 @@ func getMouseButton(button glfw.MouseButton) wde.Button {
 	return 0
 }
 
-func onMouseBtn(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
+func mouseButtonCallback(w *glfw.Window, button glfw.MouseButton,
+	action glfw.Action, mod glfw.ModifierKey) {
 
 	switch action {
 
@@ -82,7 +83,7 @@ func buttonForDetail(detail glfw.MouseButton) wde.Button {
 	return 0
 }
 
-func onCursorEnter(w *glfw.Window, entered bool) {
+func cursorEnterCallback(w *glfw.Window, entered bool) {
 	var event interface{}
 
 	if entered {
@@ -104,7 +105,7 @@ func onCursorEnter(w *glfw.Window, entered bool) {
 	}
 }
 
-func onCursorPosition(w *glfw.Window, xpos float64, ypos float64) {
+func cursorPositionCallback(w *glfw.Window, xpos float64, ypos float64) {
 	cursorPosition := image.Point{int(xpos), int(ypos)}
 	if ws, ok := windowMap[w.C()]; ok {
 		var event wde.MouseMovedEvent
@@ -115,7 +116,7 @@ func onCursorPosition(w *glfw.Window, xpos float64, ypos float64) {
 	lastCursorPosition = cursorPosition
 }
 
-func onFramebufferSize(w *glfw.Window, width int, height int) {
+func framebufferSizeCallback(w *glfw.Window, width int, height int) {
 	event := wde.ResizeEvent{width, height}
 	if ws, ok := windowMap[w.C()]; ok {
 		ws.buffer.RGBA = image.NewRGBA(image.Rect(0, 0, width, height))
@@ -123,148 +124,49 @@ func onFramebufferSize(w *glfw.Window, width int, height int) {
 	}
 }
 
-func (w *Window) handleEvents() {
-	/*
-		var noX int32 = 1<<31 - 1
-		noX++
-		var lastX, lastY int32 = noX, 0
-		var button wde.Button
+var downKeys = make(map[string]bool)
 
-		downKeys := map[string]bool{}
+func keyCallback(w *glfw.Window, key glfw.Key, scancode int,
+	action glfw.Action, mods glfw.ModifierKey) {
 
-		for {
-			e, err := w.conn.WaitForEvent()
+	ws := windowMap[w.C()]
+	if ws == nil {
+		return
+	}
 
-			if err != nil {
-				fmt.Println("[go.wde X error] ", err)
-				continue
-			}
+	switch action {
 
-			switch e.(type) {
+	case glfw.Press:
+		var letter string
+		var ke wde.KeyEvent
+		keycode := scancode
 
-			case xproto.ButtonPressEvent:
-				button = button | buttonForDetail(e.Detail)
-				var bpe wde.MouseDownEvent
-				bpe.Which = buttonForDetail(e.Detail)
-				bpe.Where.X = int(e.EventX)
-				bpe.Where.Y = int(e.EventY)
-				lastX = int32(e.EventX)
-				lastY = int32(e.EventY)
-				w.events <- bpe
-
-			case xproto.ButtonReleaseEvent:
-				button = button & ^buttonForDetail(e.Detail)
-				var bue wde.MouseUpEvent
-				bue.Which = buttonForDetail(e.Detail)
-				bue.Where.X = int(e.EventX)
-				bue.Where.Y = int(e.EventY)
-				lastX = int32(e.EventX)
-				lastY = int32(e.EventY)
-				w.events <- bue
-
-			case xproto.LeaveNotifyEvent:
-				var wee wde.MouseExitedEvent
-				wee.Where.X = int(e.EventX)
-				wee.Where.Y = int(e.EventY)
-				if lastX != noX {
-					wee.From.X = int(lastX)
-					wee.From.Y = int(lastY)
-				} else {
-					wee.From.X = wee.Where.X
-					wee.From.Y = wee.Where.Y
-				}
-				lastX = int32(e.EventX)
-				lastY = int32(e.EventY)
-				w.events <- wee
-			case xproto.EnterNotifyEvent:
-				var wee wde.MouseEnteredEvent
-				wee.Where.X = int(e.EventX)
-				wee.Where.Y = int(e.EventY)
-				if lastX != noX {
-					wee.From.X = int(lastX)
-					wee.From.Y = int(lastY)
-				} else {
-					wee.From.X = wee.Where.X
-					wee.From.Y = wee.Where.Y
-				}
-				lastX = int32(e.EventX)
-				lastY = int32(e.EventY)
-				w.events <- wee
-
-			case xproto.MotionNotifyEvent:
-				var mme wde.MouseMovedEvent
-				mme.Where.X = int(e.EventX)
-				mme.Where.Y = int(e.EventY)
-				if lastX != noX {
-					mme.From.X = int(lastX)
-					mme.From.Y = int(lastY)
-				} else {
-					mme.From.X = mme.Where.X
-					mme.From.Y = mme.Where.Y
-				}
-				lastX = int32(e.EventX)
-				lastY = int32(e.EventY)
-				if button == 0 {
-					w.events <- mme
-				} else {
-					var mde wde.MouseDraggedEvent
-					mde.MouseMovedEvent = mme
-					mde.Which = button
-					w.events <- mde
-				}
-
-			case xproto.KeyPressEvent:
-				var ke wde.KeyEvent
-				code := keybind.LookupString(w.xu, e.State, e.Detail)
-				ke.Key = keyForCode(code)
-				w.events <- wde.KeyDownEvent(ke)
-				downKeys[ke.Key] = true
-				kpe := wde.KeyTypedEvent{
-					KeyEvent: ke,
-					Glyph:    letterForCode(code),
-					Chord:    wde.ConstructChord(downKeys),
-				}
-				w.events <- kpe
-
-			case xproto.KeyReleaseEvent:
-				var ke wde.KeyUpEvent
-				ke.Key = keyForCode(keybind.LookupString(w.xu, e.State, e.Detail))
-				delete(downKeys, ke.Key)
-				w.events <- ke
-
-			case xproto.ConfigureNotifyEvent:
-				var re wde.ResizeEvent
-				re.Width = int(e.Width)
-				re.Height = int(e.Height)
-				if re.Width != w.width || re.Height != w.height {
-					w.width, w.height = re.Width, re.Height
-
-					w.bufferLck.Lock()
-					w.buffer.Destroy()
-					w.buffer = xgraphics.New(w.xu, image.Rect(0, 0, re.Width, re.Height))
-					w.bufferLck.Unlock()
-
-					w.events <- re
-				}
-
-			case xproto.ClientMessageEvent:
-				if icccm.IsDeleteProtocol(w.xu, xevent.ClientMessageEvent{&e}) {
-					w.events <- wde.CloseEvent{}
-				}
-			case xproto.DestroyNotifyEvent:
-			case xproto.ReparentNotifyEvent:
-			case xproto.MapNotifyEvent:
-			case xproto.UnmapNotifyEvent:
-			case xproto.PropertyNotifyEvent:
-
-			default:
-				fmt.Printf("unhandled event: type %T\n%+v\n", e, e)
-			}
-
+		blankLetter := containsInt(blankLetterCodes, keycode)
+		if !blankLetter {
+			letter = string(key)
 		}
 
-		close(w.events)
-	*/
+		ke.Key = keyMapping[key]
+
+		if !downKeys[ke.Key] {
+			ws.events <- wde.KeyDownEvent(ke)
+		}
+
+		downKeys[ke.Key] = true
+
+		ws.events <- wde.KeyTypedEvent{
+			KeyEvent: ke,
+			Chord:    wde.ConstructChord(downKeys),
+			Glyph:    letter,
+		}
+
+	case glfw.Release:
+		var ke wde.KeyUpEvent
+		ke.Key = keyMapping[key]
+		delete(downKeys, ke.Key)
+		ws.events <- ke
+	}
+
 }
 
 func (w *Window) EventChan() (events <-chan interface{}) {
