@@ -16,6 +16,8 @@
 
 package main
 
+// +build ignore
+
 import (
 	"fmt"
 	_ "github.com/grd/go.wde/wdeglfw3"
