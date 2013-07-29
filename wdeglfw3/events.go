@@ -17,6 +17,7 @@
 package glfw3
 
 import (
+	"fmt"
 	glfw "github.com/grd/glfw3"
 	"github.com/skelterjohn/go.wde"
 	"image"
@@ -124,8 +125,6 @@ func framebufferSizeCallback(w *glfw.Window, width int, height int) {
 	}
 }
 
-var downKeys = make(map[string]bool)
-
 func keyCallback(w *glfw.Window, key glfw.Key, scancode int,
 	action glfw.Action, mods glfw.ModifierKey) {
 
@@ -137,33 +136,45 @@ func keyCallback(w *glfw.Window, key glfw.Key, scancode int,
 	switch action {
 
 	case glfw.Press:
+		fmt.Printf("key: %v, scancode: %v, mods %v\n", key, scancode, mods)
 		var letter string
 		var ke wde.KeyEvent
-		keycode := scancode
 
-		blankLetter := containsInt(blankLetterCodes, keycode)
+		blankLetter := containsInt(blankLetterCodes, key)
 		if !blankLetter {
 			letter = string(key)
 		}
 
 		ke.Key = keyMapping[key]
 
-		if !downKeys[ke.Key] {
-			ws.events <- wde.KeyDownEvent(ke)
-		}
-
-		downKeys[ke.Key] = true
+		ws.events <- wde.KeyDownEvent(ke)
 
 		ws.events <- wde.KeyTypedEvent{
 			KeyEvent: ke,
-			Chord:    wde.ConstructChord(downKeys),
+			Chord:    constructChord(key, mods),
+			Glyph:    letter,
+		}
+
+	case glfw.Repeat:
+		fmt.Printf("key: %v, scancode: %v, mods %v\n", key, scancode, mods)
+		var letter string
+
+		blankLetter := containsInt(blankLetterCodes, key)
+		if !blankLetter {
+			letter = string(key)
+		}
+
+		ke := wde.KeyEvent{keyMapping[key]}
+
+		ws.events <- wde.KeyTypedEvent{
+			KeyEvent: ke,
+			Chord:    constructChord(key, mods),
 			Glyph:    letter,
 		}
 
 	case glfw.Release:
 		var ke wde.KeyUpEvent
 		ke.Key = keyMapping[key]
-		delete(downKeys, ke.Key)
 		ws.events <- ke
 	}
 

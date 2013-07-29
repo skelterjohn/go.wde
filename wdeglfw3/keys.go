@@ -21,7 +21,7 @@ import (
 	"github.com/skelterjohn/go.wde"
 )
 
-func containsInt(haystack []int, needle int) bool {
+func containsInt(haystack []glfw.Key, needle glfw.Key) bool {
 	for _, v := range haystack {
 		if needle == v {
 			return true
@@ -30,7 +30,44 @@ func containsInt(haystack []int, needle int) bool {
 	return false
 }
 
-var blankLetterCodes = []int{71, 117, 115, 119, 116, 121, 122, 120, 99, 118, 96, 97, 98, 100, 101, 109, 10, 103, 111, 105, 107, 113, 123, 124, 125, 126, 63, 58, 55, 59, 56, 61, 54, 62, 60, 114}
+var blankLetterCodes = []glfw.Key{
+	glfw.KeyNumLock,
+	glfw.KeyDelete,
+	glfw.KeyHome,
+	glfw.KeyEnd,
+	glfw.KeyF1,
+	glfw.KeyF2,
+	glfw.KeyF3,
+	glfw.KeyF4,
+	glfw.KeyF5,
+	glfw.KeyF6,
+	glfw.KeyF7,
+	glfw.KeyF8,
+	glfw.KeyF9,
+	glfw.KeyF10,
+	glfw.KeyF11,
+	glfw.KeyF12,
+	glfw.KeyF13,
+	glfw.KeyF14,
+	glfw.KeyF15,
+	glfw.KeyPageDown,
+	glfw.KeyPageUp,
+	glfw.KeyLeft,
+	glfw.KeyRight,
+	glfw.KeyDown,
+	glfw.KeyUp,
+	glfw.KeyLeftAlt,
+	glfw.KeyLeftSuper,
+	glfw.KeyLeftControl,
+	glfw.KeyLeftShift,
+	glfw.KeyRightAlt,
+	glfw.KeyRightSuper,
+	glfw.KeyRightControl,
+	glfw.KeyRightShift,
+	glfw.KeyInsert,
+	glfw.KeyCapsLock,
+}
+
 var keyMapping = map[glfw.Key]string{
 	glfw.KeyA:            wde.KeyA,
 	glfw.KeyB:            wde.KeyB,
@@ -86,27 +123,27 @@ var keyMapping = map[glfw.Key]string{
 	glfw.KeyDelete:       wde.KeyDelete,
 	glfw.KeyHome:         wde.KeyHome,
 	glfw.KeyEnd:          wde.KeyEnd,
-	// glfw.KeyPrior: wde.KeyPrior,
-	// glfw.KeyNext: wde.KeyNext,
-	glfw.KeyF1:    wde.KeyF1,
-	glfw.KeyF2:    wde.KeyF2,
-	glfw.KeyF3:    wde.KeyF3,
-	glfw.KeyF4:    wde.KeyF4,
-	glfw.KeyF5:    wde.KeyF5,
-	glfw.KeyF6:    wde.KeyF6,
-	glfw.KeyF7:    wde.KeyF7,
-	glfw.KeyF8:    wde.KeyF8,
-	glfw.KeyF9:    wde.KeyF9,
-	glfw.KeyF10:   wde.KeyF10,
-	glfw.KeyF11:   wde.KeyF11,
-	glfw.KeyF12:   wde.KeyF12,
-	glfw.KeyF13:   wde.KeyF13,
-	glfw.KeyF14:   wde.KeyF14,
-	glfw.KeyF15:   wde.KeyF15,
-	glfw.KeyLeft:  wde.KeyLeftArrow,
-	glfw.KeyRight: wde.KeyRightArrow,
-	glfw.KeyDown:  wde.KeyDownArrow,
-	glfw.KeyUp:    wde.KeyUpArrow,
+	glfw.KeyPageUp:       wde.KeyPrior,
+	glfw.KeyPageDown:     wde.KeyNext,
+	glfw.KeyF1:           wde.KeyF1,
+	glfw.KeyF2:           wde.KeyF2,
+	glfw.KeyF3:           wde.KeyF3,
+	glfw.KeyF4:           wde.KeyF4,
+	glfw.KeyF5:           wde.KeyF5,
+	glfw.KeyF6:           wde.KeyF6,
+	glfw.KeyF7:           wde.KeyF7,
+	glfw.KeyF8:           wde.KeyF8,
+	glfw.KeyF9:           wde.KeyF9,
+	glfw.KeyF10:          wde.KeyF10,
+	glfw.KeyF11:          wde.KeyF11,
+	glfw.KeyF12:          wde.KeyF12,
+	glfw.KeyF13:          wde.KeyF13,
+	glfw.KeyF14:          wde.KeyF14,
+	glfw.KeyF15:          wde.KeyF15,
+	glfw.KeyLeft:         wde.KeyLeftArrow,
+	glfw.KeyRight:        wde.KeyRightArrow,
+	glfw.KeyDown:         wde.KeyDownArrow,
+	glfw.KeyUp:           wde.KeyUpArrow,
 	//glfw.KeyFunction:  wde.KeyFunction,
 	glfw.KeyLeftAlt:      wde.KeyLeftAlt,
 	glfw.KeyRightAlt:     wde.KeyRightAlt,
@@ -119,19 +156,44 @@ var keyMapping = map[glfw.Key]string{
 	glfw.KeyInsert:       wde.KeyInsert,
 	glfw.KeyTab:          wde.KeyTab,
 	glfw.KeySpace:        wde.KeySpace,
-	//glfw.KeyHome:  wde.KeyPadHome, // keypad
-	//glfw.KeyKpDown:  wde.KeyPadDown,
-	//glfw.KeyPadNext:  wde.KeyPadNext,
-	//glfw.KeyPadLeft:  wde.KeyPadLeft,
-	//glfw.KeyPadBegin:  wde.KeyPadBegin,
-	//glfw.KeyPadRight:  wde.KeyPadRight,
-	//glfw.KeyEnd:  wde.KeyPadEnd,
-	//glfw.KeyKpUp:  wde.KeyPadUp,
-	//glfw.KeyKpNext:  wde.KeyPadNext,
-	//glfw.KeyKpInsert:  wde.KeyPadInsert,
-	glfw.KeyKpDivide:   wde.KeyPadSlash,
-	glfw.KeyKpMultiply: wde.KeyPadStar,
-	glfw.KeyKpSubtract: wde.KeyPadMinus,
-	glfw.KeyKpAdd:      wde.KeyPadPlus,
-	glfw.KeyKpDecimal:  wde.KeyPadDot,
+	glfw.KeyKp1:          wde.KeyPadEnd,
+	glfw.KeyKp2:          wde.KeyPadDown,
+	glfw.KeyKp3:          wde.KeyPadNext,
+	glfw.KeyKp4:          wde.KeyPadLeft,
+	glfw.KeyKp5:          wde.KeyPadNext,
+	glfw.KeyKp6:          wde.KeyPadRight,
+	glfw.KeyKp7:          wde.KeyPadHome,
+	glfw.KeyKp8:          wde.KeyPadUp,
+	glfw.KeyKp9:          wde.KeyPadBegin,
+	glfw.KeyKp0:          wde.KeyPadInsert,
+	glfw.KeyKpDivide:     wde.KeyPadSlash,
+	glfw.KeyKpMultiply:   wde.KeyPadStar,
+	glfw.KeyKpSubtract:   wde.KeyPadMinus,
+	glfw.KeyKpAdd:        wde.KeyPadPlus,
+	glfw.KeyKpDecimal:    wde.KeyPadDot,
+	glfw.KeyCapsLock:     wde.KeyCapsLock,
+}
+
+func constructChord(key glfw.Key, mods glfw.ModifierKey) (chord string) {
+	keys := make(map[string]bool)
+
+	if mods&glfw.ModSuper != 0 {
+		keys[wde.KeyLeftSuper] = true
+	}
+
+	if mods&glfw.ModShift != 0 {
+		keys[wde.KeyLeftShift] = true
+	}
+
+	if mods&glfw.ModAlt != 0 {
+		keys[wde.KeyLeftAlt] = true
+	}
+
+	if mods&glfw.ModControl != 0 {
+		keys[wde.KeyLeftControl] = true
+	}
+
+	keys[keyMapping[key]] = true
+
+	return wde.ConstructChord(keys)
 }

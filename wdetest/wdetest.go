@@ -76,7 +76,7 @@ func wdetest() {
 				case wde.KeyUpEvent:
 					// fmt.Println("KeyUpEvent", e.Glyph)
 				case wde.KeyTypedEvent:
-					fmt.Println("typed", e.Key, e.Glyph, e.Chord)
+					fmt.Printf("typed key %v, glyph %v, chord %v\n", e.Key, e.Glyph, e.Chord)
 				case wde.CloseEvent:
 					fmt.Println("close")
 					dw.Close()
