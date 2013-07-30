@@ -4,12 +4,12 @@ package main
 
 import (
 	"fmt"
-	_ "github.com/grd/go.wde/wdeglfw3"
 	"github.com/skelterjohn/geom"
 	"github.com/skelterjohn/go.uik"
 	"github.com/skelterjohn/go.uik/layouts"
 	"github.com/skelterjohn/go.uik/widgets"
 	"github.com/skelterjohn/go.wde"
+	_ "github.com/skelterjohn/go.wde/glfw"
 	"image/color"
 )
 
