@@ -46,6 +46,8 @@ func init() {
 	go glfw.WindowHint(glfw.Visible, glfw.False)
 
 	go flushBuffer()
+
+	go setGlyph()
 }
 
 func doRun() {
@@ -83,6 +85,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 	w.win.SetCursorEnterCallback(cursorEnterCallback)
 	w.win.SetCursorPositionCallback(cursorPositionCallback)
 	w.win.SetFramebufferSizeCallback(framebufferSizeCallback)
+	w.win.SetCharacterCallback(characterCallback)
 	w.win.SetKeyCallback(keyCallback)
 	w.checkShouldClose()
 

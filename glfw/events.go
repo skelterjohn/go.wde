@@ -17,11 +17,11 @@
 package glfw3
 
 import (
-	"fmt"
 	glfw "github.com/grd/glfw3"
 	"github.com/skelterjohn/go.wde"
 	"image"
 	"math"
+	"time"
 )
 
 var lastCursorPosition image.Point
@@ -136,7 +136,6 @@ func keyCallback(w *glfw.Window, key glfw.Key, scancode int,
 	switch action {
 
 	case glfw.Press:
-		fmt.Printf("key: %v, scancode: %v, mods %v\n", key, scancode, mods)
 		var letter string
 		var ke wde.KeyEvent
 
@@ -149,14 +148,15 @@ func keyCallback(w *glfw.Window, key glfw.Key, scancode int,
 
 		ws.events <- wde.KeyDownEvent(ke)
 
-		ws.events <- wde.KeyTypedEvent{
+		kte := wde.KeyTypedEvent{
 			KeyEvent: ke,
 			Chord:    constructChord(key, mods),
 			Glyph:    letter,
 		}
 
+		keyChan <- keyType{ws, kte}
+
 	case glfw.Repeat:
-		fmt.Printf("key: %v, scancode: %v, mods %v\n", key, scancode, mods)
 		var letter string
 
 		blankLetter := containsInt(blankLetterCodes, key)
@@ -166,11 +166,13 @@ func keyCallback(w *glfw.Window, key glfw.Key, scancode int,
 
 		ke := wde.KeyEvent{keyMapping[key]}
 
-		ws.events <- wde.KeyTypedEvent{
+		kte := wde.KeyTypedEvent{
 			KeyEvent: ke,
 			Chord:    constructChord(key, mods),
 			Glyph:    letter,
 		}
+
+		keyChan <- keyType{ws, kte}
 
 	case glfw.Release:
 		var ke wde.KeyUpEvent
@@ -180,8 +182,47 @@ func keyCallback(w *glfw.Window, key glfw.Key, scancode int,
 
 }
 
+func characterCallback(w *glfw.Window, char rune) {
+	ws := windowMap[w.C()]
+	if ws == nil {
+		return
+	}
+	characterChan <- characterType{ws, char}
+}
+
+type keyType struct {
+	window *Window
+	ke     wde.KeyTypedEvent
+}
+
+type characterType struct {
+	window *Window
+	char   rune
+}
+
+var (
+	keyChan       = make(chan keyType)
+	characterChan = make(chan characterType)
+)
+
+func setGlyph() {
+	for {
+		key := <-keyChan
+
+		select {
+		case newKey := <-keyChan:
+			key.window.events <- key.ke
+			keyChan <- newKey
+		case ch := <-characterChan:
+			key.ke.Glyph = string(ch.char)
+			key.window.events <- key.ke
+		case <-time.After(10 * time.Millisecond):
+			key.window.events <- key.ke
+		}
+	}
+}
+
 func (w *Window) EventChan() (events <-chan interface{}) {
 	events = w.events
-
 	return
 }
