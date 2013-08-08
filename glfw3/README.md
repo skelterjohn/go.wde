@@ -4,7 +4,7 @@
 
 - glfw doesn't support icons for the windows (except on the MS Windows platform).
   To implement this, platform specific code needs to be written. However, the 
-  issue is known ().
+  issue is known at glfw, so in the future it will be probably implemented.
 - glfw supports clipboard messaging. This is not implemented (yet) in go.wde 
   but IMO it should be part of the event system.
 - glfw key numpad works with numbers and go.wde with arrows/ins/del/pageup/etc.
@@ -31,6 +31,8 @@
       Current serial number in output stream:  964
 
 - Only tested on Ubuntu 12.04 64-bit
+- I am not sure that glfw.PollEvents() is implemented correctly in combination
+  with multiple windows. Also glfw.SwapInterval() isn't implemented (yet).
 
 ### Solved issues:
 
