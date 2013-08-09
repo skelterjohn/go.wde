@@ -44,7 +44,7 @@ type Image interface {
  */
 
 /*
-Some wde backends (cocoa) require that this function be called in the 
+Some wde backends (cocoa) require that this function be called in the
 main thread. To make your code as cross-platform as possible, it is
 recommended that your main function look like the the code below.
 
