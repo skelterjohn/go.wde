@@ -1,7 +1,7 @@
 package xgb
 
 import (
-	"github.com/skelterjohn/go.wde"
+	"github.com/AmandaCameron/go.wde"
 )
 
 func keyForCode(code string) (key string) {

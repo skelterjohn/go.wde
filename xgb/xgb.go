@@ -26,7 +26,7 @@ import (
 	"github.com/BurntSushi/xgbutil/keybind"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/BurntSushi/xgbutil/xwindow"
-	"github.com/skelterjohn/go.wde"
+	"github.com/AmandaCameron/go.wde"
 	"image"
 	"sync"
 )

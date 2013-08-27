@@ -18,7 +18,7 @@ package glfw3
 
 import (
 	glfw "github.com/grd/glfw3"
-	"github.com/skelterjohn/go.wde"
+	"github.com/AmandaCameron/go.wde"
 	"image"
 	"math"
 	"time"

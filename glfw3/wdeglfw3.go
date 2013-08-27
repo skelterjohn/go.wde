@@ -20,7 +20,7 @@ import (
 	//	"fmt"
 	"github.com/go-gl/gl"
 	glfw "github.com/grd/glfw3"
-	"github.com/skelterjohn/go.wde"
+	"github.com/AmandaCameron/go.wde"
 	"image"
 	"os"
 )
