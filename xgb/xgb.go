@@ -192,8 +192,12 @@ func (w *Window) FlushImage(bounds ...image.Rectangle) {
 		}
 		w.bufferLck.Unlock()
 	}
-	w.buffer.XDraw()
-	w.buffer.XPaint(w.win.Id)
+	if len(bounds) > 0 {
+		w.buffer.XPaintRects(w.win.Id, bounds...)
+	} else {
+		w.buffer.XDraw()
+		w.buffer.XPaint(w.win.Id)
+	}
 }
 
 func (w *Window) Close() (err error) {
