@@ -18,12 +18,12 @@ package xgb
 
 import (
 	"fmt"
+	"github.com/AmandaCameron/go.wde"
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil/icccm"
 	"github.com/BurntSushi/xgbutil/keybind"
 	"github.com/BurntSushi/xgbutil/xevent"
 	"github.com/BurntSushi/xgbutil/xgraphics"
-	"github.com/AmandaCameron/go.wde"
 	"image"
 )
 
