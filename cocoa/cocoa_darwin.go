@@ -24,7 +24,7 @@ import "C"
 import (
 	"errors"
 	"fmt"
-	"github.com/skelterjohn/go.wde"
+	"github.com/AmandaCameron/go.wde"
 	"image"
 	"image/draw"
 	"runtime"

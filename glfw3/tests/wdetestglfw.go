@@ -20,8 +20,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/skelterjohn/go.wde"
-	_ "github.com/skelterjohn/go.wde/glfw3"
+	"github.com/AmandaCameron/go.wde"
+	_ "github.com/AmandaCameron/go.wde/glfw3"
 	"image/color"
 	"math/rand"
 	"runtime"

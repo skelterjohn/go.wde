@@ -58,15 +58,15 @@ wde.Run() will return when wde.Stop() is called.
 For this to work, you must import one of the go.wde backends. For
 instance,
 
-	import _ "github.com/skelterjohn/go.wde/xgb"
+	import _ "github.com/AmandaCameron/go.wde/xgb"
 
 or
 
-	import _ "github.com/skelterjohn/go.wde/win"
+	import _ "github.com/AmandaCameron/go.wde/win"
 
 or
 
-	import _ "github.com/skelterjohn/go.wde/cocoa"
+	import _ "github.com/AmandaCameron/go.wde/cocoa"
 
 
 will register a backend with go.wde, allowing you to call

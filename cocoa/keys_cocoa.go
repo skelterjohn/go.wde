@@ -16,7 +16,7 @@
 
 package cocoa
 
-import "github.com/skelterjohn/go.wde"
+import "github.com/AmandaCameron/go.wde"
 
 func containsInt(haystack []int, needle int) bool {
 	for _, v := range haystack {

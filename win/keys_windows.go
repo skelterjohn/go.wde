@@ -17,7 +17,7 @@
 package win
 
 import (
-	"github.com/skelterjohn/go.wde"
+	"github.com/AmandaCameron/go.wde"
 )
 
 var codeKeys map[uintptr]string

@@ -1,3 +1,3 @@
 package init
 
-import _ "github.com/skelterjohn/go.wde/cocoa"
+import _ "github.com/AmandaCameron/go.wde/cocoa"
