@@ -47,6 +47,7 @@ func init() {
 
 const AllEventsMask = xproto.EventMaskKeyPress |
 	xproto.EventMaskKeyRelease |
+	xproto.EventMaskKeymapState |
 	xproto.EventMaskButtonPress |
 	xproto.EventMaskButtonRelease |
 	xproto.EventMaskEnterWindow |
