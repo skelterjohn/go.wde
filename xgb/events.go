@@ -151,6 +151,37 @@ func (w *Window) handleEvents() {
 			delete(downKeys, ke.Key)
 			w.events <- ke
 
+		case xproto.KeymapNotifyEvent:
+			newDownKeys := make(map[string]bool)
+			for i := 0; i < len(e.Keys); i ++ {
+				mask := e.Keys[i]
+				for j := 0; j < 8; j++ {
+					if mask & (1 << uint(j)) != 0 {
+						keycode := xproto.Keycode(8 * (i + 1) + j)
+						key := keybind.LookupString(w.xu, 0, keycode)
+						newDownKeys[key] = true
+					}
+				}
+			}
+			/* remove keys that are no longer pressed */
+			for key := range downKeys {
+				if _, ok := newDownKeys[key]; !ok {
+					var ke wde.KeyUpEvent
+					ke.Key = key
+					delete(downKeys, key)
+					w.events <- ke
+				}
+			}
+			/* add keys that are newly pressed */
+			for key := range newDownKeys {
+				if _, ok := downKeys[key]; !ok {
+					var ke wde.KeyDownEvent
+					ke.Key = key
+					downKeys[key] = true
+					w.events <- ke
+				}
+			}
+
 		case xproto.ConfigureNotifyEvent:
 			var re wde.ResizeEvent
 			re.Width = int(e.Width)
