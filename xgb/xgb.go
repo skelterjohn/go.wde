@@ -17,7 +17,6 @@
 package xgb
 
 import (
-	"fmt"
 	"github.com/BurntSushi/xgb"
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil"
@@ -26,7 +25,7 @@ import (
 	"github.com/BurntSushi/xgbutil/keybind"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/BurntSushi/xgbutil/xwindow"
-	"github.com/skelterjohn/go.wde"
+	"github.com/iand/go.wde"
 	"image"
 	"sync"
 )
@@ -94,7 +93,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	err = icccm.WmProtocolsSet(w.xu, w.win.Id, []string{"WM_DELETE_WINDOW"})
 	if err != nil {
-		fmt.Println(err)
+		// Ignore error
 		err = nil
 	}
 
@@ -187,9 +186,7 @@ func (w *Window) FlushImage(bounds ...image.Rectangle) {
 	}
 	if w.buffer.Pixmap == 0 {
 		w.bufferLck.Lock()
-		if err := w.buffer.XSurfaceSet(w.win.Id); err != nil {
-			fmt.Println(err)
-		}
+		w.buffer.XSurfaceSet(w.win.Id) // Ignore error
 		w.bufferLck.Unlock()
 	}
 	w.buffer.XDraw()
@@ -210,7 +207,7 @@ type Image struct {
 }
 
 func (buffer Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
-        // clip r against each image's bounds and move sp accordingly (see draw.clip())
+	// clip r against each image's bounds and move sp accordingly (see draw.clip())
 	sp := image.ZP
 	orig := r.Min
 	r = r.Intersect(buffer.Bounds())
