@@ -16,9 +16,9 @@
 
 package cocoa
 
-// #cgo darwin LDFLAGS: -framework gomacdraw
-// #include "gomacdraw/gmd.h"
-// #include "stdlib.h"
+// #cgo darwin LDFLAGS: -framework Cocoa
+// #include "gmd.h"
+// #include <stdlib.h>
 import "C"
 
 import (
@@ -35,6 +35,22 @@ import (
 var appChanStart = make(chan bool)
 var appChanFinish = make(chan bool)
 
+func setupNibs() (mdata, wdata []byte) {
+	var err error
+
+	mdata, err = mainmenu_nib()
+	if err != nil {
+		panic(err)
+	}
+
+	wdata, err = window_nib()
+	if err != nil {
+		panic(err)
+	}
+
+	return
+}
+
 func init() {
 	wde.BackendNewWindow = func(width, height int) (w wde.Window, err error) {
 		w, err = NewWindow(width, height)
@@ -43,9 +59,15 @@ func init() {
 	wde.BackendRun = Run
 	wde.BackendStop = Stop
 	runtime.LockOSThread()
-	C.initMacDraw()
-	SetAppName("go")
+	mdata, wdata := setupNibs()
+	C.initMacDraw(
+		unsafe.Pointer(&mdata[0]),
+		C.int(len(mdata)),
+		unsafe.Pointer(&wdata[0]),
+		C.int(len(wdata)),
+	)
 
+	SetAppName("go")
 }
 
 func SetAppName(name string) {

@@ -16,7 +16,7 @@
 
 package cocoa
 
-// #include "gomacdraw/gmd.h"
+// #include "gmd.h"
 import "C"
 
 import (
