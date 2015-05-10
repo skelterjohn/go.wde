@@ -17,7 +17,6 @@
 package win
 
 import (
-	"fmt"
 	"github.com/AllenDang/w32"
 	"github.com/skelterjohn/go.wde"
 	"image"
@@ -49,9 +48,6 @@ func buttonForDetail(button uint32) wde.Button {
 	}
 	return 0
 }
-
-var keyDown string
-var keysDown = map[string]bool{}
 
 func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 	wnd := GetMsgHandler(hwnd)
@@ -147,53 +143,53 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		wnd.events <- wee
 
 	case w32.WM_SYSKEYDOWN:
-		keyDown = keyFromVirtualKeyCode(wparam)
-		keysDown[wde.KeyLeftAlt] = true
-		keysDown[keyDown] = true
+		wnd.keyDown = keyFromVirtualKeyCode(wparam)
+		wnd.keysDown[wde.KeyLeftAlt] = true
+		wnd.keysDown[wnd.keyDown] = true
 		ke := wde.KeyEvent{
-			keyDown,
+			wnd.keyDown,
 		}
 		wnd.events <- wde.KeyDownEvent(ke)
 	case w32.WM_KEYDOWN:
-		keyDown = keyFromVirtualKeyCode(wparam)
-		keysDown[keyDown] = true
+		wnd.keyDown = keyFromVirtualKeyCode(wparam)
+		wnd.keysDown[wnd.keyDown] = true
 		ke := wde.KeyEvent{
-			keyDown,
+			wnd.keyDown,
 		}
 
 		wnd.events <- wde.KeyDownEvent(ke)
 	case w32.WM_SYSCHAR:
 		glyph := syscall.UTF16ToString([]uint16{uint16(wparam)})
 		ke := wde.KeyEvent{
-			keyDown,
+			wnd.keyDown,
 		}
 		kpe := wde.KeyTypedEvent{
 			ke,
 			glyph,
-			wde.ConstructChord(keysDown),
+			wde.ConstructChord(wnd.keysDown),
 		}
 		wnd.events <- kpe
 	case w32.WM_CHAR:
 		glyph := syscall.UTF16ToString([]uint16{uint16(wparam)})
 		ke := wde.KeyEvent{
-			keyDown,
+			wnd.keyDown,
 		}
 		kpe := wde.KeyTypedEvent{
 			ke,
 			glyph,
-			wde.ConstructChord(keysDown),
+			wde.ConstructChord(wnd.keysDown),
 		}
 		wnd.events <- kpe
 	case w32.WM_SYSKEYUP:
 		keyUp := keyFromVirtualKeyCode(wparam)
-		delete(keysDown, wde.KeyLeftAlt)
-		delete(keysDown, keyUp)
+		delete(wnd.keysDown, wde.KeyLeftAlt)
+		delete(wnd.keysDown, keyUp)
 		wnd.events <- wde.KeyUpEvent{
 			keyUp,
 		}
 	case w32.WM_KEYUP:
 		keyUp := keyFromVirtualKeyCode(wparam)
-		delete(keysDown, keyUp)
+		delete(wnd.keysDown, keyUp)
 		wnd.events <- wde.KeyUpEvent{
 			keyUp,
 		}

@@ -50,6 +50,9 @@ type Window struct {
 	buffer     *DIB
 	bufferback *DIB
 	events     chan interface{}
+
+	keyDown string // the most recently depressed key
+	keysDown map[string]bool
 }
 
 /*
@@ -91,6 +94,7 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 		buffer:     NewDIB(image.Rect(0, 0, width, height)),
 		bufferback: NewDIB(image.Rect(0, 0, width, height)),
 		events:     make(chan interface{}, 16),
+		keysDown:   make(map[string]bool),
 	}
 	w.InitEventData()
 
