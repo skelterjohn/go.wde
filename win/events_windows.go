@@ -142,23 +142,23 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		wee.Where.X = wnd.lastY
 		wnd.events <- wee
 
-	case w32.WM_SYSKEYDOWN:
-		wnd.keyDown = keyFromVirtualKeyCode(wparam)
-		wnd.keysDown[wde.KeyLeftAlt] = true
-		wnd.keysDown[wnd.keyDown] = true
-		ke := wde.KeyEvent{
-			wnd.keyDown,
-		}
-		wnd.events <- wde.KeyDownEvent(ke)
-	case w32.WM_KEYDOWN:
+	case w32.WM_SYSKEYDOWN, w32.WM_KEYDOWN:
+		translatable := w32.MapVirtualKeyEx(uint(wparam), w32.MAPVK_VK_TO_CHAR, w32.HKL(0))
 		wnd.keyDown = keyFromVirtualKeyCode(wparam)
 		wnd.keysDown[wnd.keyDown] = true
 		ke := wde.KeyEvent{
 			wnd.keyDown,
 		}
-
 		wnd.events <- wde.KeyDownEvent(ke)
-	case w32.WM_SYSCHAR:
+		if translatable == 0 {
+			kpe := wde.KeyTypedEvent{
+				ke,
+				"",
+				wde.ConstructChord(wnd.keysDown),
+			}
+			wnd.events <- kpe
+		}
+	case w32.WM_SYSCHAR, w32.WM_CHAR:
 		glyph := syscall.UTF16ToString([]uint16{uint16(wparam)})
 		ke := wde.KeyEvent{
 			wnd.keyDown,
@@ -169,25 +169,7 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 			wde.ConstructChord(wnd.keysDown),
 		}
 		wnd.events <- kpe
-	case w32.WM_CHAR:
-		glyph := syscall.UTF16ToString([]uint16{uint16(wparam)})
-		ke := wde.KeyEvent{
-			wnd.keyDown,
-		}
-		kpe := wde.KeyTypedEvent{
-			ke,
-			glyph,
-			wde.ConstructChord(wnd.keysDown),
-		}
-		wnd.events <- kpe
-	case w32.WM_SYSKEYUP:
-		keyUp := keyFromVirtualKeyCode(wparam)
-		delete(wnd.keysDown, wde.KeyLeftAlt)
-		delete(wnd.keysDown, keyUp)
-		wnd.events <- wde.KeyUpEvent{
-			keyUp,
-		}
-	case w32.WM_KEYUP:
+	case w32.WM_SYSKEYUP, w32.WM_KEYUP:
 		keyUp := keyFromVirtualKeyCode(wparam)
 		delete(wnd.keysDown, keyUp)
 		wnd.events <- wde.KeyUpEvent{
