@@ -173,10 +173,10 @@ func (c ChordSorter) Less(i, j int) (less bool) {
 func ConstructChord(keys map[string]bool) (chord string) {
 	unikeys := map[string]bool{}
 	for key := range keys {
-		if strings.HasPrefix(key, "left_") {
+		if strings.HasPrefix(key, "left_") && chordIndices[key[5:]] != 0 {
 			key = key[5:]
 		}
-		if strings.HasPrefix(key, "right_") {
+		if strings.HasPrefix(key, "right_") && chordIndices[key[6:]] != 0 {
 			key = key[6:]
 		}
 		unikeys[key] = true
