@@ -101,7 +101,9 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 		return wde.KeyDelete
 	case w32.VK_HELP:
 	case w32.VK_LWIN:
+		return wde.KeyLeftSuper
 	case w32.VK_RWIN:
+		return wde.KeyRightSuper
 	case w32.VK_APPS:
 	case w32.VK_SLEEP:
 	case w32.VK_NUMPAD0:
@@ -209,16 +211,27 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 	case w32.VK_LAUNCH_APP1:
 	case w32.VK_LAUNCH_APP2:
 	case w32.VK_OEM_1:
+		return wde.KeySemicolon
 	case w32.VK_OEM_PLUS:
+		return wde.KeyEqual
 	case w32.VK_OEM_COMMA:
+		return wde.KeyComma
 	case w32.VK_OEM_MINUS:
+		return wde.KeyMinus
 	case w32.VK_OEM_PERIOD:
+		return wde.KeyPeriod
 	case w32.VK_OEM_2:
+		return wde.KeySlash
 	case w32.VK_OEM_3:
+		return wde.KeyBackTick
 	case w32.VK_OEM_4:
+		return wde.KeyLeftBracket
 	case w32.VK_OEM_5:
+		return wde.KeyBackslash
 	case w32.VK_OEM_6:
+		return wde.KeyRightBracket
 	case w32.VK_OEM_7:
+		return wde.KeyQuote
 	case w32.VK_OEM_8:
 	case w32.VK_OEM_AX:
 	case w32.VK_OEM_102:
