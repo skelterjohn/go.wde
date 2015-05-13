@@ -22,36 +22,16 @@ import (
 	"github.com/skelterjohn/go.wde"
 )
 
-/*
-TODO:
- F10 loses focus
- left alt loses focus
-<	(left from z), code 226. Coded as ',' in xgb for some reason.
-		// Some that are not found in wde constants
-		// Hardcoded to be compatible with xgb
-		19:	"Pause",
-		93:	"Menu",	
-		145:	"Scroll_Lock",
-		186:	"dead_diaeresis",	// ¨
-		192:	"odiaresis",			// ö
-		220:	"section",				// §
-		221:	"aring",					// å
-		222:	"adiaresis",			// ä
-*/
-
 func keyFromVirtualKeyCode(vk uintptr) string {
+	if vk >= '0' && vk <= 'Z' {
+		/* alphanumeric range (windows doesn't use 0x3a-0x40) */
+		return fmt.Sprintf("%c", vk)
+	}
 	switch vk {
-	case w32.VK_LBUTTON:
-	case w32.VK_RBUTTON:
-	case w32.VK_CANCEL:
-	case w32.VK_MBUTTON:
-	case w32.VK_XBUTTON1:
-	case w32.VK_XBUTTON2:
 	case w32.VK_BACK:
 		return wde.KeyBackspace
 	case w32.VK_TAB:
 		return wde.KeyTab
-	case w32.VK_CLEAR:
 	case w32.VK_RETURN:
 		return wde.KeyReturn
 	case w32.VK_SHIFT:
@@ -60,19 +40,10 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 		return wde.KeyLeftControl
 	case w32.VK_MENU:
 		return wde.KeyLeftAlt
-	case w32.VK_PAUSE:
 	case w32.VK_CAPITAL:
 		return wde.KeyCapsLock
-	case w32.VK_HANGUL:
-	case w32.VK_JUNJA:
-	case w32.VK_FINAL:
-	case w32.VK_KANJI:
 	case w32.VK_ESCAPE:
 		return wde.KeyEscape
-	case w32.VK_CONVERT:
-	case w32.VK_NONCONVERT:
-	case w32.VK_ACCEPT:
-	case w32.VK_MODECHANGE:
 	case w32.VK_SPACE:
 		return wde.KeySpace
 	case w32.VK_PRIOR:
@@ -91,21 +62,14 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 		return wde.KeyRightArrow
 	case w32.VK_DOWN:
 		return wde.KeyDownArrow
-	case w32.VK_SELECT:
-	case w32.VK_PRINT:
-	case w32.VK_EXECUTE:
-	case w32.VK_SNAPSHOT:
 	case w32.VK_INSERT:
 		return wde.KeyInsert
 	case w32.VK_DELETE:
 		return wde.KeyDelete
-	case w32.VK_HELP:
 	case w32.VK_LWIN:
 		return wde.KeyLeftSuper
 	case w32.VK_RWIN:
 		return wde.KeyRightSuper
-	case w32.VK_APPS:
-	case w32.VK_SLEEP:
 	case w32.VK_NUMPAD0:
 		return wde.Key0
 	case w32.VK_NUMPAD1:
@@ -130,7 +94,6 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 		return wde.KeyPadStar
 	case w32.VK_ADD:
 		return wde.KeyPadPlus
-	case w32.VK_SEPARATOR:
 	case w32.VK_SUBTRACT:
 		return wde.KeyPadMinus
 	case w32.VK_DECIMAL:
@@ -169,17 +132,8 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 		return wde.KeyF15
 	case w32.VK_F16:
 		return wde.KeyF16
-	case w32.VK_F17:
-	case w32.VK_F18:
-	case w32.VK_F19:
-	case w32.VK_F20:
-	case w32.VK_F21:
-	case w32.VK_F22:
-	case w32.VK_F23:
-	case w32.VK_F24:
 	case w32.VK_NUMLOCK:
 		return wde.KeyNumlock
-	case w32.VK_SCROLL:
 	case w32.VK_LSHIFT:
 		return wde.KeyLeftShift
 	case w32.VK_RSHIFT:
@@ -192,24 +146,6 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 		return wde.KeyLeftAlt
 	case w32.VK_RMENU:
 		return wde.KeyRightAlt
-	case w32.VK_BROWSER_BACK:
-	case w32.VK_BROWSER_FORWARD:
-	case w32.VK_BROWSER_REFRESH:
-	case w32.VK_BROWSER_STOP:
-	case w32.VK_BROWSER_SEARCH:
-	case w32.VK_BROWSER_FAVORITES:
-	case w32.VK_BROWSER_HOME:
-	case w32.VK_VOLUME_MUTE:
-	case w32.VK_VOLUME_DOWN:
-	case w32.VK_VOLUME_UP:
-	case w32.VK_MEDIA_NEXT_TRACK:
-	case w32.VK_MEDIA_PREV_TRACK:
-	case w32.VK_MEDIA_STOP:
-	case w32.VK_MEDIA_PLAY_PAUSE:
-	case w32.VK_LAUNCH_MAIL:
-	case w32.VK_LAUNCH_MEDIA_SELECT:
-	case w32.VK_LAUNCH_APP1:
-	case w32.VK_LAUNCH_APP2:
 	case w32.VK_OEM_1:
 		return wde.KeySemicolon
 	case w32.VK_OEM_PLUS:
@@ -232,6 +168,64 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 		return wde.KeyRightBracket
 	case w32.VK_OEM_7:
 		return wde.KeyQuote
+
+	// the rest lack wde constants. the first few are xgb compatible
+	case w32.VK_PAUSE:
+		return "Pause"
+	case w32.VK_APPS:
+		return "Menu"
+	case w32.VK_SCROLL:
+		return "Scroll_Lock"
+
+	// the rest fallthrough to the default format "vk-0xff"
+	case w32.VK_LBUTTON:
+	case w32.VK_RBUTTON:
+	case w32.VK_CANCEL:
+	case w32.VK_MBUTTON:
+	case w32.VK_XBUTTON1:
+	case w32.VK_XBUTTON2:
+	case w32.VK_CLEAR:
+	case w32.VK_HANGUL:
+	case w32.VK_JUNJA:
+	case w32.VK_FINAL:
+	case w32.VK_KANJI:
+	case w32.VK_CONVERT:
+	case w32.VK_NONCONVERT:
+	case w32.VK_ACCEPT:
+	case w32.VK_MODECHANGE:
+	case w32.VK_SELECT:
+	case w32.VK_PRINT:
+	case w32.VK_EXECUTE:
+	case w32.VK_SNAPSHOT:
+	case w32.VK_HELP:
+	case w32.VK_SLEEP:
+	case w32.VK_SEPARATOR:
+	case w32.VK_F17:
+	case w32.VK_F18:
+	case w32.VK_F19:
+	case w32.VK_F20:
+	case w32.VK_F21:
+	case w32.VK_F22:
+	case w32.VK_F23:
+	case w32.VK_F24:
+	case w32.VK_BROWSER_BACK:
+	case w32.VK_BROWSER_FORWARD:
+	case w32.VK_BROWSER_REFRESH:
+	case w32.VK_BROWSER_STOP:
+	case w32.VK_BROWSER_SEARCH:
+	case w32.VK_BROWSER_FAVORITES:
+	case w32.VK_BROWSER_HOME:
+	case w32.VK_VOLUME_MUTE:
+	case w32.VK_VOLUME_DOWN:
+	case w32.VK_VOLUME_UP:
+	case w32.VK_MEDIA_NEXT_TRACK:
+	case w32.VK_MEDIA_PREV_TRACK:
+	case w32.VK_MEDIA_STOP:
+	case w32.VK_MEDIA_PLAY_PAUSE:
+	case w32.VK_LAUNCH_MAIL:
+	case w32.VK_LAUNCH_MEDIA_SELECT:
+	case w32.VK_LAUNCH_APP1:
+	case w32.VK_LAUNCH_APP2:
 	case w32.VK_OEM_8:
 	case w32.VK_OEM_AX:
 	case w32.VK_OEM_102:
@@ -261,7 +255,6 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 	case w32.VK_NONAME:
 	case w32.VK_PA1:
 	case w32.VK_OEM_CLEAR:
-
 	}
-	return fmt.Sprintf("%c", vk)
+	return fmt.Sprintf("vk-0x%02x", vk)
 }
