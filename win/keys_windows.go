@@ -22,6 +22,37 @@ import (
 	"github.com/skelterjohn/go.wde"
 )
 
+func (wnd *Window) checkKeyState() {
+	if !wnd.keysStale {
+		return
+	}
+	keyboard := make([]byte, 256)
+	if w32.GetKeyboardState(&keyboard) {
+		/* virtual keys before 0x08 are mouse buttons; skip them */
+		for vk := uintptr(0x08); vk <= 0xff; vk++ {
+			isDown := keyboard[vk] & 0x80 != 0
+			key := keyFromVirtualKeyCode(vk)
+			_, wasDown := wnd.keysDown[key]
+			if isDown != wasDown {
+				if isDown {
+					wnd.keysDown[key] = true
+					wnd.events <- wde.KeyDownEvent(wde.KeyEvent{key})
+				} else {
+					delete(wnd.keysDown, key)
+					wnd.events <- wde.KeyUpEvent(wde.KeyEvent{key})
+				}
+			}
+		}
+		wnd.keysStale = false
+	}
+}
+
+func (wnd *Window) constructChord() string {
+	wnd.checkKeyState()
+	return wde.ConstructChord(wnd.keysDown)
+}
+
+
 func keyFromVirtualKeyCode(vk uintptr) string {
 	if vk >= '0' && vk <= 'Z' {
 		/* alphanumeric range (windows doesn't use 0x3a-0x40) */

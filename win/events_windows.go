@@ -57,6 +57,16 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 
 	var rc uintptr
 	switch msg {
+	case w32.WM_ACTIVATE:
+		if wparam & 0xffff != 0 {
+			/* This window has just been granted focus, so flag our internal
+			** key state as stale. We can't simply refresh our state because
+			** win32's GetKeyboardState isn't always accurate at this point
+			** in the event stream. */
+			wnd.keysStale = true
+		}
+		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
+
 	case w32.WM_SHOWWINDOW:
 		w32.SetFocus(hwnd)
 	case w32.WM_LBUTTONDOWN, w32.WM_RBUTTONDOWN, w32.WM_MBUTTONDOWN:
@@ -146,32 +156,28 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		translatable := w32.MapVirtualKeyEx(uint(wparam), w32.MAPVK_VK_TO_CHAR, w32.HKL(0))
 		wnd.keyDown = keyFromVirtualKeyCode(wparam)
 		wnd.keysDown[wnd.keyDown] = true
-		ke := wde.KeyEvent{
-			wnd.keyDown,
-		}
-		wnd.events <- wde.KeyDownEvent(ke)
+		wnd.checkKeyState()
+		wnd.events <- wde.KeyDownEvent{wnd.keyDown}
 		if translatable == 0 {
 			kpe := wde.KeyTypedEvent{
-				ke,
+				wde.KeyEvent{wnd.keyDown},
 				"",
-				wde.ConstructChord(wnd.keysDown),
+				wnd.constructChord(),
 			}
 			wnd.events <- kpe
 		}
 	case w32.WM_SYSCHAR, w32.WM_CHAR:
 		glyph := syscall.UTF16ToString([]uint16{uint16(wparam)})
-		ke := wde.KeyEvent{
-			wnd.keyDown,
-		}
 		kpe := wde.KeyTypedEvent{
-			ke,
+			wde.KeyEvent{wnd.keyDown},
 			glyph,
-			wde.ConstructChord(wnd.keysDown),
+			wnd.constructChord(),
 		}
 		wnd.events <- kpe
 	case w32.WM_SYSKEYUP, w32.WM_KEYUP:
 		keyUp := keyFromVirtualKeyCode(wparam)
 		delete(wnd.keysDown, keyUp)
+		wnd.checkKeyState()
 		wnd.events <- wde.KeyUpEvent{
 			keyUp,
 		}

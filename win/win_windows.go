@@ -53,6 +53,7 @@ type Window struct {
 
 	keyDown string // the most recently depressed key
 	keysDown map[string]bool
+	keysStale  bool // if true, keysDown may not reflect reality
 }
 
 /*
