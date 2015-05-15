@@ -192,8 +192,12 @@ func (w *Window) FlushImage(bounds ...image.Rectangle) {
 		}
 		w.bufferLck.Unlock()
 	}
-	w.buffer.XDraw()
-	w.buffer.XPaint(w.win.Id)
+	if len(bounds) > 0 {
+		w.buffer.XPaintRects(w.win.Id, bounds...)
+	} else {
+		w.buffer.XDraw()
+		w.buffer.XPaint(w.win.Id)
+	}
 }
 
 func (w *Window) Close() (err error) {
@@ -210,7 +214,7 @@ type Image struct {
 }
 
 func (buffer Image) CopyRGBA(src *image.RGBA, r image.Rectangle) {
-        // clip r against each image's bounds and move sp accordingly (see draw.clip())
+	// clip r against each image's bounds and move sp accordingly (see draw.clip())
 	sp := image.ZP
 	orig := r.Min
 	r = r.Intersect(buffer.Bounds())
