@@ -112,3 +112,19 @@ func NewWindow(width, height int) (Window, error) {
 var BackendNewWindow = func(width, height int) (Window, error) {
 	panic("no wde backend imported")
 }
+
+func GetClipboardText() string {
+	return BackendGetClipboardText()
+}
+
+var BackendGetClipboardText = func() string {
+	panic("no wde backend imported")
+}
+
+func SetClipboardText(text string) {
+	BackendSetClipboardText(text)
+}
+
+var BackendSetClipboardText = func(text string) {
+	panic("no wde backend imported")
+}
