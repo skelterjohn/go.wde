@@ -77,6 +77,14 @@ func wdetest() {
 					// fmt.Println("KeyUpEvent", e.Glyph)
 				case wde.KeyTypedEvent:
 					fmt.Printf("typed key %v, glyph %v, chord %v\n", e.Key, e.Glyph, e.Chord)
+					switch e.Glyph {
+					case "1":
+						dw.SetCursor(wde.NormalCursor)
+					case "2":
+						dw.SetCursor(wde.CrosshairCursor)
+					case "3":
+						dw.SetCursor(wde.GrabHoverCursor)
+					}
 				case wde.CloseEvent:
 					fmt.Println("close")
 					dw.Close()

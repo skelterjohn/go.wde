@@ -31,6 +31,7 @@ type Window interface {
 	FlushImage(bounds ...image.Rectangle)
 	EventChan() (events <-chan interface{})
 	Close() (err error)
+	SetCursor(cursor Cursor)
 }
 
 type Image interface {
