@@ -95,7 +95,6 @@ func RegisterClass(className string, wndproc uintptr) error {
 	wc.Instance = gAppInstance
 	wc.Background = w32.COLOR_BTNFACE + 1
 	wc.Icon = icon
-	wc.Cursor = w32.LoadCursor(0, w32.MakeIntResource(w32.IDC_ARROW))
 	wc.ClassName = syscall.StringToUTF16Ptr(className)
 	wc.MenuName = nil
 	wc.IconSm = icon

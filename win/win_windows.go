@@ -51,9 +51,13 @@ type Window struct {
 	bufferback *DIB
 	events     chan interface{}
 
-	keyDown string // the most recently depressed key
-	keysDown map[string]bool
+	keyDown    string // the most recently depressed key
+	keysDown   map[string]bool
 	keysStale  bool // if true, keysDown may not reflect reality
+
+	cursor     wde.Cursor // most recently set cursor
+
+	uiTasks    chan func()
 }
 
 /*
@@ -96,6 +100,7 @@ func makeTheWindow(width, height int) (w *Window, err error) {
 		bufferback: NewDIB(image.Rect(0, 0, width, height)),
 		events:     make(chan interface{}, 16),
 		keysDown:   make(map[string]bool),
+		uiTasks:    make(chan func(), 8),
 	}
 	w.InitEventData()
 
@@ -241,4 +246,9 @@ func (this *Window) Repaint() {
 	hdc := w32.GetDC(this.hwnd)
 	this.blitImage(hdc, this.bufferback)
 	w32.DeleteDC(hdc)
+}
+
+func (this *Window) onUiThread(f func()) {
+	this.uiTasks <- f
+	w32.PostMessage(this.hwnd, WDEM_UI_THREAD, uintptr(0), uintptr(0))
 }

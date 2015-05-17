@@ -23,6 +23,7 @@ import (
 	"syscall"
 	"unsafe"
 )
+const WDEM_UI_THREAD = w32.WM_APP
 
 type EventData struct {
 	lastX, lastY int
@@ -69,6 +70,8 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 
 	case w32.WM_SHOWWINDOW:
 		w32.SetFocus(hwnd)
+		wnd.restoreCursor()
+
 	case w32.WM_LBUTTONDOWN, w32.WM_RBUTTONDOWN, w32.WM_MBUTTONDOWN:
 		wnd.button = wnd.button | buttonForDetail(msg)
 		var bpe wde.MouseDownEvent
@@ -131,6 +134,7 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 			tme.DwHoverTime = w32.HOVER_DEFAULT
 			w32.TrackMouseEvent(&tme)
 			wnd.trackMouse = true
+			wnd.restoreCursor()
 			wnd.events <- wde.MouseEnteredEvent(mme)
 		} else {
 			if wnd.button == 0 {
@@ -192,6 +196,10 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 	case w32.WM_PAINT:
 		wnd.Repaint()
 		rc = w32.DefWindowProc(hwnd, msg, wparam, lparam)
+
+	case WDEM_UI_THREAD:
+		f := <-wnd.uiTasks
+		f()
 
 	case w32.WM_CLOSE:
 		wnd.events <- wde.CloseEvent{}
