@@ -64,6 +64,7 @@ type Window struct {
 	width, height int
 	lockedSize    bool
 	closed        bool
+	cursor        wde.Cursor // most recently set cursor
 
 	events chan interface{}
 }
