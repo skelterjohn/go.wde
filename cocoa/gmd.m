@@ -18,6 +18,7 @@ NSNib *windownib;
 
 int initMacDraw( void *mdata, int mlen, void *wdata, int wlen ) {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    NSThread* nop = [NSThread alloc];
     
     ProcessSerialNumber psn;
     psn.highLongOfPSN = 0;
@@ -25,6 +26,9 @@ int initMacDraw( void *mdata, int mlen, void *wdata, int wlen ) {
     TransformProcessType(&psn, kProcessTransformToForegroundApplication);
 
     [NSApplication sharedApplication];
+
+    // kickoff a thread that does nothing, so cocoa inits multi-threaded mode
+    [[nop init] start];
 
     menunib = [[NSNib alloc] initWithNibData:[NSData dataWithBytes:mdata length:mlen] bundle:nil];
     windownib = [[NSNib alloc] initWithNibData:[NSData dataWithBytes:wdata length:wlen] bundle:nil];
