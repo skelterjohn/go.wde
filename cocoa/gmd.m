@@ -10,6 +10,8 @@
 #import "GoWindow.h"
 #import "GoMenu.h"
 
+#include "_cgo_export.h"
+
 GoMenu* gomenu;
 NSBundle* fw;
 
@@ -170,4 +172,12 @@ void getScreenSize(GMDImage screen, int* width, int* height) {
     *width = size.width;
     *height = size.height;
     [pool release];
+}
+
+void taskReady() {
+	dispatch_async(dispatch_get_main_queue(), ^{ runTask(); });
+}
+
+int isMainThread() {
+	return [NSThread isMainThread];
 }

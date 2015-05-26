@@ -40,6 +40,9 @@ void releaseMacDraw();
 void NSAppRun();
 void NSAppStop();
 
+int isMainThread();
+void taskReady();
+
 void setAppName(char* name);
 
 GMDWindow openWindow();

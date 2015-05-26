@@ -32,6 +32,8 @@ import (
 	"unsafe"
 )
 
+var tasks chan func()
+
 var appChanStart = make(chan bool)
 var appChanFinish = make(chan bool)
 
@@ -66,6 +68,7 @@ func init() {
 		unsafe.Pointer(&wdata[0]),
 		C.int(len(wdata)),
 	)
+	tasks = make(chan func(), 16)
 
 	SetAppName("go")
 }
@@ -132,10 +135,16 @@ func (w *Window) LockSize(lock bool) {
 }
 
 func (w *Window) Show() {
+	onMainThread(func() {
+		w.show_main()
+	})
+}
+
+func (w *Window) show_main() {
 	w.oplock.Lock()
 	defer w.oplock.Unlock()
 
-	C.showWindow(w.cw)
+	C.showWindow(w.cw) // must run on main thread
 }
 
 func (w *Window) resizeBuffer(width, height int) (im wde.Image) {
@@ -202,4 +211,28 @@ func Run() {
 func Stop() {
 	C.releaseMacDraw()
 	C.NSAppStop()
+}
+
+func isMainThread() bool {
+	return C.isMainThread() != 0
+}
+
+func onMainThread(f func()) {
+	if isMainThread() {
+		f()
+		return
+	}
+	done := make(chan bool)
+	tasks <- func() {
+		f()
+		done <- true
+	}
+	C.taskReady()
+	<-done
+}
+
+//export runTask
+func runTask() {
+	f := <-tasks
+	f()
 }
