@@ -96,6 +96,10 @@ func (w *Window) SetTitle(title string) {
 	w.win.SetTitle(title)
 }
 
+func (w *Window) SetCursor(cursor wde.Cursor) {
+	// TODO
+}
+
 func (w *Window) SetSize(width, height int) {
 	w.win.SetSize(width, height)
 }
