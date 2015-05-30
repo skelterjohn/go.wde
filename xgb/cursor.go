@@ -60,14 +60,19 @@ func (w *Window) SetCursor(cursor wde.Cursor) {
 func xCursor(w *Window, c wde.Cursor) xproto.Cursor {
 	xc, ok := cursorCache[c]
 	if !ok {
-		xid, ok := cursorXIds[c]
-		if ok {
-			xc, err := xcursor.CreateCursor(w.win.X, xid)
-			if err == nil {
-				cursorCache[c] = xc
-			}
-		}
-		// else xc falls back to 0
+		xc = createCursor(w, c)
+		cursorCache[c] = xc
 	}
 	return xc
+}
+
+func createCursor(w *Window, c wde.Cursor) xproto.Cursor {
+	xid, ok := cursorXIds[c]
+	if ok {
+		xc, err := xcursor.CreateCursor(w.win.X, xid)
+		if err == nil {
+			return xc
+		}
+	}
+	return 0 // fallback to cursor 0
 }
