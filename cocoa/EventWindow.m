@@ -190,6 +190,20 @@
     //[gw newBuffer];
 }
 
+- (void)windowDidBecomeKey:(NSNotification *)notification
+{
+    GMDEvent e;
+    e.kind = GMDKeyFocus;
+    [self nq:e];
+}
+
+- (void)windowDidBecomeMain:(NSNotification *)notification
+{
+    GMDEvent e;
+    e.kind = GMDMainFocus;
+    [self nq:e];
+}
+
 - (void)windowWillClose:(NSNotification *)notification
 {
     GMDEvent e;

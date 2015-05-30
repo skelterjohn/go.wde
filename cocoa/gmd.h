@@ -24,6 +24,8 @@ enum GMDEventCodes {
     //GMDKeyPress = 9,
     GMDResize = 10,
     GMDClose = 11,
+    GMDKeyFocus = 12, // got keyboard focus
+    GMDMainFocus = 13, // became "main" window
 };
 
 typedef void* GMDWindow;

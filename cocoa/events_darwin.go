@@ -17,6 +17,7 @@
 package cocoa
 
 // #include "gmd.h"
+// #include "cursor.h"
 import "C"
 
 import (
@@ -76,15 +77,23 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				me.Where.Y = int(e.data[1])
 				ec <- me
 			case C.GMDMouseEntered:
+				w.hasMouse = true
+				setCursor(w.cursor)
 				var me wde.MouseEnteredEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
 				ec <- me
 			case C.GMDMouseExited:
+				w.hasMouse = false
+				setCursor(wde.NormalCursor)
 				var me wde.MouseExitedEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
 				ec <- me
+			case C.GMDMainFocus:
+				// for some reason Cocoa resets the cursor to normal when the window
+				// becomes the "main" window, so we have to set it back to what we want
+				setCursor(w.cursor)
 			case C.GMDKeyDown:
 				var letter string
 				var ke wde.KeyEvent

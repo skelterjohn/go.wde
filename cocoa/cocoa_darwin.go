@@ -88,10 +88,13 @@ func (im Image) CopyRGBA(src *image.RGBA, bounds image.Rectangle) {
 }
 
 type Window struct {
-	cw     C.GMDWindow
-	im     Image
-	oplock sync.Mutex
-	ec     chan interface{}
+	cw       C.GMDWindow
+	im       Image
+	oplock   sync.Mutex
+	ec       chan interface{}
+
+	cursor   wde.Cursor // current cursor
+	hasMouse bool // is mouse cursor over window?
 }
 
 func NewWindow(width, height int) (w *Window, err error) {
