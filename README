@@ -2,6 +2,6 @@ go.wde
 
 (W)indows, (d)rawing and (e)vents for Go.
 
-Works on linux and windows with no setup beyond "go get".
+Works on linux, windows, and os x with no setup beyond "go get".
 
-To enable on os x, you must first install gomacdraw.framework. There is an installer located in go.wde/cocoa/framework/gomacdraw.pkg.
+(os x needs go 1.3 or newer)
