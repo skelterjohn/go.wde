@@ -109,9 +109,10 @@ func NewWindow(width, height int) (w *Window, err error) {
 		var err error
 		w, err = makeTheWindow(width, height)
 		ready <- err
-		if err == nil {
-			w.HandleWndMessages()
+		if err != nil {
+			return
 		}
+		w.HandleWndMessages()
 	}(ready)
 
 	err = <-ready
