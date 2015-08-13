@@ -46,6 +46,11 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 	downKeys := make(map[string]bool)
 	ec := make(chan interface{})
 	go func(ec chan<- interface{}) {
+
+		var noX int = 1<<31 - 1
+		noX++
+		var lastX, lastY int = noX, 0
+
 	eventloop:
 		for {
 			e := C.getNextEvent(w.cw)
@@ -57,33 +62,73 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				mde.Where.X = int(e.data[0])
 				mde.Where.Y = int(e.data[1])
 				mde.Which = getButton(int(e.data[2]))
+				lastX = mde.Where.X
+				lastY = mde.Where.Y
 				ec <- mde
 			case C.GMDMouseUp:
 				var mue wde.MouseUpEvent
 				mue.Where.X = int(e.data[0])
 				mue.Where.Y = int(e.data[1])
 				mue.Which = getButton(int(e.data[2]))
+				lastX = mue.Where.X
+				lastY = mue.Where.Y
 				ec <- mue
 			case C.GMDMouseDragged:
 				var mde wde.MouseDraggedEvent
 				mde.Where.X = int(e.data[0])
 				mde.Where.Y = int(e.data[1])
 				mde.Which = getButton(int(e.data[2]))
+				if lastX != noX {
+					mde.From.X = int(lastX)
+					mde.From.Y = int(lastY)
+				} else {
+					mde.From.X = mde.Where.X
+					mde.From.Y = mde.Where.Y
+				}
+				lastX = mde.Where.X
+				lastY = mde.Where.Y
 				ec <- mde
 			case C.GMDMouseMoved:
-				var me wde.MouseMovedEvent
-				me.Where.X = int(e.data[0])
-				me.Where.Y = int(e.data[1])
-				ec <- me
+				var mme wde.MouseMovedEvent
+				mme.Where.X = int(e.data[0])
+				mme.Where.Y = int(e.data[1])
+				if lastX != noX {
+					mme.From.X = int(lastX)
+					mme.From.Y = int(lastY)
+				} else {
+					mme.From.X = mme.Where.X
+					mme.From.Y = mme.Where.Y
+				}
+				lastX = mme.Where.X
+				lastY = mme.Where.Y
+				ec <- mme
 			case C.GMDMouseEntered:
 				var me wde.MouseEnteredEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
+				if lastX != noX {
+					me.From.X = int(lastX)
+					me.From.Y = int(lastY)
+				} else {
+					me.From.X = me.Where.X
+					me.From.Y = me.Where.Y
+				}
+				lastX = me.Where.X
+				lastY = me.Where.Y
 				ec <- me
 			case C.GMDMouseExited:
 				var me wde.MouseExitedEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
+				if lastX != noX {
+					me.From.X = int(lastX)
+					me.From.Y = int(lastY)
+				} else {
+					me.From.X = me.Where.X
+					me.From.Y = me.Where.Y
+				}
+				lastX = me.Where.X
+				lastY = me.Where.Y
 				ec <- me
 			case C.GMDKeyDown:
 				var letter string
