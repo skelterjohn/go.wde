@@ -22,6 +22,7 @@ import "C"
 import (
 	"fmt"
 	"github.com/skelterjohn/go.wde"
+	"image"
 	// "strings"
 )
 
@@ -47,9 +48,8 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 	ec := make(chan interface{})
 	go func(ec chan<- interface{}) {
 
-		var noX int = 1<<31 - 1
-		noX++
-		var lastX, lastY int = noX, 0
+		noX := -1
+		lastXY := image.Point{-1, -1}
 
 	eventloop:
 		for {
@@ -62,73 +62,59 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				mde.Where.X = int(e.data[0])
 				mde.Where.Y = int(e.data[1])
 				mde.Which = getButton(int(e.data[2]))
-				lastX = mde.Where.X
-				lastY = mde.Where.Y
+				lastXY = mde.Where
 				ec <- mde
 			case C.GMDMouseUp:
 				var mue wde.MouseUpEvent
 				mue.Where.X = int(e.data[0])
 				mue.Where.Y = int(e.data[1])
 				mue.Which = getButton(int(e.data[2]))
-				lastX = mue.Where.X
-				lastY = mue.Where.Y
+				lastXY = mue.Where
 				ec <- mue
 			case C.GMDMouseDragged:
 				var mde wde.MouseDraggedEvent
 				mde.Where.X = int(e.data[0])
 				mde.Where.Y = int(e.data[1])
 				mde.Which = getButton(int(e.data[2]))
-				if lastX != noX {
-					mde.From.X = int(lastX)
-					mde.From.Y = int(lastY)
+				if lastXY.X != noX {
+					mde.From = lastXY
 				} else {
-					mde.From.X = mde.Where.X
-					mde.From.Y = mde.Where.Y
+					mde.From = mde.Where
 				}
-				lastX = mde.Where.X
-				lastY = mde.Where.Y
+				lastXY = mde.Where
 				ec <- mde
 			case C.GMDMouseMoved:
 				var mme wde.MouseMovedEvent
 				mme.Where.X = int(e.data[0])
 				mme.Where.Y = int(e.data[1])
-				if lastX != noX {
-					mme.From.X = int(lastX)
-					mme.From.Y = int(lastY)
+				if lastXY.X != noX {
+					mme.From = lastXY
 				} else {
-					mme.From.X = mme.Where.X
-					mme.From.Y = mme.Where.Y
+					mme.From = mme.Where
 				}
-				lastX = mme.Where.X
-				lastY = mme.Where.Y
+				lastXY = mme.Where
 				ec <- mme
 			case C.GMDMouseEntered:
 				var me wde.MouseEnteredEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
-				if lastX != noX {
-					me.From.X = int(lastX)
-					me.From.Y = int(lastY)
+				if lastXY.X != noX {
+					me.From = lastXY
 				} else {
-					me.From.X = me.Where.X
-					me.From.Y = me.Where.Y
+					me.From = me.Where
 				}
-				lastX = me.Where.X
-				lastY = me.Where.Y
+				lastXY = me.Where
 				ec <- me
 			case C.GMDMouseExited:
 				var me wde.MouseExitedEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
-				if lastX != noX {
-					me.From.X = int(lastX)
-					me.From.Y = int(lastY)
+				if lastXY.X != noX {
+					me.From = lastXY
 				} else {
-					me.From.X = me.Where.X
-					me.From.Y = me.Where.Y
+					me.From = me.Where
 				}
-				lastX = me.Where.X
-				lastY = me.Where.Y
+				lastXY = me.Where
 				ec <- me
 			case C.GMDKeyDown:
 				var letter string
