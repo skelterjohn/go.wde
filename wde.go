@@ -73,7 +73,7 @@ will register a backend with go.wde, allowing you to call
 wde.Run(), wde.Stop() and wde.NewWindow() without referring to the
 backend explicitly.
 
-If you pupt the registration import in a separate file filtered for
+If you put the registration import in a separate file filtered for
 the correct platform, your project will work on all three major
 platforms without configuration.
 
