@@ -48,8 +48,8 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 	ec := make(chan interface{})
 	go func(ec chan<- interface{}) {
 
-		noX := -1
-		lastXY := image.Point{-1, -1}
+		noXY := image.Point{-1, -1}
+		lastXY := noXY
 
 	eventloop:
 		for {
@@ -76,7 +76,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				mde.Where.X = int(e.data[0])
 				mde.Where.Y = int(e.data[1])
 				mde.Which = getButton(int(e.data[2]))
-				if lastXY.X != noX {
+				if lastXY != noXY {
 					mde.From = lastXY
 				} else {
 					mde.From = mde.Where
@@ -87,7 +87,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				var mme wde.MouseMovedEvent
 				mme.Where.X = int(e.data[0])
 				mme.Where.Y = int(e.data[1])
-				if lastXY.X != noX {
+				if lastXY != noXY {
 					mme.From = lastXY
 				} else {
 					mme.From = mme.Where
@@ -98,7 +98,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				var me wde.MouseEnteredEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
-				if lastXY.X != noX {
+				if lastXY != noXY {
 					me.From = lastXY
 				} else {
 					me.From = me.Where
@@ -109,7 +109,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				var me wde.MouseExitedEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
-				if lastXY.X != noX {
+				if lastXY != noXY {
 					me.From = lastXY
 				} else {
 					me.From = me.Where
