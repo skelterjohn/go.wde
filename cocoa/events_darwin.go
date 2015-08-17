@@ -23,6 +23,7 @@ import "C"
 import (
 	"fmt"
 	"github.com/skelterjohn/go.wde"
+	"image"
 	// "strings"
 )
 
@@ -47,6 +48,10 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 	downKeys := make(map[string]bool)
 	ec := make(chan interface{})
 	go func(ec chan<- interface{}) {
+
+		noXY := image.Point{-1, -1}
+		lastXY := noXY
+
 	eventloop:
 		for {
 			e := C.getNextEvent(w.cw)
@@ -58,30 +63,50 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				mde.Where.X = int(e.data[0])
 				mde.Where.Y = int(e.data[1])
 				mde.Which = getButton(int(e.data[2]))
+				lastXY = mde.Where
 				ec <- mde
 			case C.GMDMouseUp:
 				var mue wde.MouseUpEvent
 				mue.Where.X = int(e.data[0])
 				mue.Where.Y = int(e.data[1])
 				mue.Which = getButton(int(e.data[2]))
+				lastXY = mue.Where
 				ec <- mue
 			case C.GMDMouseDragged:
 				var mde wde.MouseDraggedEvent
 				mde.Where.X = int(e.data[0])
 				mde.Where.Y = int(e.data[1])
 				mde.Which = getButton(int(e.data[2]))
+				if lastXY != noXY {
+					mde.From = lastXY
+				} else {
+					mde.From = mde.Where
+				}
+				lastXY = mde.Where
 				ec <- mde
 			case C.GMDMouseMoved:
-				var me wde.MouseMovedEvent
-				me.Where.X = int(e.data[0])
-				me.Where.Y = int(e.data[1])
-				ec <- me
+				var mme wde.MouseMovedEvent
+				mme.Where.X = int(e.data[0])
+				mme.Where.Y = int(e.data[1])
+				if lastXY != noXY {
+					mme.From = lastXY
+				} else {
+					mme.From = mme.Where
+				}
+				lastXY = mme.Where
+				ec <- mme
 			case C.GMDMouseEntered:
 				w.hasMouse = true
 				setCursor(w.cursor)
 				var me wde.MouseEnteredEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
+				if lastXY != noXY {
+					me.From = lastXY
+				} else {
+					me.From = me.Where
+				}
+				lastXY = me.Where
 				ec <- me
 			case C.GMDMouseExited:
 				w.hasMouse = false
@@ -89,6 +114,12 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				var me wde.MouseExitedEvent
 				me.Where.X = int(e.data[0])
 				me.Where.Y = int(e.data[1])
+				if lastXY != noXY {
+					me.From = lastXY
+				} else {
+					me.From = me.Where
+				}
+				lastXY = me.Where
 				ec <- me
 			case C.GMDMainFocus:
 				// for some reason Cocoa resets the cursor to normal when the window
