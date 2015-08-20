@@ -79,6 +79,9 @@ GMDWindow openWindow() {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
     GoWindow* gw = [GoWindow alloc];
+    if (gw == nil) {
+        return nil;
+    }
     [windownib instantiateWithOwner:gw topLevelObjects: nil];
     [[gw window] orderFront:nil];
     [[gw eventWindow] setGw:gw];

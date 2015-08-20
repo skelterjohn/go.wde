@@ -99,6 +99,9 @@ type Window struct {
 
 func NewWindow(width, height int) (w *Window, err error) {
 	cw := C.openWindow()
+	if cw == nil {
+		return nil, errors.New("couldn't allocate window (out of memory?)")
+	}
 	w = &Window{
 		cw: cw,
 	}
