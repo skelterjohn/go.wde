@@ -17,7 +17,6 @@
 package xgb
 
 import (
-	"fmt"
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil/icccm"
 	"github.com/BurntSushi/xgbutil/keybind"
@@ -55,7 +54,6 @@ func (w *Window) handleEvents() {
 		e, err := w.conn.WaitForEvent()
 
 		if err != nil {
-			fmt.Println("[go.wde X error] ", err)
 			continue
 		}
 
@@ -208,7 +206,7 @@ func (w *Window) handleEvents() {
 		case xproto.PropertyNotifyEvent:
 
 		default:
-			fmt.Printf("unhandled event: type %T\n%+v\n", e, e)
+			// Unhandled event
 		}
 
 	}

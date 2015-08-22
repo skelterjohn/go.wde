@@ -17,7 +17,6 @@
 package xgb
 
 import (
-	"fmt"
 	"github.com/BurntSushi/xgb"
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil"
@@ -96,7 +95,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	err = icccm.WmProtocolsSet(w.xu, w.win.Id, []string{"WM_DELETE_WINDOW"})
 	if err != nil {
-		fmt.Println(err)
+		// Ignore error
 		err = nil
 	}
 
@@ -189,9 +188,7 @@ func (w *Window) FlushImage(bounds ...image.Rectangle) {
 	}
 	if w.buffer.Pixmap == 0 {
 		w.bufferLck.Lock()
-		if err := w.buffer.XSurfaceSet(w.win.Id); err != nil {
-			fmt.Println(err)
-		}
+		w.buffer.XSurfaceSet(w.win.Id) // Ignore error
 		w.bufferLck.Unlock()
 	}
 	if len(bounds) > 0 {
