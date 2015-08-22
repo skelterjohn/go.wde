@@ -28,6 +28,7 @@ import (
 	"github.com/BurntSushi/xgbutil/xwindow"
 	"github.com/skelterjohn/go.wde"
 	"image"
+	"os"
 	"sync"
 )
 
@@ -96,7 +97,7 @@ func NewWindow(width, height int) (w *Window, err error) {
 
 	err = icccm.WmProtocolsSet(w.xu, w.win.Id, []string{"WM_DELETE_WINDOW"})
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		err = nil
 	}
 
@@ -190,7 +191,7 @@ func (w *Window) FlushImage(bounds ...image.Rectangle) {
 	if w.buffer.Pixmap == 0 {
 		w.bufferLck.Lock()
 		if err := w.buffer.XSurfaceSet(w.win.Id); err != nil {
-			fmt.Println(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 		w.bufferLck.Unlock()
 	}

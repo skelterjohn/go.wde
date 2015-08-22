@@ -25,6 +25,7 @@ import (
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"github.com/skelterjohn/go.wde"
 	"image"
+	"os"
 )
 
 func buttonForDetail(detail xproto.Button) wde.Button {
@@ -55,7 +56,7 @@ func (w *Window) handleEvents() {
 		e, err := w.conn.WaitForEvent()
 
 		if err != nil {
-			fmt.Println("[go.wde X error] ", err)
+			fmt.Fprintln(os.Stderr, "[go.wde X error] ", err)
 			continue
 		}
 
@@ -208,7 +209,7 @@ func (w *Window) handleEvents() {
 		case xproto.PropertyNotifyEvent:
 
 		default:
-			fmt.Printf("unhandled event: type %T\n%+v\n", e, e)
+			fmt.Fprintf(os.Stderr, "unhandled event: type %T\n%+v\n", e, e)
 		}
 
 	}
