@@ -83,7 +83,7 @@ type Image struct {
 }
 
 func (im Image) CopyRGBA(src *image.RGBA, bounds image.Rectangle) {
-	draw.Draw(im.RGBA, bounds, src, image.Point{0, 0}, draw.Src)
+	draw.Draw(im.RGBA, bounds, src, src.Bounds().Min, draw.Src)
 }
 
 type Window struct {
