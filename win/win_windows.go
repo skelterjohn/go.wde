@@ -162,6 +162,9 @@ func (this *Window) Screen() wde.Image {
 }
 
 func (this *Window) FlushImage(bounds ...image.Rectangle) {
+	if this.buffer.Bounds().Empty() {
+		return // happens when window is minimised
+	}
 	this.bufferback = NewDIB(this.buffer.Bounds())
 	*this.bufferback = *this.buffer
 
