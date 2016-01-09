@@ -56,6 +56,9 @@ func (wnd *Window) constructChord() string {
 func keyFromVirtualKeyCode(vk uintptr) string {
 	if vk >= '0' && vk <= 'Z' {
 		/* alphanumeric range (windows doesn't use 0x3a-0x40) */
+		if vk >= 'A' {
+			return fmt.Sprintf("%c", vk - 'A' + 'a') // convert to lower case
+		}
 		return fmt.Sprintf("%c", vk)
 	}
 	switch vk {
