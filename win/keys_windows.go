@@ -173,9 +173,9 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 	case w32.VK_RSHIFT:
 		return wde.KeyRightShift
 	case w32.VK_LCONTROL:
-		return wde.KeyLeftShift
+		return wde.KeyLeftControl
 	case w32.VK_RCONTROL:
-		return wde.KeyRightShift
+		return wde.KeyRightControl
 	case w32.VK_LMENU:
 		return wde.KeyLeftAlt
 	case w32.VK_RMENU:
