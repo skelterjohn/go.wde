@@ -93,24 +93,19 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		wnd.events <- bpe
 
 	case w32.WM_MOUSEWHEEL:
-		var mde wde.MouseDownEvent
-		var mue wde.MouseUpEvent
-		mde.Where.X = int(lparam) & 0xFFFF
-		mde.Where.Y = int(lparam>>16) & 0xFFFF
-		mue.Where.X = int(lparam) & 0xFFFF
-		mue.Where.Y = int(lparam>>16) & 0xFFFF
+		var me wde.MouseEvent
+		screenX := int(lparam) & 0xFFFF
+		screenY := int(lparam>>16) & 0xFFFF
+		me.Where.X, me.Where.Y, _ = w32.ScreenToClient(wnd.hwnd, screenX, screenY)
+		button := wde.WheelDownButton
 		delta := int16((wparam >> 16) & 0xFFFF)
 		if delta > 0 {
-			mde.Which = wde.WheelUpButton
-			mue.Which = wde.WheelUpButton
-		} else {
-			mde.Which = wde.WheelDownButton
-			mue.Which = wde.WheelDownButton
+			button = wde.WheelUpButton
 		}
-		wnd.lastX = mde.Where.X
-		wnd.lastX = mde.Where.Y
-		wnd.events <- mde
-		wnd.events <- mue
+		wnd.lastX = me.Where.X
+		wnd.lastX = me.Where.Y
+		wnd.events <- wde.MouseDownEvent{me, button}
+		wnd.events <- wde.MouseUpEvent{me, button}
 
 	case w32.WM_MOUSEMOVE:
 		var mme wde.MouseMovedEvent
