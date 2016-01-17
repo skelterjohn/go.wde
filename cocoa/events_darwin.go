@@ -125,6 +125,38 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				}
 				lastXY = me.Where
 				ec <- me
+			case C.GMDMouseWheel:
+				var me wde.MouseEvent
+				me.Where.X = int(e.data[0])
+				me.Where.Y = int(e.data[1])
+				// TODO e.data[2] contains horizontal scroll info; what do?
+				if e.data[3] != 0 {
+					button := wde.WheelUpButton
+					if e.data[3] == -1 {
+						button = wde.WheelDownButton
+					}
+					ec <- wde.MouseDownEvent{me, button}
+					ec <- wde.MouseUpEvent{me, button}
+				}
+			case C.GMDMagnify:
+				var mge wde.MagnifyEvent
+				mge.Where.X = int(e.data[0])
+				mge.Where.Y = int(e.data[1])
+				mge.Magnification = 1 + float64(e.data[2]) / 65536
+				ec <- mge
+			case C.GMDRotate:
+				var rte wde.RotateEvent
+				rte.Where.X = int(e.data[0])
+				rte.Where.Y = int(e.data[1])
+				rte.Rotation = float64(e.data[2]) / 65536
+				ec <- rte
+			case C.GMDScroll:
+				var se wde.ScrollEvent
+				se.Where.X = int(e.data[0])
+				se.Where.Y = int(e.data[1])
+				se.Delta.X = int(e.data[2])
+				se.Delta.Y = int(e.data[3])
+				ec <- se
 			case C.GMDMainFocus:
 				// for some reason Cocoa resets the cursor to normal when the window
 				// becomes the "main" window, so we have to set it back to what we want

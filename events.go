@@ -68,6 +68,27 @@ type MouseEnteredEvent MouseMovedEvent
 // MouseExitedEvent is for when the mouse exits a window.
 type MouseExitedEvent MouseMovedEvent
 
+// MagnifyEvent is used to represent a magnification gesture.
+type MagnifyEvent struct {
+	Event
+	Where image.Point
+	Magnification float64 // the multiplicative scale factor
+}
+
+// RotateEvent is used to represent a rotation gesture.
+type RotateEvent struct {
+	Event
+	Where image.Point
+	Rotation float64 // measured in degrees; positive == clockwise
+}
+
+// Scroll Event is used to represent a scrolling gesture.
+type ScrollEvent struct {
+	Event
+	Where image.Point
+	Delta image.Point
+}
+
 // KeyEvent is used for data common to all key events, and should not appear as an event received by the caller program.
 type KeyEvent struct {
 	Key string
