@@ -31,6 +31,10 @@ func getButton(b int) (which wde.Button) {
 	switch b {
 	case 0:
 		which = wde.LeftButton
+	case 1:
+		which = wde.RightButton
+	case 2:
+		which = wde.MiddleButton
 	}
 	return
 }

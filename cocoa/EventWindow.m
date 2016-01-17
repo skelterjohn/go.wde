@@ -100,6 +100,36 @@
     [self nq:e];
 }
 
+- (void)rightMouseDown:(NSEvent *)theEvent
+{
+    [self mouseDown:theEvent];
+}
+
+- (void)otherMouseDown:(NSEvent *)theEvent
+{
+    [self mouseDown:theEvent];
+}
+
+- (void)rightMouseUp:(NSEvent *)theEvent
+{
+    [self mouseUp:theEvent];
+}
+
+- (void)otherMouseUp:(NSEvent *)theEvent
+{
+    [self mouseUp:theEvent];
+}
+
+- (void)rightMouseDragged:(NSEvent *)theEvent
+{
+    [self mouseDragged:theEvent];
+}
+
+- (void)otherMouseDragged:(NSEvent *)theEvent
+{
+    [self mouseDragged:theEvent];
+}
+
 - (void)mouseMoved:(NSEvent *)theEvent
 {
     CGRect frameOrigin = [self frame];
