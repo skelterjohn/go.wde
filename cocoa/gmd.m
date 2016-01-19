@@ -8,17 +8,12 @@
 
 #import "gmd.h"
 #import "GoWindow.h"
-#import "GoMenu.h"
 
 #include "_cgo_export.h"
 
-GoMenu* gomenu;
 NSBundle* fw;
 
-NSNib *menunib;
-NSNib *windownib;
-
-int initMacDraw( void *mdata, int mlen, void *wdata, int wlen ) {
+int initMacDraw() {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     NSThread* nop = [NSThread alloc];
     
@@ -32,25 +27,15 @@ int initMacDraw( void *mdata, int mlen, void *wdata, int wlen ) {
     // kickoff a thread that does nothing, so cocoa inits multi-threaded mode
     [[nop init] start];
 
-    menunib = [[NSNib alloc] initWithNibData:[NSData dataWithBytes:mdata length:mlen] bundle:nil];
-    windownib = [[NSNib alloc] initWithNibData:[NSData dataWithBytes:wdata length:wlen] bundle:nil];
-
-    if (menunib == nil || windownib == nil) {
-	    [pool release];
-	    return GMDLoadNibError;
-    }
-
-    gomenu = [GoMenu alloc];
-    
-    if ( ! [menunib instantiateWithOwner:gomenu topLevelObjects: nil] ) {
-	    [pool release];
-	    return GMDLoadNibError;
-    }
-
-    [gomenu retain];
-    [menunib retain];
-    [windownib retain];
-
+    // setup the menu-bar. we just have a single "Quit" item.
+    NSMenu* menu = [[NSMenu new] autorelease];
+    NSMenuItem* appitem = [[NSMenuItem new] autorelease];
+    [menu addItem:appitem];
+    [NSApp setMainMenu:menu];
+    NSMenu* appmenu = [[NSMenu new] autorelease];
+    // XXX calling @selector(stop:) unconditionally stops the main-loop. we should instead signal the app that quit has been requested so it can save or whatever.
+    [appmenu addItem:[[[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(stop:) keyEquivalent:@"q"] autorelease]];
+    [appitem setSubmenu:appmenu];
     
     [pool release];
     
@@ -69,12 +54,6 @@ void NSAppStop() {
     [NSApp terminate:nil];
 }
 
-void setAppName(char* name) {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [gomenu setAppName:[NSString stringWithCString:name encoding:NSASCIIStringEncoding]];
-    [pool release];
-}
-
 GMDWindow openWindow() {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     
@@ -82,9 +61,21 @@ GMDWindow openWindow() {
     if (gw == nil) {
         return nil;
     }
-    [windownib instantiateWithOwner:gw topLevelObjects: nil];
+    NSRect rect = NSMakeRect(0, 0, 200, 200); // initial size isn't important
+    int style = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask;
+    id window = [[[EventWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO] autorelease];
+    [window makeKeyAndOrderFront:nil];
+    [window setWindowController:gw];
+    [window setGw:gw];
+    [gw setWindow:window];
+    NSImageView* view = [[[NSImageView alloc] initWithFrame:rect] autorelease];
+    [view setImageFrameStyle:NSImageFrameNone];
+    [view setImageScaling:NSImageScaleNone];
+    NSTrackingAreaOptions tracking = NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp | NSTrackingInVisibleRect;
+    [view addTrackingArea:[[[NSTrackingArea alloc] initWithRect:rect options:tracking owner:view userInfo:nil] autorelease]];
+    [[window contentView] addSubview:view];
+    [gw setImageView:view];
     [[gw window] orderFront:nil];
-    [[gw eventWindow] setGw:gw];
 
     [NSApp activateIgnoringOtherApps:YES];
     
@@ -116,7 +107,7 @@ void hideWindow(GMDWindow gmdw) {
 void setWindowTitle(GMDWindow gmdw, char* title) {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     GoWindow* gw = (GoWindow*)gmdw;
-    NSString* nstitle = [NSString stringWithCString:title encoding:NSASCIIStringEncoding];
+    NSString* nstitle = [NSString stringWithCString:title encoding:NSUTF8StringEncoding];
     [gw setTitle:nstitle];
     [pool release];
 }
