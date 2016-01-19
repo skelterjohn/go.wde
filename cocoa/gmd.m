@@ -15,9 +15,6 @@
 GoMenu* gomenu;
 NSBundle* fw;
 
-NSNib *menunib;
-NSNib *windownib;
-
 int initMacDraw( void *mdata, int mlen, void *wdata, int wlen ) {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     NSThread* nop = [NSThread alloc];
@@ -32,25 +29,9 @@ int initMacDraw( void *mdata, int mlen, void *wdata, int wlen ) {
     // kickoff a thread that does nothing, so cocoa inits multi-threaded mode
     [[nop init] start];
 
-    menunib = [[NSNib alloc] initWithNibData:[NSData dataWithBytes:mdata length:mlen] bundle:nil];
-    windownib = [[NSNib alloc] initWithNibData:[NSData dataWithBytes:wdata length:wlen] bundle:nil];
-
-    if (menunib == nil || windownib == nil) {
-	    [pool release];
-	    return GMDLoadNibError;
-    }
-
     gomenu = [GoMenu alloc];
-    
-    if ( ! [menunib instantiateWithOwner:gomenu topLevelObjects: nil] ) {
-	    [pool release];
-	    return GMDLoadNibError;
-    }
 
     [gomenu retain];
-    [menunib retain];
-    [windownib retain];
-
     
     [pool release];
     
@@ -82,7 +63,16 @@ GMDWindow openWindow() {
     if (gw == nil) {
         return nil;
     }
-    [windownib instantiateWithOwner:gw topLevelObjects: nil];
+    id window = [[[EventWindow alloc] initWithContentRect:NSMakeRect(0, 0, 200, 200) styleMask:NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO] autorelease];
+    [window makeKeyAndOrderFront:nil];
+    [window setWindowController:gw];
+    [gw setWindow:window];
+    NSImageView* view = [[NSImageView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)];
+    [view setImageFrameStyle:NSImageFrameNone];
+    [view setImageScaling:NSScaleNone];
+    [view setImage:nil];
+    [[window contentView] addSubview:view];
+    [gw setImageView:view];
     [[gw window] orderFront:nil];
     [[gw eventWindow] setGw:gw];
 
