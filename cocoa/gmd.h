@@ -36,7 +36,7 @@ typedef struct {
     int data[5];
 } GMDEvent;
 
-int initMacDraw(void *mdata, int mlen, void *wdata, int wlen);
+int initMacDraw();
 void releaseMacDraw();
 
 void NSAppRun();

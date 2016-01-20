@@ -15,7 +15,7 @@
 GoMenu* gomenu;
 NSBundle* fw;
 
-int initMacDraw( void *mdata, int mlen, void *wdata, int wlen ) {
+int initMacDraw() {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     NSThread* nop = [NSThread alloc];
     
