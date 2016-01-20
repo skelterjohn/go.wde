@@ -63,7 +63,8 @@ GMDWindow openWindow() {
     if (gw == nil) {
         return nil;
     }
-    id window = [[[EventWindow alloc] initWithContentRect:NSMakeRect(0, 0, 200, 200) styleMask:NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO] autorelease];
+    int style = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask;
+    id window = [[[EventWindow alloc] initWithContentRect:NSMakeRect(0, 0, 200, 200) styleMask:style backing:NSBackingStoreBuffered defer:NO] autorelease];
     [window makeKeyAndOrderFront:nil];
     [window setWindowController:gw];
     [gw setWindow:window];
