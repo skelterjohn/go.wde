@@ -63,15 +63,17 @@ GMDWindow openWindow() {
     if (gw == nil) {
         return nil;
     }
+    NSRect rect = NSMakeRect(0, 0, 200, 200); // initial size isn't important
     int style = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask;
-    id window = [[[EventWindow alloc] initWithContentRect:NSMakeRect(0, 0, 200, 200) styleMask:style backing:NSBackingStoreBuffered defer:NO] autorelease];
+    id window = [[[EventWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO] autorelease];
     [window makeKeyAndOrderFront:nil];
     [window setWindowController:gw];
     [gw setWindow:window];
-    NSImageView* view = [[NSImageView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)];
+    NSImageView* view = [[NSImageView alloc] initWithFrame:rect];
     [view setImageFrameStyle:NSImageFrameNone];
     [view setImageScaling:NSScaleNone];
-    [view setImage:nil];
+    NSTrackingAreaOptions tracking = NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp | NSTrackingInVisibleRect;
+    [view addTrackingArea:[[[NSTrackingArea alloc] initWithRect:rect options:tracking owner:view userInfo:nil] autorelease]];
     [[window contentView] addSubview:view];
     [gw setImageView:view];
     [[gw window] orderFront:nil];
