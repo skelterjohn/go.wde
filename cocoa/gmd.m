@@ -8,11 +8,9 @@
 
 #import "gmd.h"
 #import "GoWindow.h"
-#import "GoMenu.h"
 
 #include "_cgo_export.h"
 
-GoMenu* gomenu;
 NSBundle* fw;
 
 int initMacDraw() {
@@ -29,9 +27,13 @@ int initMacDraw() {
     // kickoff a thread that does nothing, so cocoa inits multi-threaded mode
     [[nop init] start];
 
-    gomenu = [GoMenu alloc];
-
-    [gomenu retain];
+    NSMenu* menu = [[NSMenu new] autorelease];
+    NSMenuItem* appitem = [[NSMenuItem new] autorelease];
+    [menu addItem:appitem];
+    [NSApp setMainMenu:menu];
+    NSMenu* appmenu = [[NSMenu new] autorelease];
+    [appmenu addItem:[[[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(stop:) keyEquivalent:@"q"] autorelease]];
+    [appitem setSubmenu:appmenu];
     
     [pool release];
     
@@ -52,7 +54,8 @@ void NSAppStop() {
 
 void setAppName(char* name) {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [gomenu setAppName:[NSString stringWithCString:name encoding:NSASCIIStringEncoding]];
+    NSMenu* menu = [NSApp mainMenu];
+    [[menu itemAtIndex:0] setTitle:[NSString stringWithCString:name encoding:NSUTF8StringEncoding]];
     [pool release];
 }
 
