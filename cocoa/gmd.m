@@ -68,16 +68,16 @@ GMDWindow openWindow() {
     id window = [[[EventWindow alloc] initWithContentRect:rect styleMask:style backing:NSBackingStoreBuffered defer:NO] autorelease];
     [window makeKeyAndOrderFront:nil];
     [window setWindowController:gw];
+    [window setGw:gw];
     [gw setWindow:window];
-    NSImageView* view = [[NSImageView alloc] initWithFrame:rect];
+    NSImageView* view = [[[NSImageView alloc] initWithFrame:rect] autorelease];
     [view setImageFrameStyle:NSImageFrameNone];
-    [view setImageScaling:NSScaleNone];
+    [view setImageScaling:NSImageScaleNone];
     NSTrackingAreaOptions tracking = NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp | NSTrackingInVisibleRect;
     [view addTrackingArea:[[[NSTrackingArea alloc] initWithRect:rect options:tracking owner:view userInfo:nil] autorelease]];
     [[window contentView] addSubview:view];
     [gw setImageView:view];
     [[gw window] orderFront:nil];
-    [[gw eventWindow] setGw:gw];
 
     [NSApp activateIgnoringOtherApps:YES];
     
