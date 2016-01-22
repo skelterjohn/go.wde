@@ -100,6 +100,60 @@
     [self nq:e];
 }
 
+- (void)rightMouseDown:(NSEvent *)theEvent
+{
+    [self mouseDown:theEvent];
+}
+
+- (void)otherMouseDown:(NSEvent *)theEvent
+{
+    [self mouseDown:theEvent];
+}
+
+- (void)rightMouseUp:(NSEvent *)theEvent
+{
+    [self mouseUp:theEvent];
+}
+
+- (void)otherMouseUp:(NSEvent *)theEvent
+{
+    [self mouseUp:theEvent];
+}
+
+- (void)rightMouseDragged:(NSEvent *)theEvent
+{
+    [self mouseDragged:theEvent];
+}
+
+- (void)otherMouseDragged:(NSEvent *)theEvent
+{
+    [self mouseDragged:theEvent];
+}
+
+static int sgn(CGFloat delta)
+{
+    if (delta < 0)
+        return -1;
+    if (delta > 0)
+        return 1;
+    return 0;
+}
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    GMDEvent e = [self mouseEvent:theEvent]; // fill in x/y coords
+    if ([theEvent hasPreciseScrollingDeltas]) {
+        e.kind = GMDScroll;
+        e.data[2] = (int)[theEvent scrollingDeltaX];
+        e.data[3] = (int)[theEvent scrollingDeltaY];
+    } else {
+        e.kind = GMDMouseWheel;
+        e.data[2] = sgn([theEvent scrollingDeltaX]);
+        e.data[3] = sgn([theEvent scrollingDeltaY]);
+    }
+    [self nq:e];
+}
+
 - (void)mouseMoved:(NSEvent *)theEvent
 {
     CGRect frameOrigin = [self frame];
@@ -124,6 +178,22 @@
 {
     GMDEvent e = [self mouseEvent:theEvent];
     e.kind = GMDMouseExited;
+    [self nq:e];
+}
+
+- (void)magnifyWithEvent:(NSEvent *)theEvent
+{
+    GMDEvent e = [self mouseEvent:theEvent]; // fill in x/y coords
+    e.kind = GMDMagnify;
+    e.data[2] = (int)([theEvent magnification] * 65536.0);
+    [self nq:e];
+}
+
+- (void)rotateWithEvent:(NSEvent *)theEvent
+{
+    GMDEvent e = [self mouseEvent:theEvent]; // fill in x/y coords
+    e.kind = GMDRotate;
+    e.data[2] = (int)([theEvent rotation] * 65536.0);
     [self nq:e];
 }
 

@@ -71,6 +71,12 @@ func wdetest() {
 					fmt.Println("mouse entered", e.Where.X, e.Where.Y)
 				case wde.MouseExitedEvent:
 					fmt.Println("mouse exited", e.Where.X, e.Where.Y)
+				case wde.MagnifyEvent:
+					fmt.Println("magnify", e.Where, e.Magnification)
+				case wde.RotateEvent:
+					fmt.Println("rotate", e.Where, e.Rotation)
+				case wde.ScrollEvent:
+					fmt.Println("scroll", e.Where, e.Delta)
 				case wde.KeyDownEvent:
 					// fmt.Println("KeyDownEvent", e.Glyph)
 				case wde.KeyUpEvent:
