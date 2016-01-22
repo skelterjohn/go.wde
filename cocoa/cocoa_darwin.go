@@ -46,14 +46,6 @@ func init() {
 	runtime.LockOSThread()
 	C.initMacDraw()
 	tasks = make(chan func(), 16)
-
-	SetAppName("go")
-}
-
-func SetAppName(name string) {
-	cname := C.CString(name)
-	defer C.free(unsafe.Pointer(cname))
-	C.setAppName(cname)
 }
 
 type Image struct {

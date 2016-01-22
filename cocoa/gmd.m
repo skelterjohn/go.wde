@@ -52,13 +52,6 @@ void NSAppStop() {
     [NSApp terminate:nil];
 }
 
-void setAppName(char* name) {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    NSMenu* menu = [NSApp mainMenu];
-    [[menu itemAtIndex:0] setTitle:[NSString stringWithCString:name encoding:NSUTF8StringEncoding]];
-    [pool release];
-}
-
 GMDWindow openWindow() {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     

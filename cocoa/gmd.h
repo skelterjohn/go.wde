@@ -45,8 +45,6 @@ void NSAppStop();
 int isMainThread();
 void taskReady();
 
-void setAppName(char* name);
-
 GMDWindow openWindow();
 int closeWindow(GMDWindow gmdw);
 
