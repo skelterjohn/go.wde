@@ -51,7 +51,7 @@ void NSAppRun() {
 }
 
 void NSAppStop() {
-    [NSApp terminate:nil];
+    [NSApp stop:nil];
 }
 
 GMDWindow openWindow() {
