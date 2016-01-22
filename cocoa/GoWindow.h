@@ -17,8 +17,8 @@
     EventWindow* eventWindow;
 }
 
-@property (assign) IBOutlet NSImageView* imageView;
-@property (assign) IBOutlet EventWindow* eventWindow;
+@property (assign) NSImageView* imageView;
+@property (assign) EventWindow* eventWindow;
 
 - (void)setTitle:(NSString*)title;
 - (void)setSize:(CGSize)size;

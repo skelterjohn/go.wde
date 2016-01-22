@@ -27,11 +27,13 @@ int initMacDraw() {
     // kickoff a thread that does nothing, so cocoa inits multi-threaded mode
     [[nop init] start];
 
+    // setup the menu-bar. we just have a single "Quit" item.
     NSMenu* menu = [[NSMenu new] autorelease];
     NSMenuItem* appitem = [[NSMenuItem new] autorelease];
     [menu addItem:appitem];
     [NSApp setMainMenu:menu];
     NSMenu* appmenu = [[NSMenu new] autorelease];
+    // XXX calling @selector(stop:) unconditionally stops the main-loop. we should instead signal the app that quit has been requested so it can save or whatever.
     [appmenu addItem:[[[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(stop:) keyEquivalent:@"q"] autorelease]];
     [appitem setSubmenu:appmenu];
     
@@ -105,7 +107,7 @@ void hideWindow(GMDWindow gmdw) {
 void setWindowTitle(GMDWindow gmdw, char* title) {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     GoWindow* gw = (GoWindow*)gmdw;
-    NSString* nstitle = [NSString stringWithCString:title encoding:NSASCIIStringEncoding];
+    NSString* nstitle = [NSString stringWithCString:title encoding:NSUTF8StringEncoding];
     [gw setTitle:nstitle];
     [pool release];
 }
