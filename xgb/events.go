@@ -159,7 +159,7 @@ func (w *Window) handleEvents() {
 				for j := 0; j < 8; j++ {
 					if mask & (1 << uint(j)) != 0 {
 						keycode := xproto.Keycode(8 * (i + 1) + j)
-						key := keybind.LookupString(w.xu, 0, keycode)
+						key := keyForCode(keybind.LookupString(w.xu, 0, keycode))
 						newDownKeys[key] = true
 					}
 				}
