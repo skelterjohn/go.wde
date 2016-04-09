@@ -145,7 +145,7 @@ func keyFromVirtualKeyCode(vk uintptr) string {
 	case w32.VK_F5:
 		return wde.KeyF5
 	case w32.VK_F6:
-		return wde.KeyF5
+		return wde.KeyF6
 	case w32.VK_F7:
 		return wde.KeyF7
 	case w32.VK_F8:
