@@ -55,6 +55,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 
 		noXY := image.Point{-1, -1}
 		lastXY := noXY
+		suppressDrag := false
 
 	eventloop:
 		for {
@@ -69,6 +70,7 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				mde.Which = getButton(int(e.data[2]))
 				lastXY = mde.Where
 				ec <- mde
+				suppressDrag = true
 			case C.GMDMouseUp:
 				var mue wde.MouseUpEvent
 				mue.Where.X = int(e.data[0])
@@ -77,6 +79,13 @@ func (w *Window) EventChan() (events <-chan interface{}) {
 				lastXY = mue.Where
 				ec <- mue
 			case C.GMDMouseDragged:
+				if suppressDrag {
+					/* Cocoa emits a drag event immediately after a mouse down.
+					 * Other backends only do so after the mouse actually moves, which
+					 * is the behaviour we emulate here. */
+					suppressDrag = false
+					continue
+				}
 				var mde wde.MouseDraggedEvent
 				mde.Where.X = int(e.data[0])
 				mde.Where.Y = int(e.data[1])
