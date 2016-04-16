@@ -33,9 +33,6 @@ import (
 
 var tasks chan func()
 
-var appChanStart = make(chan bool)
-var appChanFinish = make(chan bool)
-
 func init() {
 	wde.BackendNewWindow = func(width, height int) (w wde.Window, err error) {
 		w, err = NewWindow(width, height)

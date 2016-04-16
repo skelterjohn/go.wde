@@ -17,11 +17,6 @@ int initMacDraw() {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     NSThread* nop = [NSThread alloc];
     
-    ProcessSerialNumber psn;
-    psn.highLongOfPSN = 0;
-    psn.lowLongOfPSN = kCurrentProcess;
-    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-
     [NSApplication sharedApplication];
 
     // kickoff a thread that does nothing, so cocoa inits multi-threaded mode
@@ -47,6 +42,11 @@ void releaseMacDraw() {
 }
 
 void NSAppRun() {
+    ProcessSerialNumber psn;
+    psn.highLongOfPSN = 0;
+    psn.lowLongOfPSN = kCurrentProcess;
+    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
+
     [NSApp run];
 }
 
