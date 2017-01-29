@@ -40,6 +40,10 @@ func buttonForDetail(detail xproto.Button) wde.Button {
 		return wde.WheelUpButton
 	case 5:
 		return wde.WheelDownButton
+	case 6:
+		return wde.WheelLeftButton
+	case 7:
+		return wde.WheelRightButton
 	}
 	return 0
 }
