@@ -50,6 +50,23 @@ func buttonForDetail(button uint32) wde.Button {
 	return 0
 }
 
+func buttonForWheel(msg uint32, delta int16) wde.Button {
+	if msg == w32.WM_MOUSEWHEEL {
+		if delta > 0 {
+			return wde.WheelUpButton
+		} else if delta < 0 {
+			return wde.WheelDownButton
+		}
+	} else if msg == w32.WM_MOUSEHWHEEL {
+		if delta > 0 {
+			return wde.WheelRightButton
+		} else if delta < 0 {
+			return wde.WheelLeftButton
+		}
+	}
+	return 0
+}
+
 func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 	wnd := GetMsgHandler(hwnd)
 	if wnd == nil {
@@ -92,16 +109,13 @@ func WndProc(hwnd w32.HWND, msg uint32, wparam, lparam uintptr) uintptr {
 		wnd.lastY = bpe.Where.Y
 		wnd.events <- bpe
 
-	case w32.WM_MOUSEWHEEL:
+	case w32.WM_MOUSEWHEEL, w32.WM_MOUSEHWHEEL:
 		var me wde.MouseEvent
 		screenX := int(lparam) & 0xFFFF
 		screenY := int(lparam>>16) & 0xFFFF
 		me.Where.X, me.Where.Y, _ = w32.ScreenToClient(wnd.hwnd, screenX, screenY)
-		button := wde.WheelDownButton
 		delta := int16((wparam >> 16) & 0xFFFF)
-		if delta > 0 {
-			button = wde.WheelUpButton
-		}
+		button := buttonForWheel(msg, delta)
 		wnd.lastX = me.Where.X
 		wnd.lastX = me.Where.Y
 		wnd.events <- wde.MouseDownEvent{me, button}

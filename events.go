@@ -28,8 +28,8 @@ const (
 	RightButton
 	WheelUpButton
 	WheelDownButton
-	WheelLeftButton // only supported by xgb backend atm
-	WheelRightButton // only supported by xgb backend atm
+	WheelLeftButton // only supported by xgb/win backends atm
+	WheelRightButton // only supported by xgb/win backends atm
 )
 
 type Event int
