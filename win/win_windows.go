@@ -135,6 +135,10 @@ func (this *Window) SetTitle(title string) {
 
 func (this *Window) SetSize(width, height int) {
 	x, y := this.Pos()
+	cr := &w32.RECT{0, 0, int32(width), int32(height)}
+	w32.AdjustWindowRectEx(cr, w32.WS_OVERLAPPEDWINDOW, false, w32.WS_EX_CLIENTEDGE)
+	width = int(cr.Right - cr.Left)
+	height = int(cr.Bottom - cr.Top)
 	w32.MoveWindow(this.hwnd, x, y, width, height, true)
 }
 
