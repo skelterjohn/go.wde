@@ -52,6 +52,21 @@ void NSAppRun() {
 
 void NSAppStop() {
     [NSApp stop:nil];
+
+    // In case NSAppStop is not called in response to a UI event, we need to trigger
+    // a dummy event so the UI processing loop picks up the stop request.
+    NSEvent* dummyEvent = [NSEvent
+        otherEventWithType: NSEventTypeApplicationDefined
+                  location: NSZeroPoint
+             modifierFlags: 0
+                 timestamp: 0
+              windowNumber: 0
+                   context: nil
+                   subtype:0
+                     data1:0
+                     data2:0];
+    [NSApp postEvent: dummyEvent atStart: TRUE];
+
 }
 
 GMDWindow openWindow() {
