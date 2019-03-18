@@ -87,13 +87,13 @@ func (w *Window) SetTitle(title string) {
 
 func (w *Window) SetSize(width, height int) {
 	onMainThread(func() {
-		C.setWindowSize(w.cw, _Ctype_int(width), _Ctype_int(height))
+		C.setWindowSize(w.cw, C.int(width), C.int(height))
 	})
 }
 
 func (w *Window) Size() (width, height int) {
 	onMainThread(func() {
-		var rw, rh _Ctype_int
+		var rw, rh C.int
 		C.getWindowSize(w.cw, &rw, &rh)
 		width = int(rw)
 		height = int(rh)
