@@ -56,8 +56,17 @@ recommended that your main function look like the the code below.
 
 wde.Run() will return when wde.Stop() is called.
 
-For this to work, you must import one of the go.wde backends. For
-instance,
+For this to work, you must import one of the go.wde backends. To
+automatically import the correct backend, add this to your imports:
+
+        import _ "github.com/skelterjohn/go.wde/init"
+
+This will register a backend with go.wde, allowing you to call
+wde.Run(), wde.Stop() and wde.NewWindow() without referring to the
+backend explicitly.
+
+If you would like to disable a backend, you must import all
+ of the go.wde backends except the disabled ones. For instance,
 
 	import _ "github.com/skelterjohn/go.wde/xgb"
 
@@ -70,13 +79,9 @@ or
 	import _ "github.com/skelterjohn/go.wde/cocoa"
 
 
-will register a backend with go.wde, allowing you to call
-wde.Run(), wde.Stop() and wde.NewWindow() without referring to the
-backend explicitly.
-
-If you pupt the registration import in a separate file filtered for
-the correct platform, your project will work on all three major
-platforms without configuration.
+If you put the registration import in a separate file filtered for
+the correct platform, your project will only work on the imported
+platforms.
 
 That is, if you import go.wde/xgb in a file named "wde_linux.go",
 go.wde/win in a file named "wde_windows.go" and go.wde/cocoa in a
